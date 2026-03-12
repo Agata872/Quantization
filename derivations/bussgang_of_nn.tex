@@ -1,0 +1,636 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage[margin=2.54cm, lmargin=2.54cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{color}
+\usepackage{cancel}
+\usepackage{amssymb}
+\usepackage{hyperref}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\linespread{1.5}
+
+
+\newcommand{\vect}[1]{\boldsymbol{\mathrm{#1}}}
+\newcommand{\mat}[1]{\boldsymbol{\mathrm{#1}}}
+\newcommand{\MSE}{\mathrm{MSE}}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\vecop}{\text{vec}}
+
+\newcommand{\CP}{L}
+\newcommand{\TODO}[1]{{\color{red} TODO {#1}}}
+\newcommand{\note}[1]{{\color{blue} Note: {#1}}}
+
+\newcommand{\expt}[1]{\mathbb{E}\left(#1\right)}
+
+
+
+\usepackage{amsthm}
+\theoremstyle{remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% begin[document]
+\begin{document}
+\title{Bussgang decomposition of a neural net as nonlinearity}
+\author{Thomas Feys}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% abstract
+\large
+
+
+Let's consider the following system model where linear precoding is performed
+\begin{align}
+	\vect{x} = \mat{W}\vect{s},
+\end{align}
+here $\vect{x} \in \mathbb{C}^{M\times 1}$,  $\mat{W} \in \mathbb{C}^{M\times K}$,  $\vect{s} \in \mathbb{C}^{K\times 1}$.
+After precoding, quantization is applied as 
+\begin{align}
+	\vect{y} = \mathcal{Q}(\vect{x}) = \begin{bmatrix} \mathcal{Q}(\Re\{x_0\}) + \jmath \mathcal{Q}(\Im\{x_0\}), & \cdots,  & \mathcal{Q}(\Re\{x_{M-1}\}) + \jmath \mathcal{Q}(\Im\{x_{M-1}\}) \end{bmatrix}^{\intercal}.
+\end{align}
+
+\section{Real case, one neuron}
+For simplicity let's consider the case where $\vect{x}$ is real valued, then we have
+\begin{align}
+	\vect{y} = \mathcal{Q}(\vect{x}) = \begin{bmatrix} \mathcal{Q}(x_0), & \cdots,  & \mathcal{Q}(x_{M-1}) \end{bmatrix}^{\intercal}
+\end{align}
+
+Now let's approximate the quantizer function by a trained neural network. First, for simplicity, we consider the scalar case and a very simple neural network consisting of 1 neuron and a ReLu nonlinearity, this gives
+\begin{align}
+	\mathcal{Q}(x_m) &\approx f(x_m; \vect{\theta})\\
+	&= \sigma(a_0x_m + b_0)\\
+	&= \max(0, a_0x_m + b_0)
+\end{align}
+Let's compute the bussgang decomposition of this neural network, as it represents the nonlinearity in our system. Then we have
+\begin{align}
+	f(x_m, \vect{\theta}) = B x_m + \eta.
+\end{align}
+The Bussgang gain can be computed as 
+\begin{align}
+	B = \frac{\expt{f(x_m; \vect{\theta})x_m}}{\expt{x_m^2}}.
+\end{align}
+Let's first compute $\expt{f(x_m; \vect{\theta})x_m}$ under the assumption that $x_m\sim \mathcal{N}(0, 1)$ 
+\begin{align}
+	\expt{f(x_m; \vect{\theta})x_m} &= \int_{-\infty}^{+\infty} \max(0, a_0x_m + b_0) x_m p(x_m) dx_m\\
+	&= \int_{-\infty}^{+\infty} \max(0, a_0x_m^2 + b_0x_m) p(x_m) dx_m\\
+	&= \int_{\frac{-b_0}{a_0}}^{+\infty} a_0x_m^2 + b_0x_m p(x_m) dx_m\\
+	&= a_0\underbrace{\int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m}_{\text{(a)}} + b_0 \underbrace{\int_{\frac{-b_0}{a_0}}^{+\infty} x_m p(x_m) dx_m}_{\text{(b)}}
+\end{align}
+Let's first focus on the integral (b), if $x_m\sim \mathcal{N}(0, 1)$ this can be computed as
+\begin{align}
+	\int_{\frac{-b_0}{a_0}}^{+\infty} x_m p(x_m) dx_m &= \int_{\frac{-b_0}{a_0}}^{+\infty} x_m \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2}x_m^2}dx_m\\
+	&= \left(-\frac{1}{\sqrt{2\pi}} e^{-0.5 x_m^2}\right)\Bigg|_{\frac{-b_0}{a_0}}^{+\infty}\\
+	&= \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2}. \label{eq:int_result_1}
+\end{align}
+This expression is checked against the numerical computation of the integral and is OK.
+Alterativally, this expectation can be computed as the expected value of an unnormalized truncated normal distribution. The pdf of truncated normal distribution is defined as
+\begin{align}
+	\psi(\bar{\mu}, \bar{\sigma}, a, b ; x)= \begin{cases}0 & \text { if } x \leq a \\  \frac{\phi(\bar{\mu}, \bar{\sigma} ; x)}{\Phi(\bar{\mu}, \bar{\sigma} ; b) - \Phi(\bar{\mu}, \bar{\sigma} ; a)} & \text { if } a<x<b \\0 & \text { if } b \leq x\end{cases}
+\end{align}
+where $\phi(\cdot)$ and $\Phi(\cdot)$ represent the pdf and cdf of the normal distribution, $\bar{\mu}$ and $\bar{\sigma}$ represent the mean and variance of the normal distribution and $a$,$b$ represent the lower and upper bound of the truncation range. The truncated normal distribution can thus be seen as a normal distribution with values that are set to zero outside of the truncation range, additionally the values inside the range are scaled such that the integral of the pdf equals one.
+The expected value of this truncated normal distribution matches with the expected value we need to compute, except for the normalization which scales the integral of the pdf to one. Hence we define the unnormalized truncated normal distribution as 
+\begin{align}
+	\psi(\bar{\mu}, \bar{\sigma}, a, b ; x)= \begin{cases}0 & \text { if } x \leq a \\  \phi(\bar{\mu}, \bar{\sigma} ; x) & \text { if } a<x<b \\0 & \text { if } b \leq x\end{cases}
+\end{align}
+The expected value of this distribution can be computed as 
+\begin{align}
+	\mu = \bar{\mu} - \bar{\sigma} \cdot \left(\phi(0, 1; \beta) - \phi(0, 1; \alpha)\right),
+\end{align}
+where 
+\begin{align}
+	\alpha=\frac{a-\bar{\mu}}{\bar{\sigma}} ; \quad \beta=\frac{b-\bar{\mu}}{\bar{\sigma}}.
+\end{align}
+In our case this gives 
+\begin{align}
+	\mu &= 0 - 1 \cdot \left(\phi(0, 1; \beta) - \phi(0, 1; \alpha)\right)\\
+	&=  \phi(0, 1; \alpha)\\
+	&= \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2}
+\end{align}
+given that $\bar{\mu}=0$, $\bar{\sigma}=1$, $\alpha=\frac{-b_0}{a_0}$, $\beta=+\infty$ and $\phi(0, 1; \beta)=0$. This indeed matches the result found in (\ref{eq:int_result_1}).
+
+Next, let's focus in integral (a) which is given by 
+\begin{align}
+	\int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m &= \int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2\frac{1}{\sqrt{2\pi}} e^{\frac{-1}{2} x_m^2} dx_m \\
+	&= \frac{1}{\sqrt{2\pi}} \int_{\frac{-b_0}{a_0}}^{+\infty} (-x_m)(-x_m) e^{\frac{-1}{2} x_m^2} dx_m 
+\end{align}
+Using integration by parts we set $u=-x_m$, $du=-dx_m$ and $dv=-x_me^{\frac{-1}{2}x_m^2}$, $v=\int -x_me^{\frac{-1}{2}x_m^2} = e^{\frac{-1}{2}x_m^2}$, this leads to 
+\begin{align}
+	\int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m &=  -\frac{1}{\sqrt{2\pi}}x_m e^{-\frac{1}{2}x_m^2}\Bigg|_{\frac{-b_0}{a_0}}^{+\infty} +  \frac{1}{\sqrt{2\pi}} \int_{\frac{-b_0}{a_0}}^{+\infty} e^{-\frac{1}{2}x_m^2}dx_m \\
+	&=  \frac{1}{\sqrt{2\pi}} \left(\frac{-b_0}{a_0}\right) e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + Q\left(\frac{-b_0}{a_0}\right).
+\end{align}
+This expression was checked in simulation by comparing to the numerical computation of the integral and is OK.
+
+
+Putting it all together, this gives 
+\begin{align}
+	\expt{f(x_m; \vect{\theta})x_m} &= \int_{-\infty}^{+\infty} \max(0, a_0x_m + b_0) x_m p(x_m) dx_m\\
+	&= a_0\underbrace{\int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m}_{\text{(a)}} + b_0 \underbrace{\int_{\frac{-b_0}{a_0}}^{+\infty} x_m p(x_m) dx_m}_{\text{(b)}}\\
+	&= \frac{-b_0}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + a_0 Q\left(\frac{-b_0}{a_0}\right) + b_0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} \\
+	&= a_0 Q\left(\frac{-b_0}{a_0}\right) \label{eq:bussgang_hardway}
+\end{align}
+Relating this to the Bussgang gain we get 
+\begin{align}
+	B &= \frac{\expt{f(x_m; \vect{\theta})x_m}}{\expt{x_m^2}}\\
+	&= \frac{1}{\mathrm{var}(x_m)} \left[a_0 Q\left(\frac{-b_0}{a_0}\right) \right].
+\end{align}
+This result is checked against the numerical computation of the Bussgang gain and is OK.
+
+The same solution is obtained if we compute the Bussgang gain according to 
+\begin{align}
+	B &= \expt{\frac{\partial f(x_m; \vect{\theta})}{\partial x_m}}\\
+	&= \expt{\frac{\partial \max(0, a_0x_m + b_0) }{\partial x_m}}\\
+	&=  \int_{-b_0/a_0}^{+\infty} a_0 p(x_m) dx_m \\
+	&= a_0 Q(-b_0/a_0) 
+\end{align}
+where $Q(\cdot)$ is the Q-function (not the quantizer function). Given that the variance of $x_m$ equals one, this indeed gives the same result as eq (\ref{eq:bussgang_hardway}).
+\TODO{Note if Q function becomes a problem, we can always use a Chernoff bound to get a bound on the distortion.}
+
+Next, let's compute the variance of the distortion
+\begin{align}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}
+\end{align}
+Let's focus on $\expt{f^2(x_m; \vect{\theta})}$ as all other terms are known
+\begin{align}
+	\expt{f^2(x_m; \vect{\theta})} &= \expt{\sigma^2(a_0 x_m + b_0)}\\
+	&=  \int_{-\infty}^{+\infty} \sigma^2(a_0 x_m + b_0) p(x_m) dx_m\\
+	&= \int_{\frac{-b_0}{a_0}}^{+\infty} (a_0 x_m + b_0)^2 p(x_m) dx_m \\
+	&=  \int_{\frac{-b_0}{a_0}}^{+\infty} a_0^2 x_m^2 + 2 a_0 b_0 x_m + b_0^2 p(x_m) dx_m \\
+	&=  a_0^2 \int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m +2 a_0 b_0 \int_{\frac{-b_0}{a_0}}^{+\infty} x_m p(x_m) dx_m +\\ & \quad b_0^2 \int_{\frac{-b_0}{a_0}}^{+\infty} p(x_m) dx_m \\
+	&= a_0^2 \frac{1}{\sqrt{2\pi}} \left(\frac{-b_0}{a_0}\right) e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + a_0^2 Q\left(\frac{-b_0}{a_0}\right) \\
+	& \quad + 2a_0b_0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + b_0^2 Q\left(\frac{-b_0}{a_0}\right)\\
+	&= \frac{a_0 b_0}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right).
+\end{align}
+This results in 
+\begin{align}
+	\expt{\eta \eta} &= \frac{a_0 b_0}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right)- B^2\expt{x_m^2}.
+\end{align}
+This is checked against the numerical computation of the distortion variance and is OK.
+
+\section{Real case, multi-layer NN}
+\TODO{adjust this section}
+In the previous section we considered the single neuron case, which ofcourse will not be able to fit the quantizer function properly. In this section we consider a more general neural net, namely
+\begin{align}
+	\mathcal{Q}(x_m) &\approx f(x_m; \vect{\theta})\\
+	&= \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1,
+\end{align}
+where $\vect{a_0} \in \mathbb{R}^{d \times 1}$, $\vect{b_0} \in \mathbb{R}^{d \times 1}$, $\vect{a_1} \in \mathbb{R}^{d \times 1}$ and $b_1 \in \mathbb{R}$.
+
+In scalar form this gives
+\begin{align}
+	f(x_m; \vect{\theta}) = \left(\sum_{i=0}^{d-1} [\vect{a_1}]_i [\sigma(\vect{a_0}x_m+\vect{b_0})]_i \right)+ b_1.
+\end{align}
+
+The Bussgang gain can in this case be computed as
+\begin{align}
+	B &= \expt{\frac{\partial f(x_m; \vect{\theta})}{\partial x_m}}\\
+	&= \expt{\frac{\partial \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1 }{\partial x_m}}
+\end{align}
+Let's first compute this derivative 
+\begin{align}
+	\frac{\partial f(x_m; \vect{\theta})}{\partial x_m} = \sum_{i=0}^{d-1} [\vect{a_1}]_i [\sigma^{\prime}(\vect{a}_0x_m+\vect{b_0})]_i [\vect{a_0}]_i
+\end{align}
+This can be written in vector form
+\begin{align}
+	\frac{\partial \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1 }{\partial x_m} &= \vect{a_1}^{\intercal} \left(\sigma^{\prime}(\vect{a_0}x_m + \vect{b_0}) \odot \vect{a_0}\right). 
+\end{align}
+Here we know that 
+\begin{align}
+	\sigma^{\prime}(z) = \begin{cases}
+		1 \text{ if $z>0$}\\
+		0 \text{ else}
+	\end{cases}.
+\end{align}
+
+Let's now compute the expectation, as said before the derivative is given by 
+\begin{align}
+	\frac{\partial f(x_m; \vect{\theta})}{\partial x_m} =  \vect{a_1}^{\intercal} \sigma^{\prime}(\vect{a_0}x_m + \vect{b_0}) \odot \vect{a_0}
+\end{align}
+To simplify let's write $\vect{u} = \sigma^{\prime}(\vect{a_0}x_m + \vect{b_0}) \odot \vect{a_0}$.
+The expectation can then be written as
+\begin{align}
+	\expt{\frac{\partial f(x_m; \vect{\theta})}{\partial x_m}} &= \expt{ \vect{a_1}^{\intercal} \vect{u}}\\
+	&=  \vect{a_1}^{\intercal} \expt{\vect{u}}
+\end{align}
+Now we can compute the expectation of $\vect{u}$
+\begin{align}
+	\expt{\vect{u}} = \expt{\sigma^{\prime}(\vect{a_0}x_m + \vect{b_0}) \odot \vect{a_0}}
+\end{align}
+The element-wise expectation can be written as
+\begin{align}
+	\expt{[\vect{u}]_i} &= \expt{\sigma^{\prime}([\vect{a_0}x_m + \vect{b_0}]_i) [\vect{a_0}]_i}\\
+	&= \int_{-\infty}^{+\infty} \sigma^{\prime}([\vect{a_0}x_m + \vect{b_0}]_i) [\vect{a_0}]_i p(x_m) dx_m\\
+	&= \int_{-[\vect{b_0}]_i/[\vect{a_0}]_i}^{+\infty}  [\vect{a_0}]_i p(x_m) dx_m \\
+	&= [\vect{a_0}]_i Q(-[\vect{b_0}]_i/[\vect{a_0}]_i)
+\end{align}
+Going back to vector form we get 
+\begin{align}
+	\expt{\vect{u}} = \vect{a_0} \odot Q(-\vect{b_0}\oslash\vect{a_0}),
+\end{align}
+where $\oslash$ is the Hadamard division.
+Putting it all together we get 
+\begin{align}
+	B &=\expt{\frac{\partial f(x_m; \vect{\theta})}{\partial x_m}} \\
+	&= \vect{a_1}^{\intercal} \left(\vect{a_0} \odot Q(-\vect{b_0}\oslash\vect{a_0})\right).\label{eq:bussgang_1layer}
+\end{align}
+
+Let's double check this result using the other definition of the Bussgang gain
+\begin{align}
+	B = \frac{\expt{f(x_m;\vect{\theta})x_m}}{\expt{x_m^2}} 
+\end{align}
+Let's start by computing the expectation in the numerator
+\begin{align}
+	\expt{(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1) x_m} &= \expt{x_m \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1 x_m}\\
+	&= \expt{v} + b_1 \expt{x_m}\\
+	&= \expt{v},
+\end{align}
+where $v=x_m \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0})$. 
+\begin{align}
+	\expt{v} = \vect{a_1}^{\intercal} \expt{x_m \sigma(\vect{a_0}x_m + \vect{b_0})}.
+\end{align}
+Writing the expectation of $x_m \sigma(\vect{a_0}x_m + \vect{b_0})$ element-wise we get 
+\begin{align}
+	\expt{[x_m \sigma(x\vect{a_0}x_m + \vect{b_0})]_i} &= \int_{-\infty}^{+\infty} x_m \sigma([\vect{a_0}]_i x_m + [\vect{b_0}]_i) p(x_m) dx_m\\
+	&= \int_{\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}}^{+\infty} [\vect{a_0}]_i x_m^2 + [\vect{b_0}]_i x_m p(x_m) dx_m
+\end{align}
+This can be solved as done above for the single neuron case, it leads to the same 2 integrals as computed above and will give the same result as (\ref{eq:bussgang_1layer}).
+
+\TODO{confirm the result of the bussgang gain in simulation}
+
+
+Next let's compute the variance of the distortion. 
+\begin{align}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}
+\end{align}
+Let's focus on $\expt{f^2(x_m; \vect{\theta})}$ as all other terms are known
+\begin{align}
+	\expt{f^2(x_m; \vect{\theta})} &= \expt{\left(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1\right)}^2\\
+	&= \expt{\left(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1\right)\left(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1\right)^{\intercal}}\\
+	&= \expt{\left(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1\right)\left(\sigma(\vect{a_0}x_m + \vect{b_0})^{\intercal} \vect{a_1}+ b_1\right)}\\
+	&= \expt{\vect{a_1}^{\intercal} \sigma(\vect{a_0}x_m + \vect{b_0}) \sigma(\vect{a_0}x_m + \vect{b_0})^{\intercal} \vect{a_1} + 2 b_1 \vect{a_1}^{\intercal} \sigma(\vect{a_0}x_m + \vect{b_0}) + b_1^2}\\
+	&= \vect{a_1}^{\intercal}\underbrace{\expt{ \sigma(\vect{a_0}x_m + \vect{b_0}) \sigma(\vect{a_0}x_m + \vect{b_0})^{\intercal}}}_{\text{(a)}}\vect{a_1} + 2b_1 \vect{a_1}^{\intercal} \underbrace{\expt{\sigma(\vect{a_0}x_m + \vect{b_0})}}_{\text{(b)}} + b_1^2
+\end{align}
+Let's first focus on (a), we rewrite it as $\expt{\mat{Z}} = \expt{ \sigma(\vect{a_0}x_m + \vect{b_0}) \sigma(\vect{a_0}x_m + \vect{b_0})^{\intercal}}$, rewriting this elementwise we get
+\begin{align}
+	\left[\expt{\mat{Z}}\right]_{i,j} &= \expt{\sigma([\vect{a_0}]_i x_m + [\vect{b_0}]_i) \sigma([\vect{a_0}]_j x_m + [\vect{b_0}]_j)}\\
+	&= \int_{-\infty}^{+\infty} \sigma([\vect{a_0}]_i x_m + [\vect{b_0}]_i) \sigma([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m \\
+	&= \int_{c}^{+\infty} ([\vect{a_0}]_i x_m + [\vect{b_0}]_i) ([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m 
+\end{align}
+where $c = \max\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}, \frac{-[\vect{b_0}]_j}{[\vect{a_0}]_j}\right)$, this gives
+\begin{align}
+	\left[\expt{\mat{Z}}\right]_{i,j} &= \int_{c}^{+\infty} [\vect{a_0}]_i [\vect{a_0}]_j x_m^2 + [\vect{a_0}]_i [\vect{b_0}]_j x_m + [\vect{a_0}]_j [\vect{b_0}]_i x_m + [\vect{b_0}]_i [\vect{b_0}]_j p(x_m)dx_m \\
+	&= [\vect{a_0}]_i [\vect{a_0}]_j \int_{c}^{+\infty} x_m^2 p(x_m)dx_m + \\
+	\quad&\left([\vect{a_0}]_i [\vect{b_0}]_j  + [\vect{a_0}]_j [\vect{b_0}]_i \right) \int_{c}^{+\infty} x_m p(x_m)dx_m +  [\vect{b_0}]_i [\vect{b_0}]_j \int_{c}^{+\infty} p(x_m)dx_m \\
+	&= [\vect{a_0}]_i [\vect{a_0}]_j \left(c \phi(c) + Q(c) \right) + \left([\vect{a_0}]_i [\vect{b_0}]_j  + [\vect{a_0}]_j [\vect{b_0}]_i \right) \phi(c) +  [\vect{b_0}]_i [\vect{b_0}]_j Q(c),
+\end{align}
+where $\phi(x) = \frac{1}{\sqrt{2\pi}} e^{-0.5 x^2}$ is the pdf of the standard normal distriubtion $\mathcal{N}(0,1)$. Going back to matrix form we get 
+\begin{align}
+	\expt{\mat{Z}} = \vect{a_0} \vect{a_0}^{\intercal} \odot \left(\mat{C} \odot \phi(\mat{C}) + Q(\mat{C})\right) + 2 \vect{a_0}\vect{b_0}^{\intercal} \odot \phi(\mat{C}) + \vect{b_0}\vect{b_0}^{\intercal} \odot Q(\mat{C}),
+\end{align}
+where $[\mat{C}]_{i,j} = \max\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}, \frac{-[\vect{b_0}]_j}{[\vect{a_0}]_j}\right)$.
+
+Next we can solve (b) element wise as
+\begin{align}
+	\left[\expt{\sigma(\vect{a_0}x_m + \vect{b_0})}\right]_i &= \int_{\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}}^{+\infty} [\vect{a_0}]_i x_m + [\vect{b_0}]_i p(x_m)dx_m \\
+	&= [\vect{a_0}]_i \phi\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}\right) + [\vect{b_0}]_i Q\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}\right).
+\end{align}
+In matrix form this can be rewritten ass
+\begin{align}
+	\expt{\sigma(\vect{a_0}x_m + \vect{b_0})} &= \vect{a_0} \odot \phi(-\vect{b_0} \oslash \vect{a_0}) + \vect{b_0} \odot Q(-\vect{b_0} \oslash \vect{a_0}).
+\end{align}
+
+Putting it all together we get 
+\begin{align*}
+	\expt{f^2(x_m; \vect{\theta})} &= \vect{a_1}^{\intercal} \Big(\vect{a_0} \vect{a_0}^{\intercal} \odot \left(\mat{C} \odot \phi(\mat{C}) + Q(\mat{C})\right) + 2 \vect{a_0}\vect{b_0}^{\intercal} \odot \phi(\mat{C}) + \vect{b_0}\vect{b_0}^{\intercal} \odot\\
+	& Q(\mat{C})\Big)\vect{a_1} + 2b_1\vect{a_1}^{\intercal} \Big( \vect{a_0} \odot \phi(-\vect{b_0} \oslash \vect{a_0}) + \vect{b_0} \odot Q(-\vect{b_0} \oslash \vect{a_0}) \Big) + b_1^2
+\end{align*}
+Then for the distortion variance we get 
+\begin{align*}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}\\
+	&= \vect{a_1}^{\intercal} \Big(\vect{a_0} \vect{a_0}^{\intercal} \odot \left(\mat{C} \odot \phi(\mat{C}) + Q(\mat{C})\right) + 2 \vect{a_0}\vect{b_0}^{\intercal} \odot \phi(\mat{C}) + \vect{b_0}\vect{b_0}^{\intercal} \odot\\
+	& Q(\mat{C})\Big)\vect{a_1} + 2b_1\vect{a_1}^{\intercal} \Big( \vect{a_0} \odot \phi(-\vect{b_0} \oslash \vect{a_0}) + \vect{b_0} \odot Q(-\vect{b_0} \oslash \vect{a_0}) \Big) + b_1^2 \\
+	&- B^2\expt{x_m^2}\\
+	&= \vect{a_1}^{\intercal} \Big(\vect{a_0} \vect{a_0}^{\intercal} \odot \left(\mat{C} \odot \phi(\mat{C}) + Q(\mat{C})\right) + 2 \vect{a_0}\vect{b_0}^{\intercal} \odot \phi(\mat{C}) + \vect{b_0}\vect{b_0}^{\intercal} \odot\\
+	& Q(\mat{C})\Big)\vect{a_1} + 2b_1\vect{a_1}^{\intercal} \Big( \vect{a_0} \odot \phi(-\vect{b_0} \oslash \vect{a_0}) + \vect{b_0} \odot Q(-\vect{b_0} \oslash \vect{a_0}) \Big) + b_1^2 \\
+	&- \Big(\vect{a_1}^{\intercal} \left(\vect{a_0} \odot Q(-\vect{b_0}\oslash\vect{a_0})\right)\Big)^2\expt{x_m^2}
+\end{align*}
+\TODO{maybe rewrite it a bit simpler by using a substitution, eg name everything between $a_1^T (...) a_1$ and name everything after $2b_1 a_1^T(...)$}
+\note{The above expression for $B$ and $\expt{\eta^2}$ are corrected and verified in simulation, but only for the case $\vect{a_0}, \vect{a_1} \geq 0$.}
+
+\section{Negative NN coefficients}
+The sections above are only valid if the kernels of the NN are possitive (e.g, $a_0\geq 0$). If not the computation of the integral should be split into two cases, one for $a_0\geq0$ and one for $a_0\leq0$. This will be conidered in this section.
+
+\subsection{Single Neuron case}
+First, for simplicity we consider the single neuron case. As before, let's approximate the quantizer function by a trained neural network. First, for simplicity, we consider the scalar case and a very simple neural network consisting of 1 neuron and a ReLu nonlinearity, this gives
+\begin{align}
+	\mathcal{Q}(x_m) &\approx f(x_m; \vect{\theta})\\
+	&= \sigma(a_0x_m + b_0)\\
+	&= \max(0, a_0x_m + b_0)
+\end{align}
+Let's compute the bussgang decomposition of this neural network, as it represents the nonlinearity in our system. Then we have
+\begin{align}
+	f(x_m, \vect{\theta}) = B x_m + \eta.
+\end{align}
+The Bussgang gain can be computed as 
+\begin{align}
+	B &= \expt{\frac{\partial f(x_m; \vect{\theta})}{\partial x_m}}\\
+	&= \expt{\frac{\partial \max(0, a_0x_m + b_0) }{\partial x_m}}
+\end{align}
+if $a_0\geq0$ we get 
+\begin{align}
+	B &=  \int_{-b_0/a_0}^{+\infty} a_0 p(x_m) dx_m \\
+	&= a_0 Q(-b_0/a_0) 
+\end{align}
+if $a_0\leq0$ we get 
+\begin{align}
+	B &=  \int_{-\infty}^{-b_0/a_0} a_0 p(x_m) dx_m \\
+\end{align}
+Using basic integration properties we can write
+\begin{align}
+	1 &= \int_{-\infty}^{+\infty} p(x_m)dx_m\\
+	&= \int_{-\infty}^{-b_0/a_0} p(x_m)dx_m + \int_{-b_0/a_0}^{+\infty} p(x_m)dx_m 
+\end{align}
+Hence
+\begin{align}
+	\int_{-\infty}^{-b_0/a_0} p(x_m)dx_m &= 1 - \int_{-b_0/a_0}^{+\infty} p(x_m)dx_m 
+\end{align}
+This results in 
+\begin{align}
+	B &= \int_{-\infty}^{-b_0/a_0} a_0 p(x_m) dx_m \\
+	&= a_0 \left(1 - Q(-b_0/a_0)\right) 
+\end{align}
+A global result that is valid for possitive and negative $a_0$ can be written as
+\begin{align}
+	B &= a_0 \big((0.5-\alpha) + 2\alpha Q(-b_0/a_0)\big)\\
+	&= \begin{cases}
+		a_0Q(-b_0/a_0),  \text{  if } a_0\geq 0\\
+		a_0 - a_0Q(-b_0/a_0),  \text{  if } a_0<0
+	\end{cases}
+\end{align}
+where $\alpha = 0.5 \mathrm{sgn}(a_0) = 0.5\frac{|a_0|}{a_0}$.
+In a similar fashion we compute the variance of the distortion 
+\begin{align}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}
+\end{align}
+Let's focus on $\expt{f^2(x_m; \vect{\theta})}$ as all other terms are known
+\begin{align}
+	\expt{f^2(x_m; \vect{\theta})} &= \expt{\sigma^2(a_0 x_m + b_0)}\\
+	&= \int_{-\infty}^{+\infty} \sigma^2(a_0 x_m + b_0) p(x_m) dx_m\\
+	&= \begin{cases}
+		\int_{-b_0/a_0}^{+\infty} (a_0 x_m + b_0)^2 p(x_m) dx_m ,  \text{  if } a_0\geq 0\\
+		\int_{-\infty}^{-b_0/a_0} (a_0 x_m + b_0)^2 p(x_m) dx_m ,  \text{  if } a_0 < 0\\
+	\end{cases}
+\end{align}
+if $a_0\geq0$ this leads to 
+\begin{align}
+	\expt{f^2(x_m; \vect{\theta})}	&=  a_0^2 \int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m +2 a_0 b_0 \int_{\frac{-b_0}{a_0}}^{+\infty} x_m p(x_m) dx_m +\\ & \quad b_0^2 \int_{\frac{-b_0}{a_0}}^{+\infty} p(x_m) dx_m \\
+	&= a_0^2 \frac{1}{\sqrt{2\pi}} \left(\frac{-b_0}{a_0}\right) e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + a_0^2 Q\left(\frac{-b_0}{a_0}\right) \\
+	& \quad + 2a_0b_0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + b_0^2 Q\left(\frac{-b_0}{a_0}\right)\\
+	&= \frac{a_0 b_0}{\sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{-b_0}{a_0}\right)^2} + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right)\\
+	&= a_0b_0 \phi\left(\frac{-b_0}{a_0}\right) + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right)
+\end{align}
+
+if $a_0<$ this leads to 
+\begin{align*}
+	\expt{f^2(x_m; \vect{\theta})}	&=  a_0^2 \int_{-\infty}^{-b_0/a_0} x_m^2 p(x_m) dx_m +2 a_0 b_0 \int_{-\infty}^{-b_0/a_0} x_m p(x_m) dx_m +\\ & \quad b_0^2 \int_{-\infty}^{-b_0/a_0} p(x_m) dx_m 
+\end{align*}
+Similar as before these integrals can be rewritten as 
+\begin{align}
+	\int_{-\infty}^{-b_0/a_0} x_m^2 p(x_m) dx_m &= \expt{x_m^2} - \int_{-b_0/a_0}^{+\infty} x_m^2 p(x_m) dx_m \\
+	\int_{-\infty}^{-b_0/a_0} x_m p(x_m) dx_m &= \expt{x_m} - \int_{-b_0/a_0}^{+\infty} x_m p(x_m) dx_m \\
+	\int_{-\infty}^{-b_0/a_0} p(x_m) dx_m &= 1 - \int_{-b_0/a_0}^{+\infty} p(x_m) dx_m \\.
+\end{align}
+This leads to 
+\begin{align*}
+	\expt{f^2(x_m; \vect{\theta})}	&=  a_0^2 \int_{\frac{-b_0}{a_0}}^{+\infty} x_m^2 p(x_m) dx_m +2 a_0 b_0 \int_{\frac{-b_0}{a_0}}^{+\infty} x_m p(x_m) dx_m +\\ & \quad b_0^2 \int_{\frac{-b_0}{a_0}}^{+\infty} p(x_m) dx_m \\
+	&=  a_0^2 \left(\expt{x_m^2} - \int_{-b_0/a_0}^{+\infty} x_m^2 p(x_m) dx_m \right) \\ & \quad +2 a_0 b_0 \left(\expt{x_m} - \int_{-b_0/a_0}^{+\infty} x_m p(x_m) dx_m\right) \\ & \quad + b_0^2 \left(1 - \int_{-b_0/a_0}^{+\infty} p(x_m) dx_m\right) \\
+	&= a_0^2 \left(\expt{x_m^2} - \left(\frac{-b_0}{a_0}\right) \phi\left(\frac{-b_0}{a_0}\right) - Q\left(\frac{-b_0}{a_0}\right) \right) \\ & \quad +2 a_0 b_0 \left(\expt{x_m} - \phi\left(\frac{-b_0}{a_0}\right)\right) \\ & \quad + b_0^2 \left(1 - Q\left(\frac{-b_0}{a_0}\right)\right) \\
+	&= a_0^2 \expt{x_m^2} + 2a_0b_0 \expt{x_m} + b_0^2 - a_0b_0\phi\left(\frac{-b_0}{a_0}\right) - (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right) 
+\end{align*}
+In summary we have
+\begin{align}
+	\expt{f^2(x_m; \vect{\theta})}	&= \begin{cases}
+		a_0b_0 \phi\left(\frac{-b_0}{a_0}\right) + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right), \text{ if } a_0 \geq 0\\
+		\left[a_0^2 \expt{x_m^2} + 2a_0b_0 \expt{x_m} + b_0^2\right] - \left[a_0b_0\phi\left(\frac{-b_0}{a_0}\right) + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right)\right], \\
+		\text{ if } a_0 < 0. 
+	\end{cases}\\
+	&= (0.5 - \alpha) \left[a_0^2 \expt{x_m^2} + 2a_0b_0 \expt{x_m} + b_0^2\right] \\
+	&+ 2\alpha \left[a_0b_0\phi\left(\frac{-b_0}{a_0}\right) + (a_0^2 + b_0^2) Q\left(\frac{-b_0}{a_0}\right)\right]
+\end{align}
+where $\alpha = 0.5 \mathrm{sgn}(a_0)$.
+
+Fromt this $\expt{\eta^2}$ can easily be obtained by filling in the expressions for $B$ and $\expt{f^2(x_m;\vect{\theta})}$
+\begin{align}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}.
+\end{align}
+\note{The expressions for $B$ and $\expt{\eta^2}$ are numerically checked and OK for all values of $a_0, b_0$.}
+
+\subsection{1 layer NN case}
+Let's extend the previous result to a more general 1 layer neural network
+\begin{align}
+	\mathcal{Q}(x_m) &\approx f(x_m; \vect{\theta})\\
+	&= \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1,
+\end{align}
+where $\vect{a_0} \in \mathbb{R}^{d \times 1}$, $\vect{b_0} \in \mathbb{R}^{d \times 1}$, $\vect{a_1} \in \mathbb{R}^{d \times 1}$ and $b_1 \in \mathbb{R}$.
+
+In scalar form this gives
+\begin{align}
+	f(x_m; \vect{\theta}) = \left(\sum_{i=0}^{d-1} [\vect{a_1}]_i [\sigma(\vect{a_0}x_m+\vect{b_0})]_i \right)+ b_1.
+\end{align}
+
+
+The Bussgang gain can in this case be computed as
+\begin{align}
+	B &= \expt{\frac{\partial f(x_m; \vect{\theta})}{\partial x_m}}\\
+	&= \expt{\frac{\partial \vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1 }{\partial x_m}}\\
+	&= \expt{\vect{a_1}^{\intercal} \left(\sigma^{\prime}(\vect{a_0 x_m +b_0}) \odot \vect{a_0}\right)}\\
+	&= \vect{a_1}^{\intercal} \expt{\left(\sigma^{\prime}(\vect{a_0 x_m +b_0}) \odot \vect{a_0}\right)}
+\end{align}
+The elementwise expectation can be computed as
+\begin{align}
+	\left[\expt{\left(\sigma^{\prime}(\vect{a_0 x_m +b_0}) \odot \vect{a_0}\right)}\right]_i = \begin{cases}
+		\left[\vect{a_0}\right]_i  Q\left(-\left[\vect{b_0}\right]_i / \left[\vect{a_0}\right]_i\right), \text{ if } \left[\vect{a_0}\right]_i \geq 0 \\
+		\left[\vect{a_0}\right]_i \left(1 -  Q\left(-\left[\vect{b_0}\right]_i / \left[\vect{a_0}\right]_i\right)\right), \text{ if } \left[\vect{a_0}\right]_i < 0
+	\end{cases}
+\end{align}
+Let's denote this expectation in vector for as $\vect{u}=\expt{\left(\sigma^{\prime}(\vect{a_0 x_m +b_0}) \odot \vect{a_0}\right)}$. Then we can write the Bussgang gain as
+\begin{align}
+	B = \vect{a_1}^{\intercal}\vect{u}.
+\end{align}
+This can also be written as 
+\begin{align}
+	B = \vect{a_1}^{\intercal} \big((0.5 - \vect{\alpha}) \odot \vect{a_0} + 2\vect{\alpha}\odot\vect{a_0}\odot Q\left(-\vect{b_0} \oslash \vect{a_0}\right)\big),
+\end{align}
+where $\vect{\alpha} = 0.5\mathrm{sgn}(\vect{a_0})$, where the $\mathrm{sgn}(\cdot)$ is taken elementwise.
+\note{this is checked numerically and is ok!}
+
+Next let's compute the variance of the distortion. 
+\begin{align}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}
+\end{align}
+Let's focus on $\expt{f^2(x_m; \vect{\theta})}$ as all other terms are known
+\begin{align}
+	\expt{f^2(x_m; \vect{\theta})} &= \expt{\left(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1\right)}^2\\
+	&= \vect{a_1}^{\intercal}\underbrace{\expt{ \sigma(\vect{a_0}x_m + \vect{b_0}) \sigma(\vect{a_0}x_m + \vect{b_0})^{\intercal}}}_{\text{(a)}}\vect{a_1} + 2b_1 \vect{a_1}^{\intercal} \underbrace{\expt{\sigma(\vect{a_0}x_m + \vect{b_0})}}_{\text{(b)}} + b_1^2
+\end{align}
+Let's first focus on (a), we rewrite it as $\expt{\mat{Z}} = \expt{ \sigma(\vect{a_0}x_m + \vect{b_0}) \sigma(\vect{a_0}x_m + \vect{b_0})^{\intercal}}$, rewriting this elementwise we get
+\begin{align}
+	\left[\expt{\mat{Z}}\right]_{i,j} &= \expt{\sigma([\vect{a_0}]_i x_m + [\vect{b_0}]_i) \sigma([\vect{a_0}]_j x_m + [\vect{b_0}]_j)}\\
+	&= \int_{-\infty}^{+\infty} \sigma([\vect{a_0}]_i x_m + [\vect{b_0}]_i) \sigma([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m \\
+	&= \begin{cases}
+		\int_{c}^{+\infty} ([\vect{a_0}]_i x_m + [\vect{b_0}]_i) ([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m, \text{ if } [\vect{a_0}]_i, [\vect{a_0}]_j \geq 0 \\
+		\int_{-\infty}^{c} ([\vect{a_0}]_i x_m + [\vect{b_0}]_i) ([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m , \text{ if } [\vect{a_0}]_i, [\vect{a_0}]_j < 0 \\
+		\int_{-[\vect{b_0}]_i/[\vect{a_0}]_i}^{-[\vect{b_0}]_j/[\vect{a_0}]_j} ([\vect{a_0}]_i x_m + [\vect{b_0}]_i) ([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m , \text{ if } [\vect{a_0}]_i \geq 0, [\vect{a_0}]_j < 0 \\
+		\int_{-[\vect{b_0}]_j/[\vect{a_0}]_j}^{-[\vect{b_0}]_i/[\vect{a_0}]_i} ([\vect{a_0}]_i x_m + [\vect{b_0}]_i) ([\vect{a_0}]_j x_m + [\vect{b_0}]_j) p(x_m)dx_m , \text{ if } [\vect{a_0}]_i < 0, [\vect{a_0}]_j \geq 0 
+	\end{cases}
+\end{align}
+The undefined integral can be rewritten as
+\begin{align*}
+	&[\vect{a_0}]_i [\vect{a_0}]_j \int x_m^2 p(x_m)dx_m + \left([\vect{a_0}]_i [\vect{b_0}]_j  +  [\vect{a_0}]_j [\vect{b_0}]_i \right) \int x_m p(x_m)dx_m \\&+  [\vect{b_0}]_i [\vect{b_0}]_j \int p(x_m)dx_m 
+\end{align*}
+Then we can solve this for each case, this leads to 
+\begin{align}
+	\left[\expt{\mat{Z}}\right]_{i,j} &= \begin{cases}
+		[\vect{a_0}]_i [\vect{a_0}]_j \left(c \phi(c) + Q(c) \right) + \left([\vect{a_0}]_i [\vect{b_0}]_j  + [\vect{a_0}]_j [\vect{b_0}]_i \right) \phi(c) +\\
+		[\vect{b_0}]_i [\vect{b_0}]_j Q(c), \text{ if } [\vect{a_0}]_i, [\vect{a_0}]_j \geq 0 \\
+		[\vect{a_0}]_i [\vect{a_0}]_j \left(\expt{x_m^2} - c \phi(c) - Q(c) \right) + \left([\vect{a_0}]_i [\vect{b_0}]_j  + [\vect{a_0}]_j [\vect{b_0}]_i \right) \left(\expt{x_m} - \phi(c)\right)\\
+		 + [\vect{b_0}]_i [\vect{b_0}]_j \left(1 - Q(c)\right), \text{ if } [\vect{a_0}]_i, [\vect{a_0}]_j < 0 \\
+		 [\vect{a_0}]_i [\vect{a_0}]_j \bigg(\expt{x_m^2} - 1 - \frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i} \phi\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right) + Q\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right) + \frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j} \phi\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right) \\
+		 - Q\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right)\bigg) \left([\vect{a_0}]_i [\vect{b_0}]_j  + [\vect{a_0}]_j [\vect{b_0}]_i \right) \bigg(\expt{x_m} + \phi\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right) - \phi\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right) \bigg)\\
+		 [\vect{b_0}]_i [\vect{b_0}]_j \bigg(Q\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right)-Q\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right)\bigg)\text{ if } [\vect{a_0}]_i < 0, [\vect{a_0}]_j \geq 0 \\
+		 -\Bigg([\vect{a_0}]_i [\vect{a_0}]_j \bigg(\expt{x_m^2} - 1 - \frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i} \phi\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right) + Q\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right) + \frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j} \phi\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right) \\
+		 - Q\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right)\bigg) \left([\vect{a_0}]_i [\vect{b_0}]_j  + [\vect{a_0}]_j [\vect{b_0}]_i \right) \bigg(\expt{x_m} + \phi\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right) - \phi\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right) \bigg)\\
+		 [\vect{b_0}]_i [\vect{b_0}]_j \bigg(Q\left(\frac{[-\vect{b_0}]_i}{[\vect{a_0}]_i}\right)-Q\left(\frac{[-\vect{b_0}]_j}{[\vect{a_0}]_j}\right)\bigg)\Bigg)\text{ if } [\vect{a_0}]_i \geq 0, [\vect{a_0}]_j < 0 
+	\end{cases}
+\end{align}
+Here we used the following properties
+\begin{align}
+	\int_{-[\vect{b_0}]_i/[\vect{a_0}]_i}^{-[\vect{b_0}]_j/[\vect{a_0}]_j} p(x)dx = 1 - \int_{-\infty}^{-[\vect{b_0}]_i/[\vect{a_0}]_i} p(x)dx - \int_{-[\vect{b_0}]_j/[\vect{a_0}]_j}^{+\infty} p(x)dx \\
+	\int_{-[\vect{b_0}]_i/[\vect{a_0}]_i}^{-[\vect{b_0}]_j/[\vect{a_0}]_j} xp(x)dx = \expt{x} - \int_{-\infty}^{-[\vect{b_0}]_i/[\vect{a_0}]_i} xp(x)dx - \int_{-[\vect{b_0}]_j/[\vect{a_0}]_j}^{+\infty} xp(x)dx \\
+	\int_{-[\vect{b_0}]_i/[\vect{a_0}]_i}^{-[\vect{b_0}]_j/[\vect{a_0}]_j} x^2p(x)dx = \expt{x^2} - \int_{-\infty}^{-[\vect{b_0}]_i/[\vect{a_0}]_i} x^2p(x)dx - \int_{-[\vect{b_0}]_j/[\vect{a_0}]_j}^{+\infty} x^2p(x)dx 
+\end{align}
+and the fact that $\int_b^a f(x) \, dx = -\int_a^b f(x) \, dx$.
+
+\TODO{Think if it is possible to write this in matrix form, is it needed to write it in matrix form?}
+\TODO{rework after this}
+Going back to matrix form we get 
+\begin{align}
+	\expt{\mat{Z}} &= \vect{a_0} \vect{a_0}^{\intercal} \odot \big[(0.5-\vect{\alpha})\expt{x_m^2} + 2\vect{\alpha} \odot \left(\mat{C} \odot \phi(\mat{C}) + Q(\mat{C})\right) \big] \\
+	&+2 \vect{a_0}\vect{b_0}^{\intercal} \odot \big[(0.5-\vect{\alpha})\expt{x_m} + 2\vect{\alpha} \odot \phi(\mat{C})\big] \\
+	&+\vect{b_0}\vect{b_0}^{\intercal} \odot \big[(0.5-\vect{\alpha}) + 2\vect{\alpha} \odot Q(\mat{C})\big],
+\end{align}
+where $[\mat{C}]_{i,j} = \max\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}, \frac{-[\vect{b_0}]_j}{[\vect{a_0}]_j}\right)$.
+Next we can solve (b) element wise as
+\begin{align}
+	\left[\expt{\sigma(\vect{a_0}x_m + \vect{b_0})}\right]_i &= \begin{cases}
+		\int_{\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}}^{+\infty} [\vect{a_0}]_i x_m + [\vect{b_0}]_i p(x_m)dx_m \text{ if } [\vect{a_0}]_i \geq 0 \\
+		\int_{-\infty}^{\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}} [\vect{a_0}]_i x_m + [\vect{b_0}]_i p(x_m)dx_m \text{ if } [\vect{a_0}]_i < 0 \\
+	\end{cases}\\
+	&= \begin{cases}
+		[\vect{a_0}]_i \phi\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}\right) + [\vect{b_0}]_i Q\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}\right)\text{ if } [\vect{a_0}]_i \geq 0 \\
+		[\vect{a_0}]_i \left(\expt{x_m} - \phi\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}\right) \right)+\\
+		 [\vect{b_0}]_i \left(1 - Q\left(\frac{-[\vect{b_0}]_i}{[\vect{a_0}]_i}\right) \right)\text{ if } [\vect{a_0}]_i < 0 \\
+	\end{cases}
+\end{align}
+In matrix form this can be rewritten ass
+\begin{align}
+	\expt{\sigma(\vect{a_0}x_m + \vect{b_0})} &= \vect{a_0} \odot \big[(0.5-\vect{\alpha}) \expt{x_m} - 2\vect{\alpha} \odot \phi(-\vect{b_0} \oslash \vect{a_0}) \big]+\\
+	& \vect{b_0} \odot \big[(0.5 - \vect{\alpha}) - 2 \vect{\alpha} \odot Q(-\vect{b_0} \oslash \vect{a_0})\big].
+\end{align}
+
+Putting it all together we get 
+\begin{align*}
+	\expt{f^2(x_m; \vect{\theta})} &= \expt{\left(\vect{a_1}^{\intercal}\sigma(\vect{a_0}x_m + \vect{b_0}) + b_1\right)}^2\\
+	&= \vect{a_1}^{\intercal}{\expt{\mat{Z}}}\vect{a_1} + 2b_1 \vect{a_1}^{\intercal} \expt{\sigma(\vect{a_0}x_m + \vect{b_0})} + b_1^2\\
+	&=  \vect{a_1}^{\intercal}\Bigg[\vect{a_0} \vect{a_0}^{\intercal} \odot \big[(0.5-\vect{\alpha})\expt{x_m^2} + 2\vect{\alpha} \odot \left(\mat{C} \odot \phi(\mat{C}) + Q(\mat{C})\right) \big] \\
+	&+2 \vect{a_0}\vect{b_0}^{\intercal} \odot \big[(0.5-\vect{\alpha})\expt{x_m} + 2\vect{\alpha} \odot \phi(\mat{C})\big] \\
+	&+\vect{b_0}\vect{b_0}^{\intercal} \odot \big[(0.5-\vect{\alpha}) + 2\vect{\alpha} \odot Q(\mat{C})\big]\Bigg]\vect{a_1}\\
+	&+ 2 b_1 \vect{a_1}^{\intercal} \Bigg[ \vect{a_0} \odot \big[(0.5-\vect{\alpha}) \expt{x_m} - 2\vect{\alpha} \odot \phi(-\vect{b_0} \oslash \vect{a_0}) \big]+\\
+	& \vect{b_0} \odot \big[(0.5 - \vect{\alpha}) - 2 \vect{\alpha} \odot Q(-\vect{b_0} \oslash \vect{a_0})\big]\Bigg] +b_1^2
+\end{align*}
+Then the distortion variance can be computed as
+\begin{align*}
+	\expt{\eta \eta} &= \expt{f^2(x_m; \vect{\theta})} - B^2\expt{x_m^2}.
+\end{align*}
+\TODO{check numerically}
+
+
+
+\section{Attempt at simplification}
+\subsection{Bussgang of a ReLu, scalar case}
+Let's consider the ReLu as a nonlinearity, of which we want to compute the Bussgang decomposition
+\begin{align}
+	\sigma(z) &= \max (0, z) \\
+	&= Bz + \eta
+\end{align}
+where $B=\frac{\expt{\sigma(z)z}}{\expt{|z|^2}}$ is the Bussgang gain and $\eta$ the nonlinear distortion. 
+Let's find an expression $B$, 
+\begin{align}
+	B &= \expt{\frac{\partial\sigma(z)}{\partial z}}\\
+	&= \int_{-\infty}^{+\infty} \frac{\partial\sigma(z)}{\partial z} p(z) dz\\
+	&= \int_{0}^{+\infty} \frac{1}{\sigma \sqrt{2\pi}} e^{-0.5 (\frac{x-\mu}{\sigma})^2} dz
+\end{align}
+Substituting $t = \frac{z-\mu}{\sigma}$, $dt = \frac{1}{\sigma}dz$, leads to 
+\begin{align}
+	B &=  \frac{1}{\sigma \sqrt{2\pi}} \int_{\frac{-\mu}{\sigma}}^{+\infty} e^{-0.5 t^2} \frac{1}{\sigma}dt\\
+	&= Q\left(\frac{-\mu}{\sigma}\right)
+\end{align}
+\TODO{check in simulations because z is not zero mean so it might be fucked, check if ok then move on and check eta case}
+
+Next, let's compute the variance of the distortion as
+\begin{align}
+	\expt{\eta^2} = \expt{f^2(z)} - B^2\expt{z^2}.
+\end{align}
+For this let's first compute $\expt{f^2(z)}$
+\begin{align}
+	\expt{f^2(z)} &= \int_{-\infty}^{+\infty} \left(\max(0, z)\right)^2 p(z) dz\\
+	&= \frac{1}{\sigma \sqrt{2\pi}} \int_{0}^{+\infty} z^2 e^{-0.5 (\frac{z-\mu}{\sigma})^2}dz
+\end{align}
+Let's substitute $t = \frac{z-\mu}{\sigma}$, $dt = \frac{1}{\sigma}dz$ 
+\begin{align}
+	\expt{f^2(z)} &= \frac{1}{\sqrt{2\pi}} \int_{\frac{-\mu}{\sigma}}^{+\infty} (t\sigma + \mu)^2 e^{-0.5 (t)^2}dt\\
+	&= \frac{1}{\sqrt{2\pi}}\Bigg[\int_{\frac{-\mu}{\sigma}}^{+\infty} \sigma^2 t^2 e^{-0.5t^2} dt + \int_{\frac{-\mu}{\sigma}}^{+\infty} 2\sigma\mu t e^{-0.5t^2}dt + \int_{\frac{-\mu}{\sigma}}^{+\infty} \mu e^{-0.5}t^2dt\Bigg]\\
+	&=  \frac{1}{\sqrt{2\pi}}\Bigg[\sigma^2 \left(\frac{-\mu}{\sigma} e^{-0.5(\frac{-\mu}{\sigma})^2} + Q(\frac{-\mu}{\sigma})\right) + 2 \sigma \mu \left(e^{-0.5 (\frac{-\mu}{\sigma})^2}\right) + \mu \sqrt{2\pi} Q\left(\frac{-\mu}{\sigma}\right)\Bigg]\\
+	&= \left(-\mu \sigma + 2\sigma\mu\right) \frac{1}{\sqrt{2\pi}}e^{-0.5(\frac{-\mu}{\sigma})^2} + \left(\mu + \frac{\sigma^2}{\sqrt{2\pi}}\right) Q\left(\frac{-\mu}{\sigma}\right)
+\end{align}
+Putting this all together we get 
+\begin{align}
+	\expt{\eta^2} &= \expt{f^2(z)} - B^2\expt{z^2}\\
+	&= \expt{f^2(z)} - B^2 (\sigma^2 + \mu^2)
+\end{align}
+given that $z$ is not zero mean we use $\mathrm{var}(x) = \expt{z^2} - \expt{z}^2$, which leads to $\expt{z^2} = \sigma^2 + \mu^2 $
+
+\subsection{Bussgang of a ReLu, vector case}
+Now let's consider the extension where the ReLu is applied to each element of a vector $\vect{z}\in\mathbb{R}^{d\times1}$ as
+\begin{align}
+	\sigma(\vect{z}) &= \left[\sigma(z_0), \cdots, \sigma(z_{d_1})\right]^{\intercal}\\
+	&= \mat{B} \vect{z} + \vect{\eta}
+\end{align}
+where $\mat{D} = \diag(B_0, \cdots, B_{d-1})$ is the Bussgang gain matrix with $B_{i,i} = \frac{\expt{\sigma{z_i}z_i}}{\expt{|z_i|^2}}$.
+\subsection{Bussgang decomposition of a quantizer modeld as a 1 layer NN}
+Let's now consider the case where a quantizer is modeled as a 1 layer neural network, using a ReLu activation in its hidden layer.
+\begin{align}
+	Q(x) &= \vect{a_1}^{\intercal} \sigma(\vect{a_0}x +\vect{b_0}) + b_1\\
+	&= \vect{a_1}^{\intercal} \sigma(\vect{z}) + b_1\\
+	&= \vect{a_1}^{\intercal} \left(\mat{B} \vect{z} + \vect{\eta}\right) + b_1\\
+	&= \vect{a_1}^{\intercal} \mat{B} \vect{a_0} x + \vect{a_1}^{\intercal} \mat{B} \vect{b_0} + \vect{a_1}^{\intercal}\vect{\eta} + b_1\\
+	&= B_{\mathrm{quant}} x + \eta_{\mathrm{quant}}
+\end{align}
+where $B_{\mathrm{quant}} = \vect{a_1}^{\intercal} \mat{B} \vect{a_0}$ and $\eta_{\mathrm{quant}} = \vect{a_1}^{\intercal} \mat{B} \vect{b_0} + \vect{a_1}^{\intercal}\vect{\eta} + b_1$.
+
+
+
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

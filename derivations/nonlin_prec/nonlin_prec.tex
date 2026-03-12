@@ -1,0 +1,222 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage[margin=2.54cm, lmargin=2.54cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{color}
+\usepackage{cancel}
+\usepackage{amssymb}
+\usepackage{hyperref}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\linespread{1.5}
+
+
+\newcommand{\vect}[1]{\boldsymbol{\mathrm{#1}}}
+\newcommand{\mat}[1]{\boldsymbol{\mathrm{#1}}}
+\newcommand{\MSE}{\mathrm{MSE}}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\vecop}{\text{vec}}
+
+\newcommand{\CP}{L}
+\newcommand{\TODO}[1]{{\color{red} TODO {#1}}}
+\newcommand{\note}[1]{{\color{blue} Note: {#1}}}
+
+\newcommand{\expt}[1]{\mathbb{E}\left(#1\right)}
+
+
+
+\usepackage{amsthm}
+\theoremstyle{remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% begin[document]
+\begin{document}
+\title{Non linear precoding for quantization}
+\author{Thomas Feys}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% abstract
+\large
+
+\section{System model}
+We consider a downlink massive MIMO system, the received signal vector can be written as 
+\begin{align}
+	\vect{r} = \mat{H}^{\intercal} \vect{y} + \vect{v}
+\end{align}
+where $\vect{r} \in \mathbb{C}^{K}$ is the received signal vector, $\mat{H}\in\mathbb{C}^{M\times K}$ the channel matrix, $\vect{y}\in\mathcal{X}^{M}$ the precoded and quantized transmit symbols and $\vect{v}\in\mathbb{C}^{K}$ addative white Gaussian noise.
+
+\section{Precoding}
+\subsection{Linear precoding}
+When linear precoding is considered we have
+\begin{align}
+	\vect{x} = \mat{W} \vect{s}
+\end{align}
+where $\vect{x} \in \mathbb{C}^{M}$ is the precoded vector, $\mat{W} \in \mathbb{C}^{M\times K}$ is the precoding matrix and $\vect{s} \in \mathbb{C}^{K}$ is the symbol vector. After precoding, quantization is applied as 
+\begin{align}
+	\vect{y} = \mathcal{Q}(\vect{x}) = \begin{bmatrix} \mathcal{Q}(\Re\{x_0\}) + \jmath \mathcal{Q}(\Im\{x_0\}), & \cdots,  & \mathcal{Q}(\Re\{x_{M-1}\}) + \jmath \mathcal{Q}(\Im\{x_{M-1}\}) \end{bmatrix}^{\intercal}.
+\end{align}
+The transmit vector $\vect{y}$ is designed under an average power constraint 
+\begin{align}
+	\expt{\|\vect{y}\|_2^2} \leq P_T
+\end{align}
+For linear precoding this can be linked to a normalization of the precoding matrix (although more diffuclt given the quantizer function, but doable I think using the Bussgang decomposition, see~\cite{EE_Optimization}).
+
+\subsection{Non linear precoding}
+When considering non linear precoding we have the following
+\begin{align}
+	\vect{y} = f\left(\mat{H}, \vect{s}\right)
+\end{align}
+where $f(\cdot, \cdot): \mathbb{C}^{M\times K} \times \mathbb{C}^{K} \mapsto \mathcal{X}^{M}$ directly maps the channel matrix and symbol vector to quantized precoded values, where $\mathcal{X} = \mathcal{L} \times \mathcal{L}$ is the set of of output levels per antenna, with $\mathcal{L}$ being the set of real valued output levels of the DAC. The question is then how to enforce the average power constraint on $\vect{y}$ given that the distribution of $\vect{y}$ is unknown.
+
+
+\subsubsection{One bit case}
+If we consider the one bit case we have that the magnitude of each output level is equal. Hence, we can simply enforce the power constraint with equality $\expt{\|\vect{y}\|_2^2} = \|\vect{y}\|_2^2 = P_T$, by defining the set of output levels as $\mathcal{L} = \{\pm \sqrt{\frac{P_T}{2M}}\}$, this gives us the set of possible values at each antenna as $\mathcal{X} = \{\sqrt{\frac{P_T}{2M}} (\pm 1 \pm \jmath)\}$. 
+
+\subsubsection{Multi bit case}
+When we consider multiple bits, the magnitude of each output level is no longer equal, hence we can not easily enforce the average power constraint. The constraint can be enforced given knowledge of the distribution of $\vect{y}$. However, given that $\vect{y}$ is the output of a neural network we don't know how it is distributed. 
+One way to enforce this constraint would be to add a penalty term to the loss function which tries to satisfy the constraint
+\begin{align}
+	\lambda \left(\expt{\|\vect{y}\|_2^2} - P_T\right)
+\end{align}
+where the expectation can be computed over the batchsize. However $\lambda$ would need to be tuned manually. 
+Another option is to rewrite the constrained optimization problem using a lagrangian, this would lead to a similar penalty term in the loss, however there is a paper~\cite{constraint_nn} that uses an additional multipliers network to compute this $\lambda$. 
+
+
+\section{Supervised Learning}
+As a sanity check we can do supervised learning first. (could also be nice to see how close we are to the optimal solution) For this we will consider the 1 bit DAC case, this simplifies the power normalization. We will consider $M=8$ transmit antennas and $K=1$ user. Considering a DAC per real and imaginary part of each antenna we have $2M=16$ output levels to select. Each output level can take 2 possible values, namely  $\mathcal{L} = \{\pm \sqrt{\frac{P_T}{2M}}\}$, this gives us a search space of $2^{2M} = 65536$ possible combinations.
+
+\subsection{How to select the best output levels}
+For the single user case we can write the system model as 
+\begin{align}
+	r &= \vect{h}^{\intercal} \vect{y} + v\\
+	r &=  \vect{h}^{\intercal} f(\vect{h}, s) + v
+\end{align}
+Using the Bussgang decomposition this can be written as 
+\begin{align}
+	r = Gs + d + v
+\end{align}
+here $s$, $d$ and $v$ are uncorrelated such that the SNR is
+\begin{align}
+	\mathrm{SNR} = \frac{|G|^2 \sigma_{s}^2}{\sigma_d^2 + \sigma_v^2}
+\end{align}
+with
+\begin{align}
+	\sigma_s^2 &= \expt{|s|^2} = 1\\
+	\sigma_v^2 &= \expt{|v|^2}\\
+	\sigma_d^2 &= \expt{|r|^2} - |G|^2\sigma_s^2 - \sigma_v^2\\
+	G &= \frac{\expt{r s^*}}{\sigma_s^2}.
+\end{align}
+{\color{red}The problem with this is the following, let's say we want to compute the optimal output levels for channel realization $\vect{h}_0$ and symbol $s_0$, we cannot compute the above expectationns given that we only have a single symbol.}
+
+Another way to do this would be to simply take the output levels that produce the smalles MSE between the received and transmitted symbols. In this case we can assume that the receiver performs equalization as 
+\begin{align}
+	\hat{s} = \beta r.
+\end{align}
+Then we select the output levels that minimize
+\begin{align}
+	\min \|s - \beta r\|_2^2
+\end{align}
+this is equivalent to
+\begin{align}
+	\min_{\vect{y}\in \mathcal{X}^M, \beta\in\mathbb{R}^+} \|s - \beta \vect{h}^{\intercal} \vect{y}\|_2^2 + \beta^2 \sigma_v^2
+\end{align}
+{\color{red}The question then is how do we get $\beta$, this should be computed once per channel, not once per symbol! Some ideas can be found here~\cite{1bit_DACs}.}
+
+\section{Unsupervised Learning}
+Let's consider how a neural network could learn non linear precoding in an unsipervised manner. 
+The neural network would take as an input the channel matrix $\mat{H}$ and the user symbol vector $\vect{s}$. It's output would be a probability vector for the real and imaginary part of each antenna
+\begin{align}
+	\vect{p} &= f(\mat{H}, \vect{s}; \vect{\theta})\\
+	&= [\vect{p}_{\Re, 0}, \vect{p}_{\Im, 0}, \cdots , \vect{p}_{\Re, M-1}, \vect{p}_{\Im, M-1}]^{\intercal}
+\end{align}
+where $\vect{p} \in [0, 1]^{2M|\mathcal{L}|}$ and $\vect{p}_{\Re, m}, \vect{p}_{\Im, m} \in [0, 1]^{|\mathcal{L}|}$. $\vect{p}_{\Re, m}, \vect{p}_{\Im, m}$ represent the probability vector for the real and imaginary parts of the DAC output for antenna $m$, each of these vectors is a result of a softmax activation, which can be interpreted as the parameters of a categorical distribution. The softmax of a vector $\vect{a}$ is computed as 
+\begin{align}
+	\mathrm{softmax}(a_i) = \frac{e^{a_i}}{\sum_j e^{a_j}}.
+\end{align}
+If we know the correct labels for $\vect{p}_{\Re, m}, \vect{p}_{\Im, m}$ we could simply learn them in a supervised manner by minimizing the cross entropy loss between the output of the softmax layers and the labels. 
+
+Given that we want to train in an unsupervised manner we want to interprete the output of the softmax layer as the probability each output level has to be the 'best' value. To do so we would like to take the argmax of these probability vectors to select the maximum likelihood output levels. As an example let's do this for a single probability vector
+\begin{align}
+	\vect{z} = \mathrm{onehot}\left(\mathrm{arg}\max_i \left(\vect{p}_{\Re, m}\right)\right).
+\end{align}
+The problem here is that the argmax function is non differentiable. Hence we can not sample from this categorical distribution in a way that allows us to backpropagate through it. 
+However, we can approximate sampling from this categorical distribution in a differentiable way using the Gumbel-softmax trick~\cite{gumbel_softmax, concrete_dist}.
+
+Sampling of the categorical distribution can be rewriten as 
+\begin{align}
+	\vect{z} =  \mathrm{onehot}\left( \mathrm{arg}\max_i \left( \vect{g} + \log(\vect{p}_{\Re, m}) \right) \right)
+\end{align}
+where $\vect{g} = [g_0, \cdots, g_{|\mathcal{L}|-1}]^{\intercal}$ is a vector with samples drawn from the standard Gumbel distribution $g_i\sim\mathrm{Gumbel}(0, 1)$. This reparametrization, recasts the stochastic sampling process into a combination of a deterministic function which depends on the parameters of the categorical distribution and stochastic element which is the sampling of some independent noise drawn from the fixed Gumbel distribution. We do this so that we can compute the gradients of the diterministic function, and as such the gradients of the parameters of the categorical distribution. In simple terms this allows us to optimize the output of the softmax layers/ the parameters of the categorical distribution. However we still have the problem of the argmax function. We can use the softmax function instead of the argmax function in order to have a differentiable approximation of the argmax function. Hence in the end this gives us
+\begin{align}
+	z_i = \frac{e^{\frac{g_i + \log([\vect{p}_{\Re, m}]_i)}{\tau}}}{\sum_j e^{\frac{g_j + \log([\vect{p}_{\Re, m}]_j)}{\tau}}}
+\end{align}
+note that a temperature parameter $\tau$ has been added to the softmax approximation in order to control the degree of approximation. For $\tau \to 0$ the softmax approaches the argmax function, as $\tau \to \infty$ the sample vector $\vect{z}$ becomes uniformly distributed.
+
+Note that this continuous approximation means that continuous vectors are being used during training rather then discretized one-hot vectors. This is ok in some systems but might not be ideal in our scenario since we are considering quantization. Hence if we want discrete outputs we can use the straight through Gumbel-Softmax, here we discretize the continuous values in the forward pass by using the argmax. However, we still use the Gumbel-Softmax sample in the backward pass to approximate the gradients. (this is supported in pytorch)
+
+Once we have our one hot vector we can simply multiply it elementwise with the vector of possible output levels (let's call this vector $\vect{l}$). This then gives us the real part of the precoded symbol at antenna $m$ as
+\begin{align}
+	\Re\left(y_m\right) &= \vect{z} \odot \vect{l}.
+\end{align}
+In this way we can construct the full precoded vector $\vect{y}$ and then use it to maximize an unsupervised loss function such as the sumrate.
+
+\section{Neural Net Architecture}
+\subsection{Properties to Follow}
+Which NN architecture do we use to perform this non-linear percoding? In general we have the following precoding function
+\begin{align}
+	\vect{x} = f(\mat{H}, \vect{s})
+\end{align}
+where $\mat{H}\in\mathbb{C}^{M\times K}, \vect{s}\in\mathbb{C}^{K\times 1}$ and $\vect{x} \in \mathcal{X}^{M\times 1}$.
+We want to maintain the following properties
+\begin{itemize}
+	\item If the rows of $\mat{H}$ are permuted, we want the rows of $\vect{x}$ to be permuted accordingly $\Rightarrow f(\mat{\Pi H}, \vect{s}) = \mat{\Pi} \vect{x}$, where $\mat{\Pi}$ is a permutation matrix. Hence the GNN/function should be permutation equivariant with respect to the rows of the channel matrix.
+	\item If the columns of $\mat{H}$ are permuted, we want the rows of $\vect{x}$ to remain unchanged $\Rightarrow f(\mat{H \Pi}, \vect{s}) = \vect{x}$. Hence the GNN/function should be permutation invariant with respect to the columns of the channel matrix. 
+	\item If the rows (= elements cause just a vector) of $\vect{s}$ are permuted, we want the rows of $\vect{x}$ to remain unchanged $\Rightarrow f(\mat{H}, \mat{\Pi}\vect{s}) = \vect{x}$. Hence the GNN/function should be perumtation invariant with respect to the rows of the symbol vector.
+\end{itemize}
+These properties should be encoded in the NN architecture. 
+\TODO{It is actually not so decoupled, if we permute the columns of the channel matrix, we should also permute the rows of the symbol vector accordingly in order to maintain concitency. Let's reformulate }
+
+\begin{itemize}
+	\item If we permute the user ordering with permutation matrix $\mat{\Pi} \in \{0, 1\}^{K\times K}$, we have $\mat{H \Pi}$, $\mat{\Pi}\vect{s}$. In this scenario we want the output of the precoding function to remain unchanged, hence $f(\mat{H \Pi}, \mat{\Pi}\vect{s}) = \vect{x}$. The learned function should thus be permutation invariant with respect to the symbol vector and columns of the channel matrix.
+	\item if we permute the antenna ordering with permutation matrix $\mat{\Pi} \in \{0, 1\}^{M\times M}$, we have $\mat{\Pi H}$. In this scenario we want the output of the precoding function to be permuted accordingly. Hence, we have $f(\mat{\Pi H}, \vect{s}) = \mat{\Pi} \vect{x}$. The learned function should thus be permutation equivariant with respect to the rows of the channel matrix. 
+\end{itemize}
+
+\subsection{Generalized message passing}
+Here we describe generalized message passing for GNNs but we leave out the use of graph level features. One layer of this message passing is defined as 
+\begin{align}
+	\vect{z}^{(l)}_{(u,v)} &= \mathrm{update}_{\mathrm{edge}}\left(\vect{z}_{(u,v)}^{(l-1)}, \vect{z}_u^{(l-1)}, \vect{z}_v^{(l-1)}\right)\\
+	\vect{m}_{\mathcal{N}(u)} &= \mathrm{aggregate}_{\mathrm{node}}\left(\{\vect{z}_{(u,v)}^{(l)}, \forall v \in \mathcal{N}(u)\}\right)\\
+	\vect{z}_{u}^{(l)} &= \mathrm{update}_{\mathrm{node}}\left(\vect{z}_u^{(l-1)}, \vect{m}_{\mathcal{N}(u)}\right)
+\end{align}
+here $u, v$ denote nodes while $(u,v)$ denotes the edge between $u$ and $v$. The update and aggregate functions can be selected as desired, a straighforward implementation is given below
+\begin{align}
+	\vect{z}^{(l)}_{(u,v)} &= \sigma\left(\mat{W}_{\mathrm{edge}} \vect{z}_{(u,v)}^{(l-1)}, \mat{W}_{u} \vect{z}_u^{(l-1)},    \mat{W}_{v} \vect{z}_v^{(l-1)} \right)\\
+	\vect{m}_{\mathcal{N}(u)} &= \frac{1}{|\mathcal{N}(u)|} \sum_{v\in\mathcal{N}(u)} \vect{z}_{(u, v)}^{(l)}\\
+	\vect{z}_{u}^{(l)} &= \sigma\left(\mat{W}_{\mathrm{self}} \vect{z}_u^{(l-1)} + \mat{W}_{\mathrm{neigh}} \vect{m}_{\mathcal{N}(u)}\right).
+\end{align}
+
+For the specific case of MIMO nonlinear precoding this can be written as 
+\begin{align}
+	\vect{z}^{(l)}_{(m,k)} &= \sigma\left(\mat{W}_{\mathrm{edge}} \vect{z}_{(m,k)}^{(l-1)}+ \mat{W}_{m} \vect{z}_m^{(l-1)}+    \mat{W}_{k} \vect{z}_k^{(l-1)} \right)\\
+	\vect{m}_{\mathcal{N}(k)} &= \frac{1}{|\mathcal{N}(k)|} \sum_{m^{\prime}\in\mathcal{N}(k)} \vect{z}_{(m^{\prime}, k)}^{(l)}\\
+	\vect{m}_{\mathcal{N}(m)} &= \frac{1}{|\mathcal{N}(m)|} \sum_{k^{\prime}\in\mathcal{N}(m)} \vect{z}_{(m, k^{\prime})}^{(l)}\\
+	\vect{z}_{m}^{(l)} &= \sigma\left(\mat{W}_{\mathrm{self}} \vect{z}_m^{(l-1)} + \mat{W}_{\mathrm{neigh}} \vect{m}_{\mathcal{N}(m)}\right) \\
+	\vect{z}_{k}^{(l)} &= \sigma\left(\mat{W}_{\mathrm{self}} \vect{z}_k^{(l-1)} + \mat{W}_{\mathrm{neigh}} \vect{m}_{\mathcal{N}(k)}\right).
+\end{align}
+We could make this more general by defining seperate aggregate and node update functions for the user and antenna nodes
+
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

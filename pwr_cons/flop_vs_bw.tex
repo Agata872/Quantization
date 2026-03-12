@@ -1,0 +1,35 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{axis}[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xlabel={BW [KHz]},
+xmin=-49, xmax=1051,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={GFLOPS/second},
+ymin=-1.00282437818182, ymax=21.5095596218182,
+ytick style={color=black}
+]
+\addplot [semithick, steelblue31119180]
+table {%
+1 0.0204658036363636
+101 2.06704616727273
+201 4.11362653090909
+301 6.16020689454545
+401 8.20678725818182
+501 10.2533676218182
+601 12.2999479854545
+701 14.3465283490909
+801 16.3931087127273
+901 18.4396890763636
+1001 20.48626944
+};
+\end{axis}
+
+\end{tikzpicture}

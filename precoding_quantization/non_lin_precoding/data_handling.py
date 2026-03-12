@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams, los_channel_MU, getSymbols_QPSK
+from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams, los_channel_MU, getSymbols_QPSK, cellfree_channel_MU
 import os
 
 class ChannelSymbolsDataset(torch.utils.data.Dataset):
@@ -57,6 +57,26 @@ def getdata_nonlinprec(nr_symbols_per_channel, datapath, M, K, Ntr, Nval, Nte, c
             H = np.zeros((nr_channels, M, K), dtype=complex)
             for i in range(nr_channels):
                 H[i, :, :] = los_channel_MU(M, K)
+        elif channel_model == 'cellfree':
+            print('in cell-free part')
+            nr_channels = Ntr + Nval + Nte
+            H = np.zeros((nr_channels, M, K), dtype=complex)
+
+            # Keep AP geometry fixed across realizations and redraw user positions per realization.
+            ap_pos = None
+            for i in range(nr_channels):
+                H[i, :, :], ap_pos = cellfree_channel_MU(
+                    M=M,
+                    K=K,
+                    ap_positions=ap_pos,
+                    area_side_m=100.0,
+                    min_distance_m=10.0,
+                    pathloss_exponent=3.7,
+                    shadowing_std_db=8.0,
+                    pathloss_at_1m_db=-30.0,
+                )
+        else:
+            raise ValueError(f'Unsupported channel_model: {channel_model}')
 
         # split into test, val and train sets
         Htrain = H[0:Ntr, :, :]
@@ -127,6 +147,26 @@ def getdata_nonlinprec_QPSK(nr_symbols_per_channel, datapath, M, K, Ntr, Nval, N
             H = np.zeros((nr_channels, M, K), dtype=complex)
             for i in range(nr_channels):
                 H[i, :, :] = los_channel_MU(M, K)
+        elif channel_model == 'cellfree':
+            print('in cell-free part')
+            nr_channels = Ntr + Nval + Nte
+            H = np.zeros((nr_channels, M, K), dtype=complex)
+
+            # Keep AP geometry fixed across realizations and redraw user positions per realization.
+            ap_pos = None
+            for i in range(nr_channels):
+                H[i, :, :], ap_pos = cellfree_channel_MU(
+                    M=M,
+                    K=K,
+                    ap_positions=ap_pos,
+                    area_side_m=100.0,
+                    min_distance_m=10.0,
+                    pathloss_exponent=3.7,
+                    shadowing_std_db=8.0,
+                    pathloss_at_1m_db=-30.0,
+                )
+        else:
+            raise ValueError(f'Unsupported channel_model: {channel_model}')
 
         # split into test, val and train sets
         Htrain = H[0:Ntr, :, :]

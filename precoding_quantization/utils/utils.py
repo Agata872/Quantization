@@ -83,6 +83,43 @@ def los_channel_MU(M, K):
         H[:, k] = 1 * np.exp(-1j * np.pi * np.cos(theta) * np.arange(M))
     return H
 
+def cellfree_channel_MU(M, K, ap_positions=None, area_side_m=100.0, min_distance_m=10.0,
+                        pathloss_exponent=3.7, shadowing_std_db=8.0, pathloss_at_1m_db=-30.0):
+    """
+    Generate one cell-free channel realization with large-scale and small-scale fading.
+
+    :param M: number of AP antennas (or AP-side transmit dimensions)
+    :param K: number of users
+    :param ap_positions: optional AP coordinates, shape (M, 2). If None, sampled uniformly.
+    :param area_side_m: side length of square deployment area in meters
+    :param min_distance_m: minimum AP-UE distance to avoid singular path loss
+    :param pathloss_exponent: path loss exponent
+    :param shadowing_std_db: standard deviation of log-normal shadowing in dB
+    :param pathloss_at_1m_db: path loss reference at 1 meter in dB
+    :return: (H, ap_positions)
+    """
+    if ap_positions is None:
+        ap_positions = np.random.uniform(0.0, area_side_m, size=(M, 2))
+
+    ue_positions = np.random.uniform(0.0, area_side_m, size=(K, 2))
+
+    # Distances between APs and UEs: M x K
+    delta = ap_positions[:, np.newaxis, :] - ue_positions[np.newaxis, :, :]
+    distances = np.linalg.norm(delta, axis=-1)
+    distances = np.maximum(distances, min_distance_m)
+
+    # Large-scale fading beta_{m,k}: path loss + log-normal shadowing
+    pathloss_db = pathloss_at_1m_db - 10.0 * pathloss_exponent * np.log10(distances)
+    shadowing_db = np.random.normal(0.0, shadowing_std_db, size=(M, K))
+    beta = 10 ** ((pathloss_db + shadowing_db) / 10.0)
+
+    # Small-scale fading g_{m,k} ~ CN(0, 1)
+    g = (np.random.randn(M, K) + 1j * np.random.randn(M, K)) / np.sqrt(2.0)
+
+    # Cell-free channel: h_{m,k} = sqrt(beta_{m,k}) * g_{m,k}
+    H = np.sqrt(beta) * g
+    return H, ap_positions
+
 class NumpyEncoder(json.JSONEncoder):
     #json incoder fur numpy arrays
     #to undo  np.asarray(json_load["a"])

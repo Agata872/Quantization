@@ -344,7 +344,7 @@ if __name__ == '__main__':
     quant = True #train with or without quantization
 
     # train paramsw
-    channel_model = 'iid' #'los' #'los'
+    channel_model = 'iid' #'los' #'cellfree'
     nr_hidden_layers, nr_features = 4, 128
     model_type = 'GNN' #MLP
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'

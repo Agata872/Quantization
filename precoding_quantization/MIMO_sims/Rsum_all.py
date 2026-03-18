@@ -8,6 +8,9 @@ import os
 import scipy.stats
 import seaborn as sns
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+
 def bussgang_wrt_s(H, y, S, x, noise_vars):
     """
     :param H: channel M x K
@@ -843,8 +846,7 @@ if __name__ == "__main__":
 
     # path to quantizer parameters
     varx = 0.5
-    quant_params_path = r'C:\Users\Thomas\OneDrive - KU Leuven\Documents\GitHub\Quantization\precoding_quantization\non-uniform-quant-params' #r'D:\thomas.feys\Quantization\precoding_quantization\non-uniform-quant-params'#
-    quant_params_path = os.path.join(quant_params_path, f'Gaussian_var_{varx}', 'numerical')
+    quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params', f'Gaussian_var_{varx}', 'numerical')
 
     # generate channels
     channel_realizations = 1

@@ -5,6 +5,7 @@ import sys
 # by adding the parent folder (precoding_quantization) to sys.path.
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+REPO_ROOT = os.path.dirname(PROJECT_ROOT)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
@@ -75,7 +76,7 @@ def train(sim_params, train_params):
     print(f'device: {device}')
 
     # load/generate the data
-    datapath = os.path.join(root_dir, r'Quantization\precoding_quantization\non_lin_precoding\datasets', f'{channel_model}')
+    datapath = os.path.join(PROJECT_ROOT, 'non_lin_precoding', 'datasets', channel_model)
 
     Htrain, Hval, Htest, strain, sval, stest = getdata_nonlinprec(nr_symbols_per_channel, datapath, M, K, Ntr, Nval,
                                                                   Nte, channel_model)
@@ -324,17 +325,10 @@ def train(sim_params, train_params):
 
 
 if __name__ == '__main__':
-    # for local pc or server
-    local = False
+    # Use repository-relative Linux/Unix-safe paths.
     varx = 0.5
-    if local:
-        root_dir = r'C:\Users\Thomas\OneDrive - KU Leuven\Documents\GitHub'
-        quant_params_path = r'C:\Users\Thomas\OneDrive - KU Leuven\Documents\GitHub\Quantization\precoding_quantization\non-uniform-quant-params'
-        quant_params_path = os.path.join(quant_params_path, f'Gaussian_var_{varx}', 'numerical')
-    else:
-        root_dir = r'D:\thomas.feys'
-        quant_params_path = r'D:\thomas.feys\Quantization\precoding_quantization\non-uniform-quant-params'
-        quant_params_path = os.path.join(quant_params_path, f'Gaussian_var_{varx}', 'numerical')
+    root_dir = REPO_ROOT
+    quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params', f'Gaussian_var_{varx}', 'numerical')
 
     # sim params
     M = 8
@@ -350,16 +344,16 @@ if __name__ == '__main__':
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
     batch_size = 64#128
     lr = 0.5*10**-3
-    nr_epochs = 20#20 #10
+    nr_epochs = 5#20 #10
     snr_tx = 20  # in db
     noise_var = Pt / (10 ** (snr_tx / 10))
     tau = 4 # for gumbel softmax
     stored_model_dir = f'stored_models_{channel_model}_generalized_bussgang_loss' # todo set to desired folder!
 
     # data set params
-    Ntr = 200000 #should be multiple of batchsize
-    Nval = 1000
-    Nte = 10000
+    Ntr = 200 #should be multiple of batchsize 200000
+    Nval = 100  #1000
+    Nte = 100  #10000
     nr_symbols_per_channel = 125 #todo big enough?
 
     # put all the params in a dictionary to store it

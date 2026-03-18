@@ -3,9 +3,16 @@ from scipy import integrate
 from scipy.stats import norm
 import math
 from scipy.stats import norm
-from utils.utils import create_folder
 import os
+import sys
 import matplotlib.pyplot as plt
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from utils.utils import create_folder
 
 def truncated_normal_mean(mu, sigma, a, b):
     alpha = (a - mu) / sigma
@@ -125,9 +132,10 @@ if __name__ == '__main__':
         input_distr = 'Gaussian'
         var = 0.5
         sigma = np.sqrt(var)
-        basepath = r'D:\thomas.feys\Quantization\precoding_quantization\non-uniform-quant-params'
+        basepath = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params')
         results_path = os.path.join(os.path.join(basepath, f'{input_distr}_var_{var}'), f'{method}')
         create_folder(results_path)
+        print(f'Writing quantizer parameters to: {results_path}')
 
         # loop over nr of bits
         for b in range(1, 16):

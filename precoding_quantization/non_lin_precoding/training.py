@@ -9,6 +9,10 @@ REPO_ROOT = os.path.dirname(PROJECT_ROOT)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+import webcolors
+if not hasattr(webcolors, 'CSS3_HEX_TO_NAMES'):
+    webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
+
 import torch
 import numpy as np
 from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams
@@ -29,6 +33,32 @@ def tikzplotlib_fix_ncols(obj):
         obj._ncol = obj._ncols
     for child in obj.get_children():
         tikzplotlib_fix_ncols(child)
+
+
+def normalize_outputs(outputs, Pt, norm_block_size):
+    """Apply power normalization with per-block alpha.
+
+    norm_block_size=None or >= Ns uses a single alpha over all symbols (original behavior).
+    Otherwise normalizes each block of norm_block_size symbols independently,
+    matching causal deployment where the full symbol sequence is unavailable.
+    """
+    Ns = outputs.shape[-1]
+    epsilon = 1e-7
+    if norm_block_size is None or norm_block_size >= Ns:
+        l2_norm = torch.linalg.vector_norm(outputs, ord=2, dim=1)  # bs x Ns
+        expt_x2 = torch.mean(l2_norm ** 2, dim=-1)                 # bs
+        alpha = torch.sqrt(Pt / (expt_x2 + epsilon))
+        return alpha[:, None, None] * outputs
+    else:
+        normalized = torch.zeros_like(outputs)
+        for blk_start in range(0, Ns, norm_block_size):
+            blk = outputs[:, :, blk_start:blk_start + norm_block_size]
+            l2_norm = torch.linalg.vector_norm(blk, ord=2, dim=1)
+            expt_x2 = torch.mean(l2_norm ** 2, dim=-1)
+            alpha = torch.sqrt(Pt / (expt_x2 + epsilon))
+            normalized[:, :, blk_start:blk_start + norm_block_size] = alpha[:, None, None] * blk
+        return normalized
+
 
 def train(sim_params, train_params):
 
@@ -58,6 +88,7 @@ def train(sim_params, train_params):
     nr_hidden_layers = train_params['nr_hidden_layers']
     nr_features = train_params['nr_features']
     model_dir = train_params['stored_model_dir']
+    norm_block_size = train_params.get('norm_block_size', nr_symbols_per_channel)
 
     # folder for storing model
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -153,15 +184,7 @@ def train(sim_params, train_params):
                     else:
                         outputs[:, :, sidx] = model(H, s[:, :, sidx])  # NN takes 1 channel and 1 symbol as input
 
-                # normalization accross the symbol dimension (when multiple bits are considered)
-                l2_norm = torch.linalg.vector_norm(outputs, ord=2, dim=1)  # bs x nr_symbols
-                expt_x2 = torch.mean(l2_norm ** 2, dim=-1)  # bs
-                epsilon = 1e-7  # to avoid NaN
-                alpha = torch.sqrt(Pt / (expt_x2 + epsilon))
-                alpha = alpha[:, None, None]  # add two dimensions for broadcasting
-                normalized_output = alpha * outputs
-                l2_norm_check = torch.linalg.vector_norm(normalized_output, ord=2, dim=1)  # bs x nr_symbols
-                expt_x2_check = torch.mean(l2_norm_check ** 2, dim=-1)
+                normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
                 # print(f'{outputs=}')
 
                 # compute loss
@@ -201,13 +224,7 @@ def train(sim_params, train_params):
                 for sidx in range(s.shape[-1]):
                     outputs[:, :, sidx] = model(H, s[:, :, sidx], x_init)  # NN takes 1 channel and 1 symbol as input
 
-                # normalization across the symbol dimension (when multiple bits are considered)
-                l2_norm = torch.linalg.vector_norm(outputs, ord=2, dim=1)  # bs x nr_symbols
-                expt_x2 = torch.mean(l2_norm ** 2, dim=-1)  # bs
-                epsilon = 1e-7  # to avoid NaN
-                alpha = torch.sqrt(Pt / (expt_x2 + epsilon))
-                alpha = alpha[:, None, None]  # add two dimensions for broadcasting
-                normalized_output = alpha * outputs
+                normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
 
                 # compute loss
                 vloss = loss_fn(normalized_output.to(device), H.type(torch.complex64), s.type(torch.complex64),
@@ -270,13 +287,7 @@ def train(sim_params, train_params):
             for sidx in range(s.shape[-1]):
                 outputs[:, :, sidx] = saved_model(H, s[:, :, sidx], x_init)  # NN takes 1 channel and 1 symbol as input
 
-            # normalization accross the symbol dimension (when multiple bits are considered)
-            l2_norm = torch.linalg.vector_norm(outputs, ord=2, dim=1)  # bs x nr_symbols
-            expt_x2 = torch.mean(l2_norm ** 2, dim=-1)  # bs
-            epsilon = 1e-7  # to avoid NaN
-            alpha = torch.sqrt(Pt / (expt_x2 + epsilon))
-            alpha = alpha[:, None, None]  # add two dimensions for broadcasting
-            normalized_output = alpha * outputs
+            normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
 
             # compute sumrate
             Rsum_batches[i, :] = Rsum_Bussgang_Rx(H.cpu().numpy(), snr_points, bits=bits, quant='non-uniform',
@@ -344,16 +355,17 @@ if __name__ == '__main__':
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
     batch_size = 64#128
     lr = 0.5*10**-3
-    nr_epochs = 5#20 #10
+    nr_epochs = 10#20 #10
     snr_tx = 20  # in db
     noise_var = Pt / (10 ** (snr_tx / 10))
     tau = 4 # for gumbel softmax
     stored_model_dir = f'stored_models_{channel_model}_generalized_bussgang_loss' # todo set to desired folder!
+    norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
 
     # data set params
-    Ntr = 200 #should be multiple of batchsize 200000
-    Nval = 100  #1000
-    Nte = 100  #10000
+    Ntr = 200000 #should be multiple of batchsize 200000
+    Nval = 1000  #1000
+    Nte = 10000  #10000
     nr_symbols_per_channel = 125 #todo big enough?
 
     # put all the params in a dictionary to store it
@@ -384,13 +396,14 @@ if __name__ == '__main__':
         'lr': lr,
         'nr_hidden_layers': nr_hidden_layers,
         'nr_features': nr_features,
-        'stored_model_dir': stored_model_dir
+        'stored_model_dir': stored_model_dir,
+        'norm_block_size': norm_block_size,
     }
 
 
     M = [32]
-    K = [1, 2, 4, 6]
-    bits = [1, 2, 3, 4]
+    K = [1, 2]
+    bits = [4]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
     for m in M:

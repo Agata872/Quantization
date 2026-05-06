@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+
 import numpy as np
 import matplotlib.pyplot as plt
 #from training import getdata_nonlinprec, ChannelSymbolsDataset
@@ -529,6 +530,154 @@ class SumRateLoss(nn.Module):
         avg_sumrate = torch.mean(sumrate)
 
         return -avg_sumrate
+
+
+class FakeQuantizeWeight(nn.Module):
+    """Symmetric INT8 fake quantization with EMA-tracked scale.
+
+    During training:  updates scale via EMA, applies fake quantize (round+clamp+dequant).
+                      Gradients flow through via STE (straight-through estimator).
+    During eval:      scale is frozen; fake quantize simulates INT8 inference precision.
+    zero_point is fixed to 0 — Xavier-initialized weights are zero-centered so
+    symmetric quantization wastes no range.
+    """
+
+    def __init__(self, momentum=0.1):
+        super().__init__()
+        self.momentum = momentum
+        self.register_buffer('scale', torch.tensor(-1.0))  # -1 sentinel = not yet initialized
+
+    def forward(self, weight):
+        current_scale = weight.detach().abs().max().clamp(min=1e-8) / 127.0
+        if self.training:
+            if self.scale.item() < 0:                        # first forward: initialize
+                self.scale.copy_(current_scale)
+            else:                                            # subsequent: EMA update
+                self.scale.copy_((1 - self.momentum) * self.scale + self.momentum * current_scale)
+        return torch.fake_quantize_per_tensor_affine(weight, self.scale.item(), 0, -128, 127)
+
+
+class GNN_layer_fast_qat(nn.Module):
+    """Path-B QAT version of GNN_layer_fast.
+
+    Identical weight shapes, graph structure, and forward math.
+    Each nn.Parameter is passed through a FakeQuantizeWeight before the matmul,
+    injecting symmetric INT8 quantization noise during training via STE.
+    """
+
+    def __init__(self, input_feature_size, output_feature_size, M, K, outputlayer=False):
+        super().__init__()
+        self.M = M
+        self.K = K
+        self.input_feature_size = input_feature_size
+        self.output_feature_size = output_feature_size
+        self.outputlayer = outputlayer
+
+        self.Wedge   = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
+        self.Wm      = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
+        self.Wk      = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
+        self.Wself_m = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
+        self.Wself_k = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
+        self.Wneigh_m = nn.Parameter(torch.zeros(output_feature_size, output_feature_size))
+        self.Wneigh_k = nn.Parameter(torch.zeros(output_feature_size, output_feature_size))
+
+        for w in [self.Wedge, self.Wm, self.Wk,
+                  self.Wself_m, self.Wself_k, self.Wneigh_m, self.Wneigh_k]:
+            nn.init.xavier_uniform_(w)
+
+        self.fq_edge    = FakeQuantizeWeight()
+        self.fq_m       = FakeQuantizeWeight()
+        self.fq_k       = FakeQuantizeWeight()
+        self.fq_self_m  = FakeQuantizeWeight()
+        self.fq_self_k  = FakeQuantizeWeight()
+        self.fq_neigh_m = FakeQuantizeWeight()
+        self.fq_neigh_k = FakeQuantizeWeight()
+
+    def forward(self, z_mk, z_m, z_k):
+        bs = z_mk.shape[0]
+
+        Wz_mk = z_mk @ self.fq_edge(self.Wedge)
+        Wz_m_expanded = torch.repeat_interleave(z_m @ self.fq_m(self.Wm), repeats=self.K, dim=1)
+        Wz_k_expanded = torch.reshape(
+            torch.tile(z_k @ self.fq_k(self.Wk), dims=(1, 1, self.M, 1)),
+            (bs, self.M * self.K, self.output_feature_size)
+        )
+        z_mk_updated = F.leaky_relu(Wz_mk + Wz_m_expanded + Wz_k_expanded)
+
+        edges = torch.reshape(z_mk_updated, (bs, self.M, self.K, self.output_feature_size))
+        message_nk = torch.mean(edges, dim=1)
+        message_nm = torch.mean(edges, dim=2)
+
+        z_m_updated = z_m @ self.fq_self_m(self.Wself_m) + message_nm @ self.fq_neigh_m(self.Wneigh_m)
+        if not self.outputlayer:
+            z_m_updated = F.leaky_relu(z_m_updated)
+
+        z_k_updated = F.leaky_relu(
+            z_k @ self.fq_self_k(self.Wself_k) + message_nk @ self.fq_neigh_k(self.Wneigh_k)
+        )
+
+        return z_mk_updated, z_m_updated, z_k_updated
+
+
+class GNNmodel_QAT(nn.Module):
+    """GNN precoder with INT8 weight QAT (Path B: manual EMA fake-quantize).
+
+    Drop-in replacement for GNNmodel — same constructor signature and forward interface.
+    model.train()  →  EMA scale updates + fake INT8 quantization noise during forward.
+    model.eval()   →  scale frozen, fake INT8 simulates inference precision.
+    No external prepare/convert calls needed.
+    """
+
+    def __init__(self, M, K, nr_features, nr_hidden_layers, bits, tau,
+                 quantization_levels, quantize=True, output_type='softmax_hard'):
+        super().__init__()
+        self.M = M
+        self.K = K
+        self.dl = nr_features
+        self.bits = bits
+        self.nr_out_levels = 2 ** bits
+        self.tau = tau
+        self.quantize = quantize
+        self.quantization_levels = quantization_levels
+        self.output_type = output_type
+
+        self.input_layer = GNN_layer_fast_qat(2, self.dl, M, K)
+        self.hidden_layers = nn.ModuleList([
+            GNN_layer_fast_qat(self.dl, self.dl, M, K) for _ in range(nr_hidden_layers)
+        ])
+        out_dim = 2 * self.nr_out_levels if quantize else 2
+        self.output_layer = GNN_layer_fast_qat(self.dl, out_dim, M, K, outputlayer=True)
+
+    def forward(self, H, s, x_init):
+        bs = H.shape[0]
+
+        H_reshaped = torch.stack((H.real, H.imag), dim=-1)
+        H_flat = torch.reshape(H_reshaped, (bs, self.M * self.K, 2))
+        s_flat = torch.stack((s.real, s.imag), dim=-1)
+
+        z_mk, z_m, z_k = self.input_layer(H_flat, x_init, s_flat)
+        for layer in self.hidden_layers:
+            z_mk, z_m, z_k = layer(z_mk, z_m, z_k)
+        z_mk, z_m, z_k = self.output_layer(z_mk, z_m, z_k)
+
+        if not self.quantize:
+            return z_m[:, :, 0] + 1j * z_m[:, :, 1]
+
+        logits = torch.reshape(z_m, (-1, self.M, 2, self.nr_out_levels))
+
+        if self.output_type == 'gumbel_softmax_hard':
+            softmax_out = F.gumbel_softmax(logits, tau=self.tau, hard=True, dim=-1)
+        elif self.output_type == 'gumbel_softmax':
+            softmax_out = F.gumbel_softmax(logits, tau=self.tau, hard=False, dim=-1)
+        elif self.output_type == 'softmax_hard':
+            y_soft = F.softmax(logits, dim=-1)
+            y_hard = torch.zeros_like(y_soft).scatter(-1, torch.argmax(logits, dim=-1, keepdim=True), 1.0)
+            softmax_out = y_hard - y_soft.detach() + y_soft
+        else:
+            softmax_out = F.softmax(logits, dim=-1)
+
+        output_levels_squeezed = torch.sum(softmax_out * self.quantization_levels, dim=-1)
+        return output_levels_squeezed[:, :, 0] + 1j * output_levels_squeezed[:, :, 1]
 
 
 # # testing

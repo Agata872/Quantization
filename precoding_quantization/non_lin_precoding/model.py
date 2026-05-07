@@ -558,11 +558,11 @@ class FakeQuantizeWeight(nn.Module):
 
 
 class GNN_layer_fast_qat(nn.Module):
-    """Path-B QAT version of GNN_layer_fast.
+    """QAT GNN layer backed by nn.Linear so quantize_dynamic can replace them with INT8 after training.
 
-    Identical weight shapes, graph structure, and forward math.
-    Each nn.Parameter is passed through a FakeQuantizeWeight before the matmul,
-    injecting symmetric INT8 quantization noise during training via STE.
+    Training path:  FakeQuantizeWeight applied to each linear.weight before matmul (STE gradients).
+    Eval path:      linear layers called directly; after quantize_dynamic these become DynamicQuantizedLinear
+                    which stores weights as INT8 and executes INT8 matmul internally.
     """
 
     def __init__(self, input_feature_size, output_feature_size, M, K, outputlayer=False):
@@ -573,18 +573,22 @@ class GNN_layer_fast_qat(nn.Module):
         self.output_feature_size = output_feature_size
         self.outputlayer = outputlayer
 
-        self.Wedge   = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
-        self.Wm      = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
-        self.Wk      = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
-        self.Wself_m = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
-        self.Wself_k = nn.Parameter(torch.zeros(input_feature_size,  output_feature_size))
-        self.Wneigh_m = nn.Parameter(torch.zeros(output_feature_size, output_feature_size))
-        self.Wneigh_k = nn.Parameter(torch.zeros(output_feature_size, output_feature_size))
+        # nn.Linear(in, out, bias=False): weight shape [out, in], forward = F.linear(x, W) = x @ W.T
+        # Equivalent to the old x @ W_param where W_param had shape [in, out].
+        self.linear_edge    = nn.Linear(input_feature_size,  output_feature_size, bias=False)
+        self.linear_m       = nn.Linear(input_feature_size,  output_feature_size, bias=False)
+        self.linear_k       = nn.Linear(input_feature_size,  output_feature_size, bias=False)
+        self.linear_self_m  = nn.Linear(input_feature_size,  output_feature_size, bias=False)
+        self.linear_self_k  = nn.Linear(input_feature_size,  output_feature_size, bias=False)
+        self.linear_neigh_m = nn.Linear(output_feature_size, output_feature_size, bias=False)
+        self.linear_neigh_k = nn.Linear(output_feature_size, output_feature_size, bias=False)
 
-        for w in [self.Wedge, self.Wm, self.Wk,
-                  self.Wself_m, self.Wself_k, self.Wneigh_m, self.Wneigh_k]:
-            nn.init.xavier_uniform_(w)
+        for lin in [self.linear_edge, self.linear_m, self.linear_k,
+                    self.linear_self_m, self.linear_self_k,
+                    self.linear_neigh_m, self.linear_neigh_k]:
+            nn.init.xavier_uniform_(lin.weight)
 
+        # FakeQuantize modules — only active during the training forward path
         self.fq_edge    = FakeQuantizeWeight()
         self.fq_m       = FakeQuantizeWeight()
         self.fq_k       = FakeQuantizeWeight()
@@ -596,36 +600,53 @@ class GNN_layer_fast_qat(nn.Module):
     def forward(self, z_mk, z_m, z_k):
         bs = z_mk.shape[0]
 
-        Wz_mk = z_mk @ self.fq_edge(self.Wedge)
-        Wz_m_expanded = torch.repeat_interleave(z_m @ self.fq_m(self.Wm), repeats=self.K, dim=1)
-        Wz_k_expanded = torch.reshape(
-            torch.tile(z_k @ self.fq_k(self.Wk), dims=(1, 1, self.M, 1)),
-            (bs, self.M * self.K, self.output_feature_size)
-        )
+        if self.training:
+            # Fake-quantize each weight (STE) then do float32 matmul
+            Wz_mk = F.linear(z_mk, self.fq_edge(self.linear_edge.weight))
+            Wz_m_expanded = torch.repeat_interleave(
+                F.linear(z_m, self.fq_m(self.linear_m.weight)), repeats=self.K, dim=1)
+            Wz_k_expanded = torch.reshape(
+                torch.tile(F.linear(z_k, self.fq_k(self.linear_k.weight)), dims=(1, 1, self.M, 1)),
+                (bs, self.M * self.K, self.output_feature_size)
+            )
+        else:
+            # Call linear layers directly; after quantize_dynamic these are INT8 ops
+            Wz_mk = self.linear_edge(z_mk)
+            Wz_m_expanded = torch.repeat_interleave(self.linear_m(z_m), repeats=self.K, dim=1)
+            Wz_k_expanded = torch.reshape(
+                torch.tile(self.linear_k(z_k), dims=(1, 1, self.M, 1)),
+                (bs, self.M * self.K, self.output_feature_size)
+            )
+
         z_mk_updated = F.leaky_relu(Wz_mk + Wz_m_expanded + Wz_k_expanded)
 
         edges = torch.reshape(z_mk_updated, (bs, self.M, self.K, self.output_feature_size))
         message_nk = torch.mean(edges, dim=1)
         message_nm = torch.mean(edges, dim=2)
 
-        z_m_updated = z_m @ self.fq_self_m(self.Wself_m) + message_nm @ self.fq_neigh_m(self.Wneigh_m)
+        if self.training:
+            z_m_updated = (F.linear(z_m, self.fq_self_m(self.linear_self_m.weight)) +
+                           F.linear(message_nm, self.fq_neigh_m(self.linear_neigh_m.weight)))
+            z_k_updated = F.leaky_relu(
+                F.linear(z_k, self.fq_self_k(self.linear_self_k.weight)) +
+                F.linear(message_nk, self.fq_neigh_k(self.linear_neigh_k.weight))
+            )
+        else:
+            z_m_updated = self.linear_self_m(z_m) + self.linear_neigh_m(message_nm)
+            z_k_updated = F.leaky_relu(self.linear_self_k(z_k) + self.linear_neigh_k(message_nk))
+
         if not self.outputlayer:
             z_m_updated = F.leaky_relu(z_m_updated)
-
-        z_k_updated = F.leaky_relu(
-            z_k @ self.fq_self_k(self.Wself_k) + message_nk @ self.fq_neigh_k(self.Wneigh_k)
-        )
 
         return z_mk_updated, z_m_updated, z_k_updated
 
 
 class GNNmodel_QAT(nn.Module):
-    """GNN precoder with INT8 weight QAT (Path B: manual EMA fake-quantize).
+    """GNN precoder with INT8 weight QAT backed by nn.Linear layers.
 
-    Drop-in replacement for GNNmodel — same constructor signature and forward interface.
-    model.train()  →  EMA scale updates + fake INT8 quantization noise during forward.
-    model.eval()   →  scale frozen, fake INT8 simulates inference precision.
-    No external prepare/convert calls needed.
+    Training:   FakeQuantizeWeight injects INT8 noise into each linear.weight via STE.
+    After training: call torch.quantization.quantize_dynamic(model, {nn.Linear}, dtype=torch.qint8)
+                    to replace every linear layer with a true INT8 DynamicQuantizedLinear.
     """
 
     def __init__(self, M, K, nr_features, nr_hidden_layers, bits, tau,
@@ -638,7 +659,7 @@ class GNNmodel_QAT(nn.Module):
         self.nr_out_levels = 2 ** bits
         self.tau = tau
         self.quantize = quantize
-        self.quantization_levels = quantization_levels
+        self.register_buffer('quantization_levels', quantization_levels)  # moves with model.cpu()/cuda()
         self.output_type = output_type
 
         self.input_layer = GNN_layer_fast_qat(2, self.dl, M, K)

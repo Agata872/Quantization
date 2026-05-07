@@ -14,6 +14,7 @@ if not hasattr(webcolors, 'CSS3_HEX_TO_NAMES'):
     webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
 
 import torch
+from torch import nn
 import numpy as np
 from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams
 from tqdm import tqdm
@@ -264,12 +265,23 @@ def train(sim_params, train_params):
     saved_model = model_cls(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device),
                             quantize=True).to(device)
     saved_model.load_state_dict(torch.load(os.path.join(model_path, 'model_{}'.format(timestamp))))
+    saved_model.eval()
+
+    # Convert GNN_QAT to true INT8 dynamic quantization.
+    # quantize_dynamic only runs on CPU, so move off GPU first if needed.
+    if model_type == 'GNN_QAT':
+        saved_model = saved_model.cpu()
+        saved_model = torch.ao.quantization.quantize_dynamic(saved_model, {nn.Linear}, dtype=torch.qint8)
+        torch.save(saved_model, os.path.join(model_path, f'model_{timestamp}_int8.pt'))
+        print('GNN_QAT converted to INT8 and saved.')
+        inference_device = torch.device('cpu')
+    else:
+        inference_device = device
 
     # define snr points
     snr_points = np.array([-30, -20, -10, 0.1, 10, 20, 30])
 
     # test set
-    saved_model.eval()
     nr_batches = int(Nte / batch_size)
     Rsum_batches = np.zeros((nr_batches, len(snr_points)))
     Rsum_batches_zf = np.zeros((nr_batches, len(snr_points)))
@@ -282,10 +294,9 @@ def train(sim_params, train_params):
             print(f'batch of test set {i} / {nr_batches}')
             H, s = batch  # H: bs x M x K, s: bs x K x nr_symbols_per_channel
             bs = H.shape[0]
-            x_init = torch.zeros((bs, M, 2)).to(device)  # zeros as initial input for antennanode features
+            x_init = torch.zeros((bs, M, 2)).to(inference_device)
 
-            # move input data to the GPU
-            H, s = H.to(device), s.to(device)
+            H, s = H.to(inference_device), s.to(inference_device)
 
             # forward pass
             outputs = torch.zeros((batch_size, M, nr_symbols_per_channel), dtype=torch.complex64)
@@ -407,7 +418,7 @@ if __name__ == '__main__':
 
 
     M = [8]
-    K = [2, 4]
+    K = [4]
     bits = [1]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)

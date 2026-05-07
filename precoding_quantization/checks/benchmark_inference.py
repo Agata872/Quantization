@@ -17,8 +17,10 @@ for _p in (PROJECT_ROOT, NON_LIN_DIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+import warnings
 import torch
 import numpy as np
+warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
 # Import via the bare 'model' module so pickle module paths match training.py,
 # which also runs with non_lin_precoding/ on sys.path and uses 'from model import ...'.
 from model import GNNmodel, GNNmodel_QAT, MLPmodel  # noqa: E402 (resolved via sys.path above)
@@ -26,7 +28,7 @@ from model import GNNmodel, GNNmodel_QAT, MLPmodel  # noqa: E402 (resolved via s
 # ── configure here ────────────────────────────────────────────────────────────
 BASE_DIR        = r'stored_models_iid_generalized_bussgang_loss/M_32_K_4_bs_128_layers_4_dl_128_tau_1'
 BATCH_SIZE      = 128
-N_WARMUP        = 20
+N_WARMUP        = 50
 N_RUNS          = 200
 # Force all models onto CPU so INT8 (CPU-only) and FP32 are measured on the same hardware.
 # Set to False to let FP32 models run on GPU — faster but not comparable to INT8.

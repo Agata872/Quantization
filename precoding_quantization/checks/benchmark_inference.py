@@ -39,9 +39,17 @@ def _load_config(model_dir):
     return cfg
 
 
-def _find_checkpoint(model_dir):
+def _find_int8_checkpoint(model_dir):
+    """Return the INT8 full-model file saved by quantize_dynamic, or None."""
+    matches = glob.glob(os.path.join(model_dir, 'model_*_int8.pt'))
+    return matches[0] if matches else None
+
+
+def _find_float_checkpoint(model_dir):
+    """Return the float32 state-dict file, excluding INT8 and non-weight files."""
     matches = glob.glob(os.path.join(model_dir, 'model_*'))
-    matches = [p for p in matches if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex'))]
+    matches = [p for p in matches
+               if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex', '_int8.pt'))]
     return matches[0] if matches else None
 
 
@@ -75,35 +83,48 @@ def benchmark_dir(model_dir, device):
     if not cfg:
         return None
 
-    M               = cfg['M']
-    K               = cfg['K']
-    bits            = cfg['bits']
-    nr_features     = cfg.get('nr_features', 128)
+    M                = cfg['M']
+    K                = cfg['K']
+    bits             = cfg['bits']
+    nr_features      = cfg.get('nr_features', 128)
     nr_hidden_layers = cfg.get('nr_hidden_layers', 4)
-    tau             = cfg.get('tau', 1)
-    output_type     = cfg.get('output_type', 'gumbel_softmax_hard')
-    model_type      = cfg.get('model_type', 'GNN')
+    tau              = cfg.get('tau', 1)
+    output_type      = cfg.get('output_type', 'gumbel_softmax_hard')
+    model_type       = cfg.get('model_type', 'GNN')
 
-    quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params',
-                                     'Gaussian_var_0.5', 'numerical')
-    output_levels = torch.from_numpy(
-        np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
-    ).float().to(device)
-
-    cls = MODEL_CLS[model_type]
-    if model_type == 'MLP':
-        model = cls(M, K, bits, tau, output_levels).to(device)
+    # For GNN_QAT: prefer the INT8 full-model file over the float32 state dict.
+    # quantize_dynamic only runs on CPU, so the INT8 model is always on CPU.
+    int8_ckpt = _find_int8_checkpoint(model_dir) if model_type == 'GNN_QAT' else None
+    if int8_ckpt:
+        model = torch.load(int8_ckpt, map_location='cpu')  # full model, not state dict
+        model.eval()
+        inference_device = torch.device('cpu')
+        loaded = True
+        weight_tag = 'INT8'
     else:
-        model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
-                    output_levels, quantize=True, output_type=output_type).to(device)
+        quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params',
+                                         'Gaussian_var_0.5', 'numerical')
+        output_levels = torch.from_numpy(
+            np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
+        ).float().to(device)
 
-    ckpt = _find_checkpoint(model_dir)
-    if ckpt:
-        model.load_state_dict(torch.load(ckpt, map_location=device))
+        cls = MODEL_CLS[model_type]
+        if model_type == 'MLP':
+            model = cls(M, K, bits, tau, output_levels).to(device)
+        else:
+            model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
+                        output_levels, quantize=True, output_type=output_type).to(device)
 
-    H, s, x_init = _make_inputs(M, K, device)
+        float_ckpt = _find_float_checkpoint(model_dir)
+        if float_ckpt:
+            model.load_state_dict(torch.load(float_ckpt, map_location=device))
+        inference_device = device
+        loaded = float_ckpt is not None
+        weight_tag = 'loaded' if loaded else 'random'
+
+    H, s, x_init = _make_inputs(M, K, inference_device)
     mean_ms, std_ms = _time_model(model, H, s, x_init)
-    return mean_ms, std_ms, model_type, M, K, bits, ckpt is not None
+    return mean_ms, std_ms, model_type, M, K, bits, weight_tag
 
 
 if __name__ == '__main__':
@@ -128,6 +149,5 @@ if __name__ == '__main__':
         if result is None:
             print(f'{os.path.basename(d):<50}  (no config found, skipped)')
             continue
-        mean_ms, std_ms, model_type, M, K, bits, loaded = result
-        weights_tag = 'loaded' if loaded else 'random'
-        print(f'{os.path.basename(d):<50} {model_type:<10} {mean_ms:>10.3f}  {std_ms:>9.3f}  {weights_tag}')
+        mean_ms, std_ms, model_type, M, K, bits, weight_tag = result
+        print(f'{os.path.basename(d):<50} {model_type:<10} {mean_ms:>10.3f}  {std_ms:>9.3f}  {weight_tag}')

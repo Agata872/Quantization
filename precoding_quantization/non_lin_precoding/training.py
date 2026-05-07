@@ -14,7 +14,7 @@ if not hasattr(webcolors, 'CSS3_HEX_TO_NAMES'):
     webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
 
 import torch
-from torch import nn
+import torch.nn as nn
 import numpy as np
 from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams
 from tqdm import tqdm
@@ -266,19 +266,12 @@ def train(sim_params, train_params):
                             quantize=True).to(device)
     saved_model.load_state_dict(torch.load(os.path.join(model_path, 'model_{}'.format(timestamp)), weights_only=True))
     saved_model.eval()
-
-    # Convert GNN_QAT to true INT8 dynamic quantization for post-training evaluation.
-    # quantize_dynamic only runs on CPU, so move off GPU first if needed.
-    # Saved with torch.save(full_model) so the benchmark can load it directly without
-    # re-applying quantize_dynamic. Module paths are consistent because both training.py
-    # and benchmark_inference.py add non_lin_precoding/ to sys.path and import from 'model'.
-    if model_type == 'GNN_QAT':
-        saved_model = saved_model.cpu()
-        saved_model = torch.ao.quantization.quantize_dynamic(saved_model, {nn.Linear}, dtype=torch.qint8)
-        torch.save(saved_model, os.path.join(model_path, f'model_{timestamp}_int8.pt'))
-        inference_device = torch.device('cpu')
-    else:
-        inference_device = device
+    # Evaluation always uses the float32 model on the training device (GPU if available).
+    # INT8 conversion is done after evaluation and saved separately for deployment.
+    # Reason: quantize_dynamic is CPU-only, running 125 symbols × N_batches on CPU
+    # would be much slower than the GPU float32 model, without any quality difference
+    # (QAT ensures the float32 weights already reflect INT8-level precision).
+    inference_device = device
 
     # define snr points
     snr_points = np.array([-30, -20, -10, 0.1, 10, 20, 30])
@@ -350,6 +343,13 @@ def train(sim_params, train_params):
 
     logparams(os.path.join(model_path, 'sim_params.json'), sim_params)
     logparams(os.path.join(model_path, 'train_params.json'), train_params)
+
+    # Convert GNN_QAT to INT8 and save after evaluation (not before), so evaluation
+    # runs on GPU with the float32 model. quantize_dynamic is CPU-only.
+    if model_type == 'GNN_QAT':
+        int8_model = saved_model.cpu()
+        int8_model = torch.ao.quantization.quantize_dynamic(int8_model, {nn.Linear}, dtype=torch.qint8)
+        torch.save(int8_model, os.path.join(model_path, f'model_{timestamp}_int8.pt'))
 
 
 

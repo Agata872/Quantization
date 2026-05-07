@@ -96,7 +96,7 @@ def benchmark_dir(model_dir, device):
     # quantize_dynamic only runs on CPU, so the INT8 model is always on CPU.
     int8_ckpt = _find_int8_checkpoint(model_dir) if model_type == 'GNN_QAT' else None
     if int8_ckpt:
-        model = torch.load(int8_ckpt, map_location='cpu')  # full model, not state dict
+        model = torch.load(int8_ckpt, map_location='cpu', weights_only=False)  # full model, not state dict
         model.eval()
         inference_device = torch.device('cpu')
         loaded = True

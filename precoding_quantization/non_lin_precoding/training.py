@@ -264,7 +264,7 @@ def train(sim_params, train_params):
     model_cls = GNNmodel_QAT if model_type == 'GNN_QAT' else GNNmodel
     saved_model = model_cls(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device),
                             quantize=True).to(device)
-    saved_model.load_state_dict(torch.load(os.path.join(model_path, 'model_{}'.format(timestamp))))
+    saved_model.load_state_dict(torch.load(os.path.join(model_path, 'model_{}'.format(timestamp)), weights_only=True))
     saved_model.eval()
 
     # Convert GNN_QAT to true INT8 dynamic quantization.

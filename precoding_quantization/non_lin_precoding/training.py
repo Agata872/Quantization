@@ -190,7 +190,7 @@ def train(sim_params, train_params):
                 # forward pass
                 outputs = torch.zeros((batch_size, M, nr_symbols_per_channel), dtype=torch.complex64)
                 for sidx in range(s.shape[-1]):
-                    if model_type == 'GNN':
+                    if model_type in ('GNN', 'GNN_QAT'):
                         outputs[:, :, sidx] = model(H, s[:, :, sidx], x_init)  # NN takes 1 channel and 1 symbol as input
                     else:
                         outputs[:, :, sidx] = model(H, s[:, :, sidx])  # NN takes 1 channel and 1 symbol as input

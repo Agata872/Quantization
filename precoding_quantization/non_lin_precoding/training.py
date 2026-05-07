@@ -170,13 +170,12 @@ def train(sim_params, train_params):
     # containers to store loss
     loss_history = []
     vloss_history = []
-    running_loss = 0
     best_vloss = 0
-    last_loss = 0
 
     x_init = torch.zeros((batch_size, M, 2)).to(device)  # zeros as initial input for antennanode features
     # loop over batches
     for epoch in range(nr_epochs):
+        running_loss = 0
         with tqdm(training_dataloader, unit='batch') as tqdmbatch:
             for i, batch in enumerate(tqdmbatch):
                 H, s = batch  # H: bs x M x K, s: bs x K x nr_symbols_per_channel
@@ -206,17 +205,11 @@ def train(sim_params, train_params):
                 loss.backward()
                 optimizer.step()
 
-                # gather data and report
                 running_loss += loss.item()
-                if i % 100 == 99:
-                    last_loss = running_loss / 100
-
-                    # log some values
-                    tqdmbatch.set_postfix(loss=last_loss)
-                    running_loss = 0
+                tqdmbatch.set_postfix(loss=running_loss / (i + 1))
 
         # save training loss after each epoch
-        loss_history.append(last_loss)
+        loss_history.append(running_loss / (i + 1))
 
         # validation loss
         model.eval()

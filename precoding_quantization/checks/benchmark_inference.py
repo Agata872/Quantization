@@ -12,13 +12,16 @@ import json
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+NON_LIN_DIR  = os.path.join(PROJECT_ROOT, 'non_lin_precoding')
+for _p in (PROJECT_ROOT, NON_LIN_DIR):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import torch
-from torch import nn
 import numpy as np
-from non_lin_precoding.model import GNNmodel, GNNmodel_QAT, MLPmodel
+# Import via the bare 'model' module so pickle module paths match training.py,
+# which also runs with non_lin_precoding/ on sys.path and uses 'from model import ...'.
+from model import GNNmodel, GNNmodel_QAT, MLPmodel  # noqa: E402 (resolved via sys.path above)
 
 # ── configure here ────────────────────────────────────────────────────────────
 BASE_DIR   = r'stored_models_iid_generalized_bussgang_loss/M_32_K_4_bs_128_layers_4_dl_128_tau_1'
@@ -40,11 +43,17 @@ def _load_config(model_dir):
     return cfg
 
 
+def _find_int8_checkpoint(model_dir):
+    """Return the INT8 full-model file (model_*_int8.pt), or None."""
+    matches = glob.glob(os.path.join(model_dir, 'model_*_int8.pt'))
+    return matches[0] if matches else None
+
+
 def _find_float_checkpoint(model_dir):
-    """Return the float32 state-dict file, excluding non-weight files."""
+    """Return the float32 state-dict file, excluding INT8 and non-weight files."""
     matches = glob.glob(os.path.join(model_dir, 'model_*'))
     matches = [p for p in matches
-               if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex', '.pt'))]
+               if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex', '_int8.pt'))]
     return matches[0] if matches else None
 
 
@@ -89,31 +98,30 @@ def benchmark_dir(model_dir, device):
 
     quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params',
                                      'Gaussian_var_0.5', 'numerical')
-    output_levels = torch.from_numpy(
-        np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
-    ).float()
 
-    cls = MODEL_CLS[model_type]
-    if model_type == 'MLP':
-        model = cls(M, K, bits, tau, output_levels.to(device)).to(device)
-    else:
-        model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
-                    output_levels.to(device), quantize=True, output_type=output_type).to(device)
-
-    float_ckpt = _find_float_checkpoint(model_dir)
-    if float_ckpt:
-        model.load_state_dict(torch.load(float_ckpt, map_location=device, weights_only=True))
-    model.eval()
-
-    # For GNN_QAT: apply quantize_dynamic on the fly from the float32 state dict.
-    # Saving the full quantized model as a file causes pickle module-path errors on load,
-    # so we re-quantize at benchmark time instead.
-    if model_type == 'GNN_QAT':
-        model = model.cpu()
-        model = torch.ao.quantization.quantize_dynamic(model, {nn.Linear}, dtype=torch.qint8)
+    # GNN_QAT: load INT8 full-model if it exists (module paths are consistent because
+    # both training.py and this script add non_lin_precoding/ to sys.path and import
+    # from 'model', so pickle can resolve GNNmodel_QAT / GNN_layer_fast_qat correctly).
+    int8_ckpt = _find_int8_checkpoint(model_dir) if model_type == 'GNN_QAT' else None
+    if int8_ckpt:
+        model = torch.load(int8_ckpt, map_location='cpu', weights_only=False)
+        model.eval()
         inference_device = torch.device('cpu')
-        weight_tag = 'INT8' if float_ckpt else 'INT8(random)'
+        weight_tag = 'INT8'
     else:
+        output_levels = torch.from_numpy(
+            np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
+        ).float()
+        cls = MODEL_CLS[model_type]
+        if model_type == 'MLP':
+            model = cls(M, K, bits, tau, output_levels.to(device)).to(device)
+        else:
+            model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
+                        output_levels.to(device), quantize=True, output_type=output_type).to(device)
+        float_ckpt = _find_float_checkpoint(model_dir)
+        if float_ckpt:
+            model.load_state_dict(torch.load(float_ckpt, map_location=device, weights_only=True))
+        model.eval()
         inference_device = device
         weight_tag = 'loaded' if float_ckpt else 'random'
 

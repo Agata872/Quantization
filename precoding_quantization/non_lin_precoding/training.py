@@ -269,12 +269,13 @@ def train(sim_params, train_params):
 
     # Convert GNN_QAT to true INT8 dynamic quantization for post-training evaluation.
     # quantize_dynamic only runs on CPU, so move off GPU first if needed.
-    # We do NOT save the quantized model as a file: torch.save of a full model object
-    # pickles class paths that are environment-dependent and break on load elsewhere.
-    # The benchmark script re-applies quantize_dynamic from the float32 state dict instead.
+    # Saved with torch.save(full_model) so the benchmark can load it directly without
+    # re-applying quantize_dynamic. Module paths are consistent because both training.py
+    # and benchmark_inference.py add non_lin_precoding/ to sys.path and import from 'model'.
     if model_type == 'GNN_QAT':
         saved_model = saved_model.cpu()
         saved_model = torch.ao.quantization.quantize_dynamic(saved_model, {nn.Linear}, dtype=torch.qint8)
+        torch.save(saved_model, os.path.join(model_path, f'model_{timestamp}_int8.pt'))
         inference_device = torch.device('cpu')
     else:
         inference_device = device

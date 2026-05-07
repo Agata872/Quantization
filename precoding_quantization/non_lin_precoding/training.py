@@ -11,20 +11,13 @@ if PROJECT_ROOT not in sys.path:
 
 import webcolors
 if not hasattr(webcolors, 'CSS3_HEX_TO_NAMES'):
-    if hasattr(webcolors, 'CSS3_NAMES_TO_HEX'):
-        # webcolors 1.x
-        webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
-    else:
-        # webcolors 24.x: constant dicts replaced by functions
-        _names = webcolors.names(spec=webcolors.CSS3)
-        webcolors.CSS3_NAMES_TO_HEX = {n: webcolors.name_to_hex(n) for n in _names}
-        webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
+    webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
 
 import torch
 import numpy as np
 from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams
 from tqdm import tqdm
-from model import MLPmodel, SumRateLoss, MLPmodel_noquant, GNNmodel, GNNmodel_QAT, SumRateLoss_generalized_Bussgang
+from model import MLPmodel, SumRateLoss, MLPmodel_noquant, GNNmodel, SumRateLoss_generalized_Bussgang
 import matplotlib.pyplot as plt
 from torchsummary import summary
 from datetime import datetime
@@ -144,13 +137,6 @@ def train(sim_params, train_params):
         model_path = os.path.join(base_path, name)
         create_folder(model_path)
 
-    elif model_type == 'GNN_QAT':
-        model = GNNmodel_QAT(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device),
-                             quantize=quant, output_type=output_type).to(device)
-        name = f'{bits}_bits_GNN_QAT_{output_type}_{timestamp}'
-        model_path = os.path.join(base_path, name)
-        create_folder(model_path)
-
     elif model_type == 'MLP':
         if quant:
             model = MLPmodel(M, K, bits, tau, output_levels.to(device)).to(device)
@@ -193,7 +179,7 @@ def train(sim_params, train_params):
                 # forward pass
                 outputs = torch.zeros((batch_size, M, nr_symbols_per_channel), dtype=torch.complex64)
                 for sidx in range(s.shape[-1]):
-                    if model_type in ('GNN', 'GNN_QAT'):
+                    if model_type == 'GNN':
                         outputs[:, :, sidx] = model(H, s[:, :, sidx], x_init)  # NN takes 1 channel and 1 symbol as input
                     else:
                         outputs[:, :, sidx] = model(H, s[:, :, sidx])  # NN takes 1 channel and 1 symbol as input
@@ -270,9 +256,8 @@ def train(sim_params, train_params):
     """post training"""
 
     # load the best model
-    model_cls = GNNmodel_QAT if model_type == 'GNN_QAT' else GNNmodel
-    saved_model = model_cls(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device),
-                            quantize=True).to(device)
+    saved_model = GNNmodel(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device), quantize=True).to(
+        device)
     saved_model.load_state_dict(torch.load(os.path.join(model_path, 'model_{}'.format(timestamp))))
 
     # define snr points
@@ -360,7 +345,7 @@ if __name__ == '__main__':
     M = 8
     K = 1
     Pt = M
-    bits = 2
+    bits = 1
     quant = True #train with or without quantization
 
     # train paramsw
@@ -368,7 +353,7 @@ if __name__ == '__main__':
     nr_hidden_layers, nr_features = 4, 128
     model_type = 'GNN_QAT' #MLP, 'GNN', 'GNN_QAT'
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
-    batch_size = 64 #128
+    batch_size = 128 #128, 64
     lr = 0.5*10**-3
     nr_epochs = 10 #20 #10
     snr_tx = 20  # in db
@@ -378,9 +363,9 @@ if __name__ == '__main__':
     norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
 
     # data set params
-    Ntr = 1000 #should be multiple of batchsize 200000
+    Ntr = 200000 #should be multiple of batchsize 200000
     Nval = 1000  #1000
-    Nte = 1000  #10000
+    Nte = 10000  #10000
     nr_symbols_per_channel = 125 #todo big enough?
 
     # put all the params in a dictionary to store it
@@ -416,8 +401,8 @@ if __name__ == '__main__':
     }
 
 
-    M = [4]
-    K = [1]
+    M = [8]
+    K = [2, 4]
     bits = [1]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
@@ -442,6 +427,7 @@ if __name__ == '__main__':
 
     """ todo:
     - speed up GNN
+    
     
     - reduce lr on plateau?
     - try output types

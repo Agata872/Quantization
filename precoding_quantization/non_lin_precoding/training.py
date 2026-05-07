@@ -267,8 +267,9 @@ def train(sim_params, train_params):
     """post training"""
 
     # load the best model
-    saved_model = GNNmodel(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device), quantize=True).to(
-        device)
+    model_cls = GNNmodel_QAT if model_type == 'GNN_QAT' else GNNmodel
+    saved_model = model_cls(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device),
+                            quantize=True).to(device)
     saved_model.load_state_dict(torch.load(os.path.join(model_path, 'model_{}'.format(timestamp))))
 
     # define snr points
@@ -366,7 +367,7 @@ if __name__ == '__main__':
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
     batch_size = 128 #128, 64
     lr = 0.5*10**-3
-    nr_epochs = 10 #20 #10
+    nr_epochs = 20 #20 #10
     snr_tx = 20  # in db
     noise_var = Pt / (10 ** (snr_tx / 10))
     tau = 4 # for gumbel softmax
@@ -374,9 +375,9 @@ if __name__ == '__main__':
     norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
 
     # data set params
-    Ntr = 200000 #should be multiple of batchsize 200000
+    Ntr = 1000 #should be multiple of batchsize 200000
     Nval = 1000  #1000
-    Nte = 10000  #10000
+    Nte = 1000  #10000
     nr_symbols_per_channel = 125 #todo big enough?
 
     # put all the params in a dictionary to store it

@@ -1,0 +1,133 @@
+"""
+Benchmark inference latency for all trained models under a given base directory.
+
+Set BASE_DIR below, then run:
+    python checks/benchmark_inference.py
+"""
+import os
+import sys
+import glob
+import time
+import json
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+import torch
+import numpy as np
+from non_lin_precoding.model import GNNmodel, GNNmodel_QAT, MLPmodel
+
+# ── configure here ────────────────────────────────────────────────────────────
+BASE_DIR   = r'D:\Documents\Pycharm_Files\Quantization\stored_models_iid_generalized_bussgang_loss\M_8_K_2_bs_128_layers_4_dl_128_tau_1'
+BATCH_SIZE = 64
+N_WARMUP   = 20
+N_RUNS     = 200
+# ──────────────────────────────────────────────────────────────────────────────
+
+MODEL_CLS = {'GNN': GNNmodel, 'GNN_QAT': GNNmodel_QAT, 'MLP': MLPmodel}
+
+
+def _load_config(model_dir):
+    cfg = {}
+    for fname in ('sim_params.json', 'train_params.json'):
+        path = os.path.join(model_dir, fname)
+        if os.path.exists(path):
+            with open(path) as f:
+                cfg.update(json.load(f))
+    return cfg
+
+
+def _find_checkpoint(model_dir):
+    matches = glob.glob(os.path.join(model_dir, 'model_*'))
+    matches = [p for p in matches if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex'))]
+    return matches[0] if matches else None
+
+
+def _make_inputs(M, K, device):
+    H      = torch.randn(BATCH_SIZE, M, K, dtype=torch.complex64).to(device)
+    s      = torch.randn(BATCH_SIZE, K, dtype=torch.complex64).to(device)
+    x_init = torch.zeros(BATCH_SIZE, M, 2).to(device)
+    return H, s, x_init
+
+
+def _time_model(model, H, s, x_init):
+    is_gnn = isinstance(model, (GNNmodel, GNNmodel_QAT))
+    model.eval()
+    with torch.no_grad():
+        for _ in range(N_WARMUP):
+            model(H, s, x_init) if is_gnn else model(H, s)
+        if H.is_cuda:
+            torch.cuda.synchronize()
+        times = []
+        for _ in range(N_RUNS):
+            t0 = time.perf_counter()
+            model(H, s, x_init) if is_gnn else model(H, s)
+            if H.is_cuda:
+                torch.cuda.synchronize()
+            times.append((time.perf_counter() - t0) * 1000)
+    return float(np.mean(times)), float(np.std(times))
+
+
+def benchmark_dir(model_dir, device):
+    cfg = _load_config(model_dir)
+    if not cfg:
+        return None
+
+    M               = cfg['M']
+    K               = cfg['K']
+    bits            = cfg['bits']
+    nr_features     = cfg.get('nr_features', 128)
+    nr_hidden_layers = cfg.get('nr_hidden_layers', 4)
+    tau             = cfg.get('tau', 1)
+    output_type     = cfg.get('output_type', 'gumbel_softmax_hard')
+    model_type      = cfg.get('model_type', 'GNN')
+
+    quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params',
+                                     'Gaussian_var_0.5', 'numerical')
+    output_levels = torch.from_numpy(
+        np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
+    ).float().to(device)
+
+    cls = MODEL_CLS[model_type]
+    if model_type == 'MLP':
+        model = cls(M, K, bits, tau, output_levels).to(device)
+    else:
+        model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
+                    output_levels, quantize=True, output_type=output_type).to(device)
+
+    ckpt = _find_checkpoint(model_dir)
+    if ckpt:
+        model.load_state_dict(torch.load(ckpt, map_location=device))
+
+    H, s, x_init = _make_inputs(M, K, device)
+    mean_ms, std_ms = _time_model(model, H, s, x_init)
+    return mean_ms, std_ms, model_type, M, K, bits, ckpt is not None
+
+
+if __name__ == '__main__':
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f'Device: {device}')
+    print(f'Base dir: {BASE_DIR}\n')
+
+    subdirs = sorted([
+        os.path.join(BASE_DIR, d)
+        for d in os.listdir(BASE_DIR)
+        if os.path.isdir(os.path.join(BASE_DIR, d))
+    ])
+
+    if not subdirs:
+        print('No subdirectories found.')
+        sys.exit(1)
+
+    print(f'{"Model folder":<50} {"Type":<10} {"Mean (ms)":>10}  {"Std (ms)":>9}  {"Weights"}')
+    print('-' * 95)
+    for d in subdirs:
+        result = benchmark_dir(d, device)
+        if result is None:
+            print(f'{os.path.basename(d):<50}  (no config found, skipped)')
+            continue
+        mean_ms, std_ms, model_type, M, K, bits, loaded = result
+        weights_tag = 'loaded' if loaded else 'random'
+        print(f'{os.path.basename(d):<50} {model_type:<10} {mean_ms:>10.3f}  {std_ms:>9.3f}  {weights_tag}')

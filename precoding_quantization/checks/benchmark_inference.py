@@ -21,7 +21,7 @@ from non_lin_precoding.model import GNNmodel, GNNmodel_QAT, MLPmodel
 
 # ── configure here ────────────────────────────────────────────────────────────
 BASE_DIR   = r'D:\Documents\Pycharm_Files\Quantization\stored_models_iid_generalized_bussgang_loss\M_8_K_2_bs_128_layers_4_dl_128_tau_1'
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 N_WARMUP   = 20
 N_RUNS     = 200
 # ──────────────────────────────────────────────────────────────────────────────

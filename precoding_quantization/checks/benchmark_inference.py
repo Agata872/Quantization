@@ -24,10 +24,13 @@ import numpy as np
 from model import GNNmodel, GNNmodel_QAT, MLPmodel  # noqa: E402 (resolved via sys.path above)
 
 # ── configure here ────────────────────────────────────────────────────────────
-BASE_DIR   = r'stored_models_iid_generalized_bussgang_loss/M_32_K_4_bs_128_layers_4_dl_128_tau_1'
-BATCH_SIZE = 128
-N_WARMUP   = 20
-N_RUNS     = 200
+BASE_DIR        = r'stored_models_iid_generalized_bussgang_loss/M_32_K_4_bs_128_layers_4_dl_128_tau_1'
+BATCH_SIZE      = 128
+N_WARMUP        = 20
+N_RUNS          = 200
+# Force all models onto CPU so INT8 (CPU-only) and FP32 are measured on the same hardware.
+# Set to False to let FP32 models run on GPU — faster but not comparable to INT8.
+FORCE_CPU       = True
 # ──────────────────────────────────────────────────────────────────────────────
 
 MODEL_CLS = {'GNN': GNNmodel, 'GNN_QAT': GNNmodel_QAT, 'MLP': MLPmodel}
@@ -109,20 +112,21 @@ def benchmark_dir(model_dir, device):
         inference_device = torch.device('cpu')
         weight_tag = 'INT8'
     else:
+        inference_device = torch.device('cpu') if FORCE_CPU else device
         output_levels = torch.from_numpy(
             np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
         ).float()
         cls = MODEL_CLS[model_type]
         if model_type == 'MLP':
-            model = cls(M, K, bits, tau, output_levels.to(device)).to(device)
+            model = cls(M, K, bits, tau, output_levels.to(inference_device)).to(inference_device)
         else:
             model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
-                        output_levels.to(device), quantize=True, output_type=output_type).to(device)
+                        output_levels.to(inference_device), quantize=True,
+                        output_type=output_type).to(inference_device)
         float_ckpt = _find_float_checkpoint(model_dir)
         if float_ckpt:
-            model.load_state_dict(torch.load(float_ckpt, map_location=device, weights_only=True))
+            model.load_state_dict(torch.load(float_ckpt, map_location=inference_device, weights_only=True))
         model.eval()
-        inference_device = device
         weight_tag = 'loaded' if float_ckpt else 'random'
 
     H, s, x_init = _make_inputs(M, K, inference_device)
@@ -132,7 +136,9 @@ def benchmark_dir(model_dir, device):
 
 if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f'Device: {device}')
+    fp32_device = torch.device('cpu') if FORCE_CPU else device
+    print(f'Available device: {device}')
+    print(f'FP32 inference device: {fp32_device}  |  INT8 inference device: cpu (quantize_dynamic is CPU-only)')
     print(f'Base dir: {BASE_DIR}\n')
 
     subdirs = sorted([

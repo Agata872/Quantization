@@ -17,7 +17,7 @@ import torch
 import numpy as np
 from utils.utils import rayleigh_channel_MU, getSymbols, create_folder, logparams
 from tqdm import tqdm
-from model import MLPmodel, SumRateLoss, MLPmodel_noquant, GNNmodel, SumRateLoss_generalized_Bussgang
+from model import MLPmodel, SumRateLoss, MLPmodel_noquant, GNNmodel, GNNmodel_QAT, SumRateLoss_generalized_Bussgang
 import matplotlib.pyplot as plt
 from torchsummary import summary
 from datetime import datetime
@@ -133,6 +133,17 @@ def train(sim_params, train_params):
             name = f'{bits}_bits_GNN_{output_type}_{timestamp}'
         else:
             name = f'GNN_no_quant_{timestamp}'
+
+        model_path = os.path.join(base_path, name)
+        create_folder(model_path)
+
+    elif model_type == 'GNN_QAT':
+        model = GNNmodel_QAT(M, K, nr_features, nr_hidden_layers, bits, tau, output_levels.to(device),
+                              quantize=quant, output_type=output_type).to(device)
+        if quant:
+            name = f'{bits}_bits_GNN_QAT_{output_type}_{timestamp}'
+        else:
+            name = f'GNN_QAT_no_quant_{timestamp}'
 
         model_path = os.path.join(base_path, name)
         create_folder(model_path)

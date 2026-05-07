@@ -366,9 +366,9 @@ if __name__ == '__main__':
     # train paramsw
     channel_model = 'iid' #'los' #'cellfree'
     nr_hidden_layers, nr_features = 4, 128
-    model_type = 'GNN_QAT' #MLP
+    model_type = 'GNN_QAT' #MLP, 'GNN', 'GNN_QAT'
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
-    batch_size = 64#128
+    batch_size = 64 #128
     lr = 0.5*10**-3
     nr_epochs = 10 #20 #10
     snr_tx = 20  # in db

@@ -16,6 +16,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 import torch
+from torch import nn
 import numpy as np
 from non_lin_precoding.model import GNNmodel, GNNmodel_QAT, MLPmodel
 
@@ -39,17 +40,11 @@ def _load_config(model_dir):
     return cfg
 
 
-def _find_int8_checkpoint(model_dir):
-    """Return the INT8 full-model file saved by quantize_dynamic, or None."""
-    matches = glob.glob(os.path.join(model_dir, 'model_*_int8.pt'))
-    return matches[0] if matches else None
-
-
 def _find_float_checkpoint(model_dir):
-    """Return the float32 state-dict file, excluding INT8 and non-weight files."""
+    """Return the float32 state-dict file, excluding non-weight files."""
     matches = glob.glob(os.path.join(model_dir, 'model_*'))
     matches = [p for p in matches
-               if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex', '_int8.pt'))]
+               if not any(p.endswith(ext) for ext in ('.json', '.pdf', '.tex', '.pt'))]
     return matches[0] if matches else None
 
 
@@ -92,35 +87,35 @@ def benchmark_dir(model_dir, device):
     output_type      = cfg.get('output_type', 'gumbel_softmax_hard')
     model_type       = cfg.get('model_type', 'GNN')
 
-    # For GNN_QAT: prefer the INT8 full-model file over the float32 state dict.
-    # quantize_dynamic only runs on CPU, so the INT8 model is always on CPU.
-    int8_ckpt = _find_int8_checkpoint(model_dir) if model_type == 'GNN_QAT' else None
-    if int8_ckpt:
-        model = torch.load(int8_ckpt, map_location='cpu', weights_only=False)  # full model, not state dict
-        model.eval()
-        inference_device = torch.device('cpu')
-        loaded = True
-        weight_tag = 'INT8'
+    quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params',
+                                     'Gaussian_var_0.5', 'numerical')
+    output_levels = torch.from_numpy(
+        np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
+    ).float()
+
+    cls = MODEL_CLS[model_type]
+    if model_type == 'MLP':
+        model = cls(M, K, bits, tau, output_levels.to(device)).to(device)
     else:
-        quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params',
-                                         'Gaussian_var_0.5', 'numerical')
-        output_levels = torch.from_numpy(
-            np.load(os.path.join(quant_params_path, f'{bits}bits_outputlevels.npy'))
-        ).float().to(device)
+        model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
+                    output_levels.to(device), quantize=True, output_type=output_type).to(device)
 
-        cls = MODEL_CLS[model_type]
-        if model_type == 'MLP':
-            model = cls(M, K, bits, tau, output_levels).to(device)
-        else:
-            model = cls(M, K, nr_features, nr_hidden_layers, bits, tau,
-                        output_levels, quantize=True, output_type=output_type).to(device)
+    float_ckpt = _find_float_checkpoint(model_dir)
+    if float_ckpt:
+        model.load_state_dict(torch.load(float_ckpt, map_location=device, weights_only=True))
+    model.eval()
 
-        float_ckpt = _find_float_checkpoint(model_dir)
-        if float_ckpt:
-            model.load_state_dict(torch.load(float_ckpt, map_location=device))
+    # For GNN_QAT: apply quantize_dynamic on the fly from the float32 state dict.
+    # Saving the full quantized model as a file causes pickle module-path errors on load,
+    # so we re-quantize at benchmark time instead.
+    if model_type == 'GNN_QAT':
+        model = model.cpu()
+        model = torch.ao.quantization.quantize_dynamic(model, {nn.Linear}, dtype=torch.qint8)
+        inference_device = torch.device('cpu')
+        weight_tag = 'INT8' if float_ckpt else 'INT8(random)'
+    else:
         inference_device = device
-        loaded = float_ckpt is not None
-        weight_tag = 'loaded' if loaded else 'random'
+        weight_tag = 'loaded' if float_ckpt else 'random'
 
     H, s, x_init = _make_inputs(M, K, inference_device)
     mean_ms, std_ms = _time_model(model, H, s, x_init)

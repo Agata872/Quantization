@@ -10,8 +10,32 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 import webcolors
-if not hasattr(webcolors, 'CSS3_HEX_TO_NAMES'):
-    webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in webcolors.CSS3_NAMES_TO_HEX.items()}
+
+# Ensure a CSS3 hex->name mapping exists regardless of webcolors version.
+# Some webcolors versions expose different constant names; try common variants
+# and fall back to an empty dict if none are available.
+try:
+    css3_names_to_hex = getattr(webcolors, 'CSS3_NAMES_TO_HEX', None)
+    css3_hex_to_names = getattr(webcolors, 'CSS3_HEX_TO_NAMES', None)
+    if css3_hex_to_names is None and css3_names_to_hex is not None:
+        webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in css3_names_to_hex.items()}
+    elif css3_hex_to_names is None and css3_names_to_hex is None:
+        # Try alternate attribute names used in other versions
+        alt_maps = [
+            'CSS21_NAMES_TO_HEX', 'HTML4_NAMES_TO_HEX',
+            'css3_names_to_hex', 'css21_names_to_hex', 'html4_names_to_hex'
+        ]
+        found = False
+        for alt in alt_maps:
+            if hasattr(webcolors, alt):
+                cmap = getattr(webcolors, alt)
+                webcolors.CSS3_HEX_TO_NAMES = {v: k for k, v in cmap.items()}
+                found = True
+                break
+        if not found:
+            webcolors.CSS3_HEX_TO_NAMES = {}
+except Exception:
+    webcolors.CSS3_HEX_TO_NAMES = {}
 
 import torch
 import torch.nn as nn
@@ -363,7 +387,7 @@ if __name__ == '__main__':
     M = 8
     K = 1
     Pt = M
-    bits = 1
+    bits = 2
     quant = True #train with or without quantization
 
     # train paramsw
@@ -373,7 +397,7 @@ if __name__ == '__main__':
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
     batch_size = 128 #128, 64
     lr = 0.5*10**-3
-    nr_epochs = 5 #20 #10
+    nr_epochs = 20 #20 #10
     snr_tx = 20  # in db
     noise_var = Pt / (10 ** (snr_tx / 10))
     tau = 4 # for gumbel softmax
@@ -381,9 +405,9 @@ if __name__ == '__main__':
     norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
 
     # data set params
-    Ntr = 1000 #should be multiple of batchsize 200000
-    Nval = 1000  #1000
-    Nte = 1000  #10000
+    Ntr = 200000 #should be multiple of batchsize 200000
+    Nval = 10000  #1000
+    Nte = 10000  #10000
     nr_symbols_per_channel = 125 #todo big enough?
 
     # put all the params in a dictionary to store it
@@ -419,9 +443,9 @@ if __name__ == '__main__':
     }
 
 
-    M = [32]
-    K = [4]
-    bits = [1]
+    M = [8]
+    K = [1, 2]
+    bits = [3, 4, 5, 6]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
     for m in M:

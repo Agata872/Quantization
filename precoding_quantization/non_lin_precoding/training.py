@@ -393,7 +393,7 @@ if __name__ == '__main__':
     # train paramsw
     channel_model = 'iid' #'los' #'cellfree'
     nr_hidden_layers, nr_features = 4, 128
-    model_type = 'GNN_QAT' #MLP, 'GNN', 'GNN_QAT'
+    model_type = 'GNN' #MLP, 'GNN', 'GNN_QAT'
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
     batch_size = 128 #128, 64
     lr = 0.5*10**-3
@@ -444,8 +444,8 @@ if __name__ == '__main__':
 
 
     M = [8]
-    K = [1, 2]
-    bits = [3, 4, 5, 6]
+    K = [1]
+    bits = [1]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
     for m in M:

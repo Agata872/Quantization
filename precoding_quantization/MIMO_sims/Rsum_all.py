@@ -472,7 +472,7 @@ def Rsum_Bussgang_DAC(H, snr_points, bits=32, quant='uniform', Pt=64, correlated
 
 def Rsum_Bussgang_Rx(H, snr_points, bits=32, quant='uniform', Pt=64, correlated_dist=True, automatic_gain_control=True,
                      quant_params_path='', precoding='zf-mrt', precoding_weights=None, x_nonlin=None, s_provided=None,
-                     normalize_across_symbols=False):
+                     normalize_across_symbols=False, sigma_theta=0.0, phase_drift_rng=None):
     """
     - Fully numerical simulation:
     :param H: channel realizations, nr_channels x M x K
@@ -488,10 +488,17 @@ def Rsum_Bussgang_Rx(H, snr_points, bits=32, quant='uniform', Pt=64, correlated_
     :params x_nonlin: precoded vector (only used when nonlinear precoding is considered), nr_channels x M x 1
     :params s_provided: symbols to use for computing the sumrate (only used when nonlinear precoding is considred or
     when control over the used symbols is desired), nr_channels x K x 1
+    :params sigma_theta: std dev [rad] of i.i.d. per-antenna RF-chain phase drift, applied after the DAC and fixed
+    within each channel realization (same model as Phase_impact/phase_impact.ipynb); 0 disables it
+    :params phase_drift_rng: numpy Generator used to draw the per-antenna phase errors; defaults to a fresh
+    np.random.default_rng() when None
     :return:
     """
     assert correlated_dist == True, \
         f'Distortion is always correlated in the numerical computation of Rsum, change correlated_dist argument to True'
+
+    if sigma_theta > 0 and phase_drift_rng is None:
+        phase_drift_rng = np.random.default_rng()
 
     if precoding == 'non-linear' and s_provided is None:
         raise AssertionError('non linear precoding is selected but no symbols are provided!')
@@ -602,6 +609,12 @@ def Rsum_Bussgang_Rx(H, snr_points, bits=32, quant='uniform', Pt=64, correlated_
         l2_norm_post_norm = np.linalg.norm(y, ord=2, axis=0)  # bs x nr_symbols
         expt_x2_post_norm = np.mean(l2_norm_post_norm ** 2, axis=-1)
         #print(f'precding used: {precoding} - quantization: {quant} - avg pwr post norm {expt_x2_post_norm=}')
+
+        # distributed RF-chain phase drift, applied after the DAC, fixed for this channel realization
+        # (dtheta_m ~ N(0, sigma_theta^2) i.i.d. per antenna, same model as Phase_impact/phase_impact.ipynb)
+        if sigma_theta > 0:
+            dtheta = phase_drift_rng.normal(0, sigma_theta, size=M)
+            y = np.exp(1j * dtheta)[:, np.newaxis] * y
 
         # send over channel
         r = H[i, :, :].T @ y

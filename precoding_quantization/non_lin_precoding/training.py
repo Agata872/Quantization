@@ -60,6 +60,25 @@ def tikzplotlib_fix_ncols(obj):
         tikzplotlib_fix_ncols(child)
 
 
+def apply_phase_drift(y, sigma_theta):
+    """Apply i.i.d. per-antenna RF-chain phase drift, after the DAC/power-normalization stage.
+
+    Models distributed-MIMO RF-chain (free-running LO) phase noise, same mechanism validated in
+    Phase_impact/phase_impact.ipynb: dtheta_m ~ N(0, sigma_theta^2) i.i.d. per antenna, fixed across
+    all symbols of a given channel realization (batch element), but resampled on every call so that
+    training sees a fresh drift realization per batch/epoch.
+
+    y: bs x M x nr_symbols (complex), the actual (quantized, power-normalized) transmit signal
+    sigma_theta: std dev [rad] of the per-antenna phase error; sigma_theta <= 0 disables drift (no-op)
+    """
+    if sigma_theta <= 0:
+        return y
+    bs, M = y.shape[0], y.shape[1]
+    dtheta = sigma_theta * torch.randn(bs, M, device=y.device)
+    phase = torch.polar(torch.ones_like(dtheta), dtheta).to(y.dtype)  # exp(1j*dtheta)
+    return y * phase.unsqueeze(-1)
+
+
 def normalize_outputs(outputs, Pt, norm_block_size):
     """Apply power normalization with per-block alpha.
 
@@ -97,6 +116,8 @@ def train(sim_params, train_params):
     quant = sim_params['quant']
     varx = sim_params['varx']
     root_dir = sim_params['root_dir']
+    sigma_theta_deg = sim_params.get('sigma_theta_deg', 0.0)
+    sigma_theta_rad = np.deg2rad(sigma_theta_deg)
 
     # unpack training parameters
     channel_model = train_params['channel_model']
@@ -220,6 +241,7 @@ def train(sim_params, train_params):
                         outputs[:, :, sidx] = model(H, s[:, :, sidx])  # NN takes 1 channel and 1 symbol as input
 
                 normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
+                normalized_output = apply_phase_drift(normalized_output, sigma_theta_rad)
                 # print(f'{outputs=}')
 
                 # compute loss
@@ -254,6 +276,7 @@ def train(sim_params, train_params):
                     outputs[:, :, sidx] = model(H, s[:, :, sidx], x_init)  # NN takes 1 channel and 1 symbol as input
 
                 normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
+                normalized_output = apply_phase_drift(normalized_output, sigma_theta_rad)
 
                 # compute loss
                 vloss = loss_fn(normalized_output.to(device), H.type(torch.complex64), s.type(torch.complex64),
@@ -306,6 +329,12 @@ def train(sim_params, train_params):
     Rsum_batches_zf = np.zeros((nr_batches, len(snr_points)))
     Rsum_batches_zf_agc = np.zeros((nr_batches, len(snr_points)))
     Rsum_batches_zf_noquant = np.zeros((nr_batches, len(snr_points)))
+    if sigma_theta_rad > 0:
+        # additional curves under distributed RF-chain phase drift, for comparison against the
+        # drift-free curves above (case B vs. case C in Phase_impact/phase_impact.ipynb)
+        Rsum_batches_drift = np.zeros((nr_batches, len(snr_points)))
+        Rsum_batches_zf_drift = np.zeros((nr_batches, len(snr_points)))
+        Rsum_batches_zf_agc_drift = np.zeros((nr_batches, len(snr_points)))
 
     with torch.no_grad():
         running_vloss = 0
@@ -346,6 +375,25 @@ def train(sim_params, train_params):
                                                          Pt=M, precoding='zf-mrt', s_provided=s.cpu().numpy(),
                                                              normalize_across_symbols=True)
 
+            if sigma_theta_rad > 0:
+                # same three cases, but with distributed RF-chain phase drift applied after the DAC
+                Rsum_batches_drift[i, :] = Rsum_Bussgang_Rx(H.cpu().numpy(), snr_points, bits=bits, quant='non-uniform',
+                                                            Pt=M, automatic_gain_control=False, precoding='non-linear',
+                                                            x_nonlin=normalized_output.numpy(),
+                                                            quant_params_path=quant_params_path,
+                                                            s_provided=s.cpu().numpy(), normalize_across_symbols=True,
+                                                            sigma_theta=sigma_theta_rad)
+                Rsum_batches_zf_drift[i, :] = Rsum_Bussgang_Rx(H.cpu().numpy(), snr_points, bits=bits, quant='non-uniform',
+                                                               Pt=M, automatic_gain_control=False, precoding='zf-mrt',
+                                                               quant_params_path=quant_params_path,
+                                                               s_provided=s.cpu().numpy(), normalize_across_symbols=True,
+                                                               sigma_theta=sigma_theta_rad)
+                Rsum_batches_zf_agc_drift[i, :] = Rsum_Bussgang_Rx(H.cpu().numpy(), snr_points, bits=bits, quant='non-uniform',
+                                                                   Pt=M, automatic_gain_control=True, precoding='zf-mrt',
+                                                                   quant_params_path=quant_params_path,
+                                                                   s_provided=s.cpu().numpy(), normalize_across_symbols=True,
+                                                                   sigma_theta=sigma_theta_rad)
+
     # avg across the batches
     Rsum_avg = np.mean(Rsum_batches, axis=0)
     Rsum_avg_zf = np.mean(Rsum_batches_zf, axis=0)
@@ -356,6 +404,15 @@ def train(sim_params, train_params):
     plt.plot(snr_points, Rsum_avg_zf, label='ZF/MRT')
     plt.plot(snr_points, Rsum_avg_zf_agc, label='ZF/MRT - AGC')
     plt.plot(snr_points, Rsum_avg_zf_no_quant, label='ZF/MRT - no quant')
+    if sigma_theta_rad > 0:
+        Rsum_avg_drift = np.mean(Rsum_batches_drift, axis=0)
+        Rsum_avg_zf_drift = np.mean(Rsum_batches_zf_drift, axis=0)
+        Rsum_avg_zf_agc_drift = np.mean(Rsum_batches_zf_agc_drift, axis=0)
+        # note: avoid linestyle='--' here -- tikzplotlib 0.10.1 crashes on dashed Line2D objects
+        # under matplotlib >= 3.6 (accesses the since-renamed private attribute _us_dashSeq)
+        plt.plot(snr_points, Rsum_avg_drift, label=f'non lin prec + drift ({sigma_theta_deg:.0f}deg)')
+        plt.plot(snr_points, Rsum_avg_zf_drift, label=f'ZF/MRT + drift ({sigma_theta_deg:.0f}deg)')
+        plt.plot(snr_points, Rsum_avg_zf_agc_drift, label=f'ZF/MRT - AGC + drift ({sigma_theta_deg:.0f}deg)')
     plt.xlabel('SNR [dB]')
     plt.ylabel('R sum')
     plt.legend()
@@ -389,6 +446,9 @@ if __name__ == '__main__':
     Pt = M
     bits = 2
     quant = True #train with or without quantization
+    sigma_theta_deg = 20.0  # std dev [deg] of distributed RF-chain phase drift (post-DAC); 0 disables it
+                            # -- see Phase_impact/phase_impact.ipynb; most physically relevant for 'cellfree'
+                            # (each AP has its own free-running LO), but the mechanism is enabled for any channel_model
 
     # train paramsw
     channel_model = 'iid' #'los' #'cellfree'
@@ -421,7 +481,8 @@ if __name__ == '__main__':
         'quant_params_path': quant_params_path,
         'quant': quant,
         'varx': varx,
-        'root_dir': root_dir
+        'root_dir': root_dir,
+        'sigma_theta_deg': sigma_theta_deg,
     }
 
     training_params = {
@@ -445,7 +506,7 @@ if __name__ == '__main__':
 
     M = [8]
     K = [1]
-    bits = [1]
+    bits = [3]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
     for m in M:

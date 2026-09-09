@@ -75,6 +75,18 @@ def getdata_nonlinprec(nr_symbols_per_channel, datapath, M, K, Ntr, Nval, Nte, c
                     shadowing_std_db=8.0,
                     pathloss_at_1m_db=-30.0,
                 )
+
+            # Real path loss over a 100m area makes mean|H|^2 ~1e-8 (vs. 1 for iid Rayleigh): with
+            # pathloss_exponent=3.7 and pathloss_at_1m_db=-30dB, a 50m link already sees ~-100dB of
+            # large-scale attenuation. snr_tx/noise_var elsewhere in this pipeline are calibrated
+            # assuming mean|H|^2~1 (the iid convention); without rescaling, that ~1e-8 factor would
+            # just sit entirely in the noise term and collapse every configured SNR point's rate to
+            # ~0. Rescale by a single global scalar (computed once over this whole batch, before the
+            # train/val/test split, so all three splits share the same scale) so that mean|H|^2 = 1 --
+            # this preserves all relative AP/user gain differences intact (near vs. far users,
+            # shadowing), it only re-anchors the average operating point. Same fix as used in
+            # Phase_impact/phase_impact.ipynb.
+            H = H / np.sqrt(np.mean(np.abs(H) ** 2))
         else:
             raise ValueError(f'Unsupported channel_model: {channel_model}')
 
@@ -165,6 +177,18 @@ def getdata_nonlinprec_QPSK(nr_symbols_per_channel, datapath, M, K, Ntr, Nval, N
                     shadowing_std_db=8.0,
                     pathloss_at_1m_db=-30.0,
                 )
+
+            # Real path loss over a 100m area makes mean|H|^2 ~1e-8 (vs. 1 for iid Rayleigh): with
+            # pathloss_exponent=3.7 and pathloss_at_1m_db=-30dB, a 50m link already sees ~-100dB of
+            # large-scale attenuation. snr_tx/noise_var elsewhere in this pipeline are calibrated
+            # assuming mean|H|^2~1 (the iid convention); without rescaling, that ~1e-8 factor would
+            # just sit entirely in the noise term and collapse every configured SNR point's rate to
+            # ~0. Rescale by a single global scalar (computed once over this whole batch, before the
+            # train/val/test split, so all three splits share the same scale) so that mean|H|^2 = 1 --
+            # this preserves all relative AP/user gain differences intact (near vs. far users,
+            # shadowing), it only re-anchors the average operating point. Same fix as used in
+            # Phase_impact/phase_impact.ipynb.
+            H = H / np.sqrt(np.mean(np.abs(H) ** 2))
         else:
             raise ValueError(f'Unsupported channel_model: {channel_model}')
 

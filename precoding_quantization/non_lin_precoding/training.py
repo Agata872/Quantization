@@ -135,6 +135,7 @@ def train(sim_params, train_params):
     nr_features = train_params['nr_features']
     model_dir = train_params['stored_model_dir']
     norm_block_size = train_params.get('norm_block_size', nr_symbols_per_channel)
+    sigma_theta_warmup_epochs = train_params.get('sigma_theta_warmup_epochs', max(1, nr_epochs // 2))
 
     # folder for storing model
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -221,6 +222,17 @@ def train(sim_params, train_params):
     x_init = torch.zeros((batch_size, M, 2)).to(device)  # zeros as initial input for antennanode features
     # loop over batches
     for epoch in range(nr_epochs):
+        # curriculum: ramp sigma_theta linearly from 0 (epoch 0) up to the full target value
+        # (reached at epoch sigma_theta_warmup_epochs-1, held there after). Training on the full,
+        # large drift from initialization destabilizes optimization -- see the M8/K1/3bit/40deg
+        # run that ended up *worse* than the ZF/MRT baseline even before drift was applied at test
+        # time, vs. the same config converging normally at sigma_theta_deg=0. Validation always
+        # uses the full target value (below) so best-checkpoint selection tracks the real deployment
+        # condition, not the moving curriculum target.
+        ramp = min(1.0, epoch / max(1, sigma_theta_warmup_epochs - 1))
+        sigma_theta_rad_train = sigma_theta_rad * ramp
+        print(f'epoch {epoch}: sigma_theta_deg (train) = {np.rad2deg(sigma_theta_rad_train):.1f} '
+              f'(target {sigma_theta_deg:.1f})')
         running_loss = 0
         with tqdm(training_dataloader, unit='batch') as tqdmbatch:
             for i, batch in enumerate(tqdmbatch):
@@ -241,7 +253,7 @@ def train(sim_params, train_params):
                         outputs[:, :, sidx] = model(H, s[:, :, sidx])  # NN takes 1 channel and 1 symbol as input
 
                 normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
-                normalized_output = apply_phase_drift(normalized_output, sigma_theta_rad)
+                normalized_output = apply_phase_drift(normalized_output, sigma_theta_rad_train)
                 # print(f'{outputs=}')
 
                 # compute loss
@@ -441,8 +453,8 @@ if __name__ == '__main__':
     quant_params_path = os.path.join(PROJECT_ROOT, 'non-uniform-quant-params', f'Gaussian_var_{varx}', 'numerical')
 
     # sim params
-    M = 8
-    K = 1
+    M = 16
+    K = 2
     Pt = M
     bits = 2
     quant = True #train with or without quantization
@@ -463,6 +475,10 @@ if __name__ == '__main__':
     tau = 4 # for gumbel softmax
     stored_model_dir = f'stored_models_{channel_model}_generalized_bussgang_loss' # todo set to desired folder!
     norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
+    sigma_theta_warmup_epochs = nr_epochs // 2  # epochs to linearly ramp sigma_theta 0 -> target during training;
+                                                 # avoids destabilizing optimization by exposing the untrained
+                                                 # network to the full (possibly large) drift from epoch 0.
+                                                 # Validation/eval always use the full target sigma_theta_deg.
 
     # data set params
     Ntr = 200000 #should be multiple of batchsize 200000
@@ -501,7 +517,9 @@ if __name__ == '__main__':
         'nr_features': nr_features,
         'stored_model_dir': stored_model_dir,
         'norm_block_size': norm_block_size,
+        'sigma_theta_warmup_epochs': sigma_theta_warmup_epochs,
     }
+
 
 
     M = [8]

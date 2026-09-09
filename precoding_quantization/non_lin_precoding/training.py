@@ -463,7 +463,7 @@ if __name__ == '__main__':
                             # (each AP has its own free-running LO), but the mechanism is enabled for any channel_model
 
     # train paramsw
-    channel_model = 'iid' #'los' #'cellfree'
+    channel_model = 'cellfree' #'los' #'cellfree'
     nr_hidden_layers, nr_features = 4, 128
     model_type = 'GNN' #MLP, 'GNN', 'GNN_QAT'
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
@@ -522,9 +522,9 @@ if __name__ == '__main__':
 
 
 
-    M = [8]
-    K = [1]
-    bits = [3]
+    M = [16]
+    K = [2]
+    bits = [1, 2, 3]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
     for m in M:

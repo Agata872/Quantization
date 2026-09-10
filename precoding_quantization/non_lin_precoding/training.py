@@ -458,7 +458,7 @@ if __name__ == '__main__':
     Pt = M
     bits = 2
     quant = True #train with or without quantization
-    sigma_theta_deg = 40.0  # std dev [deg] of distributed RF-chain phase drift (post-DAC); 0 disables it
+    sigma_theta_deg = 10.0  # std dev [deg] of distributed RF-chain phase drift (post-DAC); 0 disables it
                             # -- see Phase_impact/phase_impact.ipynb; most physically relevant for 'cellfree'
                             # (each AP has its own free-running LO), but the mechanism is enabled for any channel_model
 

@@ -139,7 +139,7 @@ def train(sim_params, train_params):
 
     # folder for storing model
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    base_path = os.path.join(os.getcwd(), model_dir, f'M_{M}_K_{K}_bs_{batch_size}_layers_{nr_hidden_layers}_dl_{nr_features}_tau_{tau}')
+    base_path = os.path.join(os.getcwd(), model_dir, f'M_{M}_K_{K}_bs_{batch_size}_layers_{nr_hidden_layers}_dl_{nr_features}_tau_{tau}_sigmatheta_{sigma_theta_deg:g}deg')
 
     # quantizer params
     if bits == 1:
@@ -458,7 +458,7 @@ if __name__ == '__main__':
     Pt = M
     bits = 2
     quant = True #train with or without quantization
-    sigma_theta_deg = 10.0  # std dev [deg] of distributed RF-chain phase drift (post-DAC); 0 disables it
+    sigma_theta_deg = 20.0  # std dev [deg] of distributed RF-chain phase drift (post-DAC); 0 disables it
                             # -- see Phase_impact/phase_impact.ipynb; most physically relevant for 'cellfree'
                             # (each AP has its own free-running LO), but the mechanism is enabled for any channel_model
 
@@ -522,29 +522,32 @@ if __name__ == '__main__':
 
 
 
-    M = [16]
-    K = [2]
+    M = [8]
+    K = [1]
     bits = [1, 2, 3]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
+    sigma_theta_deg_range = [10.0, 15.0, 20.0]  # sweep over different RF-chain phase drift levels
     for m in M:
         for tau in tau_range:
             for b in bits:
                 for k in K:
-                    sim_params['K'] = k
-                    sim_params['M'] = m
-                    sim_params['Pt'] = m
-                    sim_params['bits'] = b
-                    snr_tx = 20  # in db
-                    noise_var = sim_params['Pt'] / (10 ** (snr_tx / 10))
-                    sim_params['noise_var'] = noise_var
-                    training_params['output_type'] = 'gumbel_softmax_hard'
-                    training_params['tau'] = tau
-                    print(f'---------------starting training for-------------------')
-                    print(f'{sim_params=}')
-                    print(f'{training_params=}')
-                    train(sim_params, training_params)
-                    print(f'--------------------Done training---------------')
+                    for sigma_theta_deg in sigma_theta_deg_range:
+                        sim_params['K'] = k
+                        sim_params['M'] = m
+                        sim_params['Pt'] = m
+                        sim_params['bits'] = b
+                        sim_params['sigma_theta_deg'] = sigma_theta_deg
+                        snr_tx = 20  # in db
+                        noise_var = sim_params['Pt'] / (10 ** (snr_tx / 10))
+                        sim_params['noise_var'] = noise_var
+                        training_params['output_type'] = 'gumbel_softmax_hard'
+                        training_params['tau'] = tau
+                        print(f'---------------starting training for-------------------')
+                        print(f'{sim_params=}')
+                        print(f'{training_params=}')
+                        train(sim_params, training_params)
+                        print(f'--------------------Done training---------------')
 
     """ todo:
     - speed up GNN

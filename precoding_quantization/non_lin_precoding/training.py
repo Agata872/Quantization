@@ -1,3 +1,4 @@
+import glob
 import os
 import sys
 
@@ -104,7 +105,50 @@ def normalize_outputs(outputs, Pt, norm_block_size):
         return normalized
 
 
-def train(sim_params, train_params):
+def compute_base_path(model_dir, M, K, batch_size, nr_hidden_layers, nr_features, tau, sigma_theta_deg):
+    return os.path.join(os.getcwd(), model_dir,
+                         f'M_{M}_K_{K}_bs_{batch_size}_layers_{nr_hidden_layers}_dl_{nr_features}_'
+                         f'tau_{tau}_sigmatheta_{sigma_theta_deg:g}deg')
+
+
+def find_resume_candidate(base_path, bits, output_type, model_type):
+    """Look for a previous run of this exact (bits, output_type, model_type) combo under base_path.
+
+    Returns ('done', run_dir) if a run already finished (has the final Rsum_testeset.pdf),
+    ('resume', checkpoint_path) if a run left a per-epoch checkpoint to continue from,
+    or (None, None) if there's nothing to pick up -- caller should train from scratch.
+    """
+    if model_type == 'GNN_QAT':
+        prefix = f'{bits}_bits_GNN_QAT_{output_type}_'
+    elif model_type == 'GNN':
+        prefix = f'{bits}_bits_GNN_{output_type}_'
+    elif model_type == 'MLP':
+        prefix = f'{bits}_bits_MLP_'
+    else:
+        return None, None
+
+    if not os.path.isdir(base_path):
+        return None, None
+
+    candidates = sorted(
+        d for d in os.listdir(base_path)
+        if d.startswith(prefix) and os.path.isdir(os.path.join(base_path, d))
+    )
+    if not candidates:
+        return None, None
+
+    run_dir = os.path.join(base_path, candidates[-1])  # most recent timestamp
+    if os.path.exists(os.path.join(run_dir, 'Rsum_testeset.pdf')):
+        return 'done', run_dir
+
+    checkpoints = sorted(glob.glob(os.path.join(run_dir, 'checkpoint_*.pt')))
+    if checkpoints:
+        return 'resume', checkpoints[-1]
+
+    return None, None
+
+
+def train(sim_params, train_params, resume_from=None):
 
     # unpack simulation parameters
     M = sim_params['M']
@@ -136,10 +180,17 @@ def train(sim_params, train_params):
     model_dir = train_params['stored_model_dir']
     norm_block_size = train_params.get('norm_block_size', nr_symbols_per_channel)
     sigma_theta_warmup_epochs = train_params.get('sigma_theta_warmup_epochs', max(1, nr_epochs // 2))
+    nr_drift_mc_samples = train_params.get('nr_drift_mc_samples', 4)
 
     # folder for storing model
-    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    base_path = os.path.join(os.getcwd(), model_dir, f'M_{M}_K_{K}_bs_{batch_size}_layers_{nr_hidden_layers}_dl_{nr_features}_tau_{tau}_sigmatheta_{sigma_theta_deg:g}deg')
+    checkpoint = None
+    if resume_from is not None:
+        checkpoint = torch.load(resume_from, map_location='cpu', weights_only=False)
+        timestamp = checkpoint['timestamp']  # reuse the interrupted run's timestamp/folder
+        print(f'resuming from checkpoint: {resume_from}')
+    else:
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    base_path = compute_base_path(model_dir, M, K, batch_size, nr_hidden_layers, nr_features, tau, sigma_theta_deg)
 
     # quantizer params
     if bits == 1:
@@ -218,21 +269,36 @@ def train(sim_params, train_params):
     loss_history = []
     vloss_history = []
     best_vloss = 0
+    start_epoch = 0
+
+    if checkpoint is not None:
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        loss_history = checkpoint['loss_history']
+        vloss_history = checkpoint['vloss_history']
+        best_vloss = checkpoint['best_vloss']
+        start_epoch = checkpoint['epoch'] + 1
+        print(f'resumed at epoch {start_epoch}/{nr_epochs} (best_vloss so far: {best_vloss})')
 
     x_init = torch.zeros((batch_size, M, 2)).to(device)  # zeros as initial input for antennanode features
     # loop over batches
-    for epoch in range(nr_epochs):
-        # curriculum: ramp sigma_theta linearly from 0 (epoch 0) up to the full target value
-        # (reached at epoch sigma_theta_warmup_epochs-1, held there after). Training on the full,
-        # large drift from initialization destabilizes optimization -- see the M8/K1/3bit/40deg
-        # run that ended up *worse* than the ZF/MRT baseline even before drift was applied at test
-        # time, vs. the same config converging normally at sigma_theta_deg=0. Validation always
-        # uses the full target value (below) so best-checkpoint selection tracks the real deployment
-        # condition, not the moving curriculum target.
+    for epoch in range(start_epoch, nr_epochs):
+        # curriculum: ramp the *ceiling* of the training-time sigma_theta range linearly from 0
+        # (epoch 0) up to the full target value (reached at epoch sigma_theta_warmup_epochs-1, held
+        # there after). Training on the full, large drift from initialization destabilizes
+        # optimization -- see the M8/K1/3bit/40deg run that ended up *worse* than the ZF/MRT baseline
+        # even before drift was applied at test time, vs. the same config converging normally at
+        # sigma_theta_deg=0.
+        # Within that ceiling, every batch draws its own sigma_theta ~ U(0, ceiling) instead of
+        # training at one fixed value per epoch: a single checkpoint then has to stay good across the
+        # whole severity range instead of overfitting to one operating point, so it should generalize
+        # better to deployment drift levels that don't exactly match sigma_theta_deg. Validation
+        # always uses the full target value (below) so best-checkpoint selection tracks the real
+        # deployment condition, not the training-time sampling range.
         ramp = min(1.0, epoch / max(1, sigma_theta_warmup_epochs - 1))
-        sigma_theta_rad_train = sigma_theta_rad * ramp
-        print(f'epoch {epoch}: sigma_theta_deg (train) = {np.rad2deg(sigma_theta_rad_train):.1f} '
-              f'(target {sigma_theta_deg:.1f})')
+        sigma_theta_rad_ceiling = sigma_theta_rad * ramp
+        print(f'epoch {epoch}: sigma_theta_deg (train ceiling) = {np.rad2deg(sigma_theta_rad_ceiling):.1f} '
+              f'(target {sigma_theta_deg:.1f}), sampled per-batch from U(0, ceiling)')
         running_loss = 0
         with tqdm(training_dataloader, unit='batch') as tqdmbatch:
             for i, batch in enumerate(tqdmbatch):
@@ -253,12 +319,20 @@ def train(sim_params, train_params):
                         outputs[:, :, sidx] = model(H, s[:, :, sidx])  # NN takes 1 channel and 1 symbol as input
 
                 normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
-                normalized_output = apply_phase_drift(normalized_output, sigma_theta_rad_train)
                 # print(f'{outputs=}')
 
-                # compute loss
-                loss = loss_fn(normalized_output.to(device), H.type(torch.complex64), s.type(torch.complex64),
-                               noise_var)
+                # sample this batch's drift severity, then average the loss over several independent
+                # phase-drift realizations at that severity (Monte-Carlo estimate of E_theta[loss]):
+                # a single realization gives a high-variance gradient since dtheta is resampled fresh
+                # on every apply_phase_drift call.
+                sigma_theta_rad_train = sigma_theta_rad_ceiling * float(torch.rand(1))
+                mc_samples = nr_drift_mc_samples if sigma_theta_rad_train > 0 else 1
+                loss = 0.0
+                for _ in range(mc_samples):
+                    drifted_output = apply_phase_drift(normalized_output, sigma_theta_rad_train)
+                    loss = loss + loss_fn(drifted_output.to(device), H.type(torch.complex64),
+                                          s.type(torch.complex64), noise_var)
+                loss = loss / mc_samples
 
                 # backprop + gradient descent step
                 loss.backward()
@@ -288,11 +362,16 @@ def train(sim_params, train_params):
                     outputs[:, :, sidx] = model(H, s[:, :, sidx], x_init)  # NN takes 1 channel and 1 symbol as input
 
                 normalized_output = normalize_outputs(outputs, Pt, norm_block_size)
-                normalized_output = apply_phase_drift(normalized_output, sigma_theta_rad)
 
-                # compute loss
-                vloss = loss_fn(normalized_output.to(device), H.type(torch.complex64), s.type(torch.complex64),
-                                noise_var)
+                # average over multiple drift realizations for a lower-variance validation metric
+                # (same MC averaging as training), so best-checkpoint selection isn't noisy
+                mc_samples = nr_drift_mc_samples if sigma_theta_rad > 0 else 1
+                vloss = 0.0
+                for _ in range(mc_samples):
+                    drifted_output = apply_phase_drift(normalized_output, sigma_theta_rad)
+                    vloss = vloss + loss_fn(drifted_output.to(device), H.type(torch.complex64),
+                                            s.type(torch.complex64), noise_var)
+                vloss = vloss / mc_samples
                 running_vloss += vloss.item()
 
         # log the validation loss
@@ -305,6 +384,21 @@ def train(sim_params, train_params):
             best_vloss = avg_vloss
             path = os.path.join(model_path, 'model_{}'.format(timestamp))
             torch.save(model.state_dict(), path)
+
+        # Always persist a full checkpoint after every epoch (model + optimizer + epoch + loss
+        # history), overwriting the previous one. Unlike the best-vloss-only weights file above,
+        # this has everything needed to resume training exactly if the process is interrupted
+        # (crash, reboot, preemption) -- see find_resume_candidate()/resume_from above.
+        checkpoint_path = os.path.join(model_path, f'checkpoint_{timestamp}.pt')
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'best_vloss': best_vloss,
+            'loss_history': loss_history,
+            'vloss_history': vloss_history,
+            'timestamp': timestamp,
+        }, checkpoint_path)
 
         # print epoch nr
         print(f'epoch: {epoch}')
@@ -469,16 +563,18 @@ if __name__ == '__main__':
     output_type = 'gumbel_softmax_hard' #'softmax_hard', 'softmax', 'gumbel_softmax_hard', 'gumbel_softmax'
     batch_size = 128 #128, 64
     lr = 0.5*10**-3
-    nr_epochs = 20 #20 #10
+    nr_epochs = 25 #20 #10
     snr_tx = 20  # in db
     noise_var = Pt / (10 ** (snr_tx / 10))
     tau = 4 # for gumbel softmax
-    stored_model_dir = f'stored_models_{channel_model}_generalized_bussgang_loss' # todo set to desired folder!
+    stored_model_dir = f'stored_models_{channel_model}_generalized_bussgang_loss_mcdrift_randsigma' # todo set to desired folder!
     norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
-    sigma_theta_warmup_epochs = nr_epochs // 2  # epochs to linearly ramp sigma_theta 0 -> target during training;
-                                                 # avoids destabilizing optimization by exposing the untrained
-                                                 # network to the full (possibly large) drift from epoch 0.
+    sigma_theta_warmup_epochs = nr_epochs // 2  # epochs to linearly ramp the training sigma_theta *ceiling*
+                                                 # 0 -> target; avoids destabilizing optimization by exposing the
+                                                 # untrained network to the full (possibly large) drift from epoch 0.
                                                  # Validation/eval always use the full target sigma_theta_deg.
+    nr_drift_mc_samples = 4  # nr of independent phase-drift realizations averaged into the loss per batch,
+                              # to reduce the gradient/validation-metric variance from the single-realization draw
 
     # data set params
     Ntr = 200000 #should be multiple of batchsize 200000
@@ -518,16 +614,17 @@ if __name__ == '__main__':
         'stored_model_dir': stored_model_dir,
         'norm_block_size': norm_block_size,
         'sigma_theta_warmup_epochs': sigma_theta_warmup_epochs,
+        'nr_drift_mc_samples': nr_drift_mc_samples,
     }
 
 
 
-    M = [8]
-    K = [1]
-    bits = [1, 2, 3]
+    M = [40]
+    K = [1, 2, 4]
+    bits = [1, 2]
     output = ['softmax_hard', 'gumbel_softmax_hard', 'softmax_hard', 'softmax', 'gumbel_softmax'] #todo later
     tau_range = [1] #todo later (+annealing during training)
-    sigma_theta_deg_range = [10.0, 15.0, 20.0]  # sweep over different RF-chain phase drift levels
+    sigma_theta_deg_range = [15.0, 20.0]  # sweep over different RF-chain phase drift levels
     for m in M:
         for tau in tau_range:
             for b in bits:
@@ -543,10 +640,26 @@ if __name__ == '__main__':
                         sim_params['noise_var'] = noise_var
                         training_params['output_type'] = 'gumbel_softmax_hard'
                         training_params['tau'] = tau
+
+                        # auto-resume: skip combos that already finished, pick up combos that were
+                        # interrupted (crash/reboot) from their last per-epoch checkpoint, so a plain
+                        # re-run of this script after an interruption doesn't waste the sweep progress
+                        combo_base_path = compute_base_path(
+                            training_params['stored_model_dir'], m, k, training_params['batch_size'],
+                            training_params['nr_hidden_layers'], training_params['nr_features'], tau,
+                            sigma_theta_deg)
+                        status, info = find_resume_candidate(
+                            combo_base_path, b, training_params['output_type'], training_params['model_type'])
+                        if status == 'done':
+                            print(f'skipping (already completed): {info}')
+                            continue
+                        resume_from = info if status == 'resume' else None
+
                         print(f'---------------starting training for-------------------')
                         print(f'{sim_params=}')
                         print(f'{training_params=}')
-                        train(sim_params, training_params)
+                        print(f'{resume_from=}')
+                        train(sim_params, training_params, resume_from=resume_from)
                         print(f'--------------------Done training---------------')
 
     """ todo:

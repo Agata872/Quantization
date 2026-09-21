@@ -568,7 +568,7 @@ if __name__ == '__main__':
     noise_var = Pt / (10 ** (snr_tx / 10))
     tau = 4 # for gumbel softmax
     stored_model_dir = f'stored_models_{channel_model}_generalized_bussgang_loss_mcdrift_randsigma' # todo set to desired folder!
-    norm_block_size = 14  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
+    norm_block_size = 125  # symbols per normalization block; set to nr_symbols_per_channel for original behavior
     sigma_theta_warmup_epochs = nr_epochs // 2  # epochs to linearly ramp the training sigma_theta *ceiling*
                                                  # 0 -> target; avoids destabilizing optimization by exposing the
                                                  # untrained network to the full (possibly large) drift from epoch 0.

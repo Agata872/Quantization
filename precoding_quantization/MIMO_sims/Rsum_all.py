@@ -234,7 +234,15 @@ def bussgang_at_receiver(S, r, noise_vars, x=None):
         pwr_usefull_sig = np.abs(G) ** 2 * Css
         test = np.mean(rk * rk.conj())
         varr = np.var(rk)
-        pwr_dist_interference = np.mean(rk * rk.conj()) - np.abs(G) ** 2 * Css
+        # pwr_dist_interference is a power (variance) and can never be negative; in single
+        # precision it is computed as a difference of two nearly-equal large numbers (catastrophic
+        # cancellation), which can leave a small negative residual when the true distortion is ~0
+        # (e.g. the no-quantization baseline). Left uncorrected, that negative residual can exceed
+        # noise_vars at high SNR and flip the SINDR denominator negative, sending log2(1+sindr) to
+        # NaN. Clip at 0 since only floating-point rounding can make it negative.
+        pwr_dist_interference = np.maximum(
+            np.real(np.mean(rk * rk.conj()) - np.abs(G) ** 2 * Css), 0.0
+        )
 
         sindr[k, :] = np.real(pwr_usefull_sig / (pwr_dist_interference + noise_vars))
     R = np.real(np.sum(np.log2(1 + sindr), axis=0))

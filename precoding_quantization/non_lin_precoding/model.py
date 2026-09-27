@@ -428,10 +428,18 @@ class SumRateLoss_generalized_Bussgang(nn.Module):
         """
         nr_symb = nn_outputs.shape[-1]
 
-        # decompose y = Gs + q (G: bs x M x K)
-        G_full = (nn_outputs @ torch.transpose(torch.conj(s), 1, 2)) / nr_symb  # = E(y s^H)
-        #cov_s = (s @ torch.transpose(torch.conj(s), 1, 2)) / nr_symb # = E(s s^H) = diag(1)
-        #G_full = G @ torch.linalg.inv(cov_s)
+        # decompose y = Gs + q (G: bs x M x K), G fitted by least squares over the block.
+        # E(s s^H) = I holds for the population but not for nr_symb=125 samples: each stream's
+        # sample power is off by ~1/sqrt(nr_symb) ~ 9%, and without the inverse below that
+        # mismatch is booked as distortion lying along the useful signal, which caps the SINDR
+        # near nr_symb (~24 dB). Unquantized MRT then saturated at 8.4 instead of 13.8 bits at
+        # 30 dB. For TRAINING the two forms were measured to be interchangeable (per channel the
+        # biased SINDR is a monotone function of the true one, so the optimum does not move:
+        # 4.570 vs 4.549 after 4 epochs, K=1), but the rate this returns is only correct with it.
+        # MIMO_sims/Rsum_all.py (bussgang_wrt_s, bussgang_at_receiver) already did this.
+        R_ys = (nn_outputs @ torch.transpose(torch.conj(s), 1, 2)) / nr_symb  # E(y s^H)
+        R_ss = (s @ torch.transpose(torch.conj(s), 1, 2)) / nr_symb            # E(s s^H)
+        G_full = R_ys @ torch.linalg.inv(R_ss)
         q = nn_outputs - G_full @ s
 
         # some stuff we will reuse later

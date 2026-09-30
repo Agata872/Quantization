@@ -1,5 +1,6 @@
-"""Uncoded BER with Gray-mapped 16-QAM at SNR = 20 dB: GNN vs. IDE with beta_WF (Wang et al., TWC 2018, Alg. 1)
-for b = 1, 2, 3, and SQUID (Jacobsson et al., TCOM 2017) for b = 1. M = 40, K in {1, 2, 4, 6}.
+"""Uncoded BER with Gray-mapped 16-QAM at SNR = 20 dB: GNN vs. IDE with a calibrated fixed beta and with block beta
+(Wang et al., TWC 2018, Alg. 1) for b = 1, 2, 3, and SQUID (Jacobsson et al., TCOM 2017) for b = 1. M = 40,
+K in {1, 2, 4, 6}.
 
 Self-contained (the former QPSK companion script, from which the shared settings below came, was removed).
 Symbols: Gray 16-QAM, per-dimension levels {-3, -1, 1, 3}/sqrt(10) (unit average energy), i.i.d. (seed 1234 for
@@ -9,7 +10,11 @@ Precoders: GNN (best checkpoint of the continued runs, argmax), IDE_WF = ide_bas
 (T = 100, alpha = 0.95, beta = beta_WF of eq. (7)), IDE_block = ide_baseline.precode(..., 'ide', 'block') (beta of
 (26) summed over the block, one beta per channel realization, updated every 10 iterations), SQUID (50 iterations,
 rho = 1) with gain selected from GAINS by the 16-QAM BER on the tuning channels; ZF/MRT + DAC is stored as a
-reference only. The figure of the paper shows GNN, IDE_WF, IDE_block and SQUID.
+reference only. IDE_cal: per channel realization, beta = ide_baseline.calibrated_beta(...), the value of the block
+update on an independent training block of 125 16-QAM symbol vectors (seed SEED_CAL, never the data), then
+ide_baseline.precode(..., 'ide', 'fixed', beta_fixed=beta): every symbol vector is processed independently with a
+fixed beta, as for IDE_WF, but without its mis-scaling on the DAC grid; the ratio to beta_WF is stored.
+The figure of the paper shows GNN, IDE_cal, IDE_block and SQUID (IDE_WF, the earlier version, is kept in the json).
 Receiver: UE k divides by its effective gain per block, g_k = sum_t r_k[t] s_k[t]^* / sum_t |s_k[t]|^2 (noiseless
 r = H^T y), and detects each dimension with the PAM-4 thresholds {0, +-2/sqrt(10)}. Per dimension, bit 1 (sign)
 errs with Q(sign(a) u / sd) and bit 2 (inner/outer) with Q((d - u)/sd) + Q((d + u)/sd) if an inner level a was
@@ -71,10 +76,23 @@ def gnn_precode(model, H, s, levels, chunk=256):
                       for i in range(0, H.shape[0], chunk)])
 
 
+SEED_CAL = 777          # training symbols for the calibrated beta of IDE (independent of the data, seed 1234)
+CAL_STATS = {}
+
+
+def ide_calibrated(K, b, H, s, lv):
+    beta = ide_baseline.calibrated_beta(H, qam16(H.shape[0], K, SEED_CAL), lv, SNR_DB)
+    ratio = beta / ide_baseline.beta_wf_values(H, SNR_DB)
+    CAL_STATS[K, b] = {'median_over_beta_wf': float(ratio.median()),
+                       'p10_p90_over_beta_wf': [float(ratio.quantile(q)) for q in (0.1, 0.9)]}
+    return ide_baseline.precode(H, s, lv, SNR_DB, 'ide', 'fixed', beta_fixed=beta)
+
+
 METHODS = {
     'gnn': lambda K, b, H, s, lv: gnn_precode(load_gnn(K, b, lv), H, s, lv),
     'ide_wf': lambda K, b, H, s, lv: ide_baseline.precode(H, s, lv, SNR_DB, 'ide', 'wf'),
     'ide_block': lambda K, b, H, s, lv: ide_baseline.precode(H, s, lv, SNR_DB, 'ide', 'block'),
+    'ide_cal': ide_calibrated,
     'zf_dac': lambda K, b, H, s, lv: normalize_power(linear_quantized(H, s, lv, PT), PT),
 }
 
@@ -126,6 +144,8 @@ def main():
             levels = load_levels(b, DEV)
             for m, f in todo.items():
                 res[m] = ber(f(K, b, H, s, levels), H, s)
+                if m == 'ide_cal':
+                    res['ide_cal_beta'] = CAL_STATS.pop((K, b))
             if b == 1 and 'squid' not in res:
                 N0 = 10 ** (-SNR_DB / 10)
                 tune = {gn: ber(normalize_power(squid_baseline.squid(Ht, st, N0, gn), PT), Ht, st) for gn in GAINS}
@@ -136,7 +156,7 @@ def main():
                            squid_tuning={f'{k:g}': v for k, v in tune.items()})
             out['results'][f'K{K}b{b}'] = res
             print(f'K{K} b{b}: ' + ' | '.join(f'{k} {v:.3e}' if k != 'squid_gain' else f'{k} {v}'
-                                              for k, v in res.items() if k != 'squid_tuning')
+                                              for k, v in res.items() if not isinstance(v, dict))
                   + f'  ({time.perf_counter() - t0:.0f} s)', flush=True)
             json.dump(out, open(OUT, 'w'), indent=1)
 

@@ -23,6 +23,9 @@ Precoding factor beta (--variants algorithm:beta_mode):
           realization, updated every 10 iterations. Strongest variant under our metric, but it couples the
           symbols of a block (the whole block must be available, as for GNN-GD).
   wf      beta fixed to beta_WF of eq. (7) per channel realization: causal, per-symbol processing.
+  cal     calibrated fixed beta (calibrated_beta): per channel realization, the value that the block update
+          reaches on an independent training block (same distribution as the data, never the data), then
+          fixed: causal, per-symbol processing like wf, without the mis-scaling of beta_WF on the DAC grid.
 
 Every rate: LS Bussgang estimator after per-block power normalization, test set [4096:6144], 125 symbols per
 channel -- the numbers every other curve of the paper uses.
@@ -75,30 +78,35 @@ def beta_wf(A, sig2):
     """Precoding factor of the Wiener-filter precoder, eq. (7), with N P_tx = 1: one value per channel (C)."""
     K = A.shape[1]
     W = A.conj().transpose(1, 2) @ torch.linalg.inv(A @ A.conj().transpose(1, 2)
-                                                     + K * sig2 * torch.eye(K, dtype=A.dtype))
+                                                     + K * sig2 * torch.eye(K, dtype=A.dtype, device=A.device))
     return (W.abs() ** 2).sum((1, 2)).sqrt()
 
 
-def ide(A, S, lv, sig2, variant='ide', T=100, alpha=0.95, beta_every=10, beta_mode='symbol'):
-    """A: C x K x M, S: C x N x K (one row per symbol vector), lv: real levels. Returns x: C x N x M.
+def ide(A, S, lv, sig2, variant='ide', T=100, alpha=0.95, beta_every=10, beta_mode='symbol', beta_fixed=None,
+        return_beta=False):
+    """A: C x K x M, S: C x N x K (one row per symbol vector), lv: real levels. Returns x: C x N x M
+    (and beta: C x N after the last iteration if return_beta).
 
     beta_mode  'symbol': (26) per symbol vector, as in the paper (the UE is assumed to know every beta^t);
                'block' : (26) with numerator and denominator summed over the N symbols of the block, so that all
                          symbols of a channel realization share one beta (a UE with one gain per block);
-               'wf'    : fixed beta = beta_WF of eq. (7), one per channel realization, never updated."""
+               'wf'    : fixed beta = beta_WF of eq. (7), one per channel realization, never updated;
+               'fixed' : fixed beta = beta_fixed (C values, one per channel realization), never updated."""
     C, K, M = A.shape
     N = S.shape[1]
     AH = A.conj().transpose(1, 2)                                    # C x M x K
     G = A @ AH                                                       # C x K x K  (A A^H)
     trG = G.diagonal(dim1=1, dim2=2).real.sum(-1)                    # tr(A^H A)
     col2 = (A.abs() ** 2).sum(1)                                     # C x M, diag(A^H A)
-    eye = torch.eye(K, dtype=A.dtype)
-    xd = torch.zeros(C, N, M, dtype=A.dtype)
+    eye = torch.eye(K, dtype=A.dtype, device=A.device)
+    xd = torch.zeros(C, N, M, dtype=A.dtype, device=A.device)
     if beta_mode == 'wf':
         beta = beta_wf(A, sig2)[:, None].expand(C, N).clone()
+    elif beta_mode == 'fixed':
+        beta = beta_fixed.to(A.device, torch.float64)[:, None].expand(C, N).clone()
     else:
-        beta = torch.ones(C, N, dtype=torch.float64)
-    gd = torch.ones(C, N, dtype=torch.float64)
+        beta = torch.ones(C, N, dtype=torch.float64, device=A.device)
+    gd = torch.ones(C, N, dtype=torch.float64, device=A.device)
     x = xd
     for t in range(T):
         b = beta
@@ -118,26 +126,55 @@ def ide(A, S, lv, sig2, variant='ide', T=100, alpha=0.95, beta_every=10, beta_mo
         else:
             raise ValueError(variant)
         xd = alpha * xd + (1 - alpha) * x                                                 # line 8 / 6
-        if beta_mode != 'wf' and (t + 1) % beta_every == 0:                               # (26)
+        if beta_mode not in ('wf', 'fixed') and (t + 1) % beta_every == 0:                # (26)
             Ax = torch.einsum('ckm,cnm->cnk', A, x)
             num, den = (S.conj() * Ax).sum(-1).real, (Ax.abs() ** 2).sum(-1) + K * sig2
             if beta_mode == 'block':
                 num, den = num.sum(1, keepdim=True).expand(C, N), den.sum(1, keepdim=True).expand(C, N)
             beta = (num / den).clamp_min(1e-6)
-    return x
+    return (x, beta) if return_beta else x
 
 
-def precode(H, s, levels, snr_db, variant, beta_mode='symbol', chunk=128):
-    """H: n x M x K, s: n x K x Ns -> power-normalized y: n x M x Ns (complex64)."""
-    lv = (levels.double() / PT ** 0.5)
+def precode(H, s, levels, snr_db, variant, beta_mode='symbol', chunk=128, beta_fixed=None, device=None):
+    """H: n x M x K, s: n x K x Ns -> power-normalized y: n x M x Ns (complex64).
+    beta_fixed: n values for beta_mode 'fixed' (e.g. from calibrated_beta).
+    device: where IDE runs (default: that of H); the result is returned on the device of H."""
+    dev = H.device if device is None else torch.device(device)
+    lv = (levels.double() / PT ** 0.5).to(dev)
     sig2 = 10 ** (-snr_db / 10)
     ys = []
     for i in range(0, H.shape[0], chunk):
-        A = H[i:i + chunk].transpose(1, 2).to(torch.complex128)
-        S = s[i:i + chunk].transpose(1, 2).to(torch.complex128)
-        x = ide(A, S, lv, sig2, variant, beta_mode=beta_mode)
-        ys.append(x.transpose(1, 2).to(torch.complex64))
+        A = H[i:i + chunk].transpose(1, 2).to(dev, torch.complex128)
+        S = s[i:i + chunk].transpose(1, 2).to(dev, torch.complex128)
+        bf = None if beta_fixed is None else beta_fixed[i:i + chunk]
+        x = ide(A, S, lv, sig2, variant, beta_mode=beta_mode, beta_fixed=bf)
+        ys.append(x.transpose(1, 2).to(H.device, torch.complex64))
     return normalize_power(torch.cat(ys), PT)
+
+
+def calibrated_beta(H, train, levels, snr_db, variant='ide', chunk=128, device=None):
+    """Calibrated fixed precoding factor, one per channel realization: the beta that the block update (26) reaches on
+    the independent training block `train` (n x K x N_train, same distribution as the data, never the data).
+    Precoding the data with beta_mode='fixed', beta_fixed=calibrated_beta(...) then processes every symbol vector
+    independently, as with beta_WF, but with a precoding factor that matches the DAC grid.
+    device: where IDE runs (default: that of H); the result is returned on the device of H."""
+    dev = H.device if device is None else torch.device(device)
+    lv = (levels.double() / PT ** 0.5).to(dev)
+    sig2 = 10 ** (-snr_db / 10)
+    betas = []
+    for i in range(0, H.shape[0], chunk):
+        A = H[i:i + chunk].transpose(1, 2).to(dev, torch.complex128)
+        S = train[i:i + chunk].transpose(1, 2).to(dev, torch.complex128)
+        _, beta = ide(A, S, lv, sig2, variant, beta_mode='block', return_beta=True)
+        betas.append(beta[:, 0].to(H.device))
+    return torch.cat(betas)
+
+
+def beta_wf_values(H, snr_db, chunk=512):
+    """beta_WF of eq. (7) per channel realization (n values), for comparison with calibrated_beta."""
+    sig2 = 10 ** (-snr_db / 10)
+    return torch.cat([beta_wf(H[i:i + chunk].transpose(1, 2).to(torch.complex128), sig2)
+                      for i in range(0, H.shape[0], chunk)])
 
 
 def rate(y, H, s, snr_db):

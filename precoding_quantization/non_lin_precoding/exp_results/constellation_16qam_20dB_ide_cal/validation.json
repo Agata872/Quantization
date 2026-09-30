@@ -1,0 +1,4958 @@
+{
+  "passed": true,
+  "n_checks": 641,
+  "n_failed": 0,
+  "independent_implementation": "NumPy + Python standard library; no simulator imports",
+  "transmit_power": 40.0,
+  "noise_variance": 0.4,
+  "checks": [
+    {
+      "name": "metadata/status",
+      "passed": true
+    },
+    {
+      "name": "metadata/antennas",
+      "passed": true
+    },
+    {
+      "name": "metadata/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "metadata/configuration",
+      "passed": true
+    },
+    {
+      "name": "metadata/snr_noise_variance",
+      "passed": true
+    },
+    {
+      "name": "metadata/methods",
+      "passed": true,
+      "detail": {
+        "methods": [
+          "gnn",
+          "ide_cal"
+        ]
+      }
+    },
+    {
+      "name": "metadata/case_files",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "shared_K1/H/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/tx_symbols/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/tx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/noise/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/channel_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/n_eval/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/snapshot_channel_index/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/noise_variance/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/H/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          1
+        ],
+        "expected": [
+          2080,
+          40,
+          1
+        ]
+      }
+    },
+    {
+      "name": "shared_K1/tx_symbols/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "shared_K1/tx_bits/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125,
+          4
+        ],
+        "expected": [
+          2080,
+          1,
+          125,
+          4
+        ]
+      }
+    },
+    {
+      "name": "shared_K1/noise/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "shared_K1/channel_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "shared_K1/n_eval",
+      "passed": true,
+      "detail": {
+        "n_eval": 2048,
+        "n_snapshot_blocks": 32,
+        "evaluation_symbols_per_user": 256000
+      }
+    },
+    {
+      "name": "shared_K1/snapshot_count",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/snapshot_index",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/noise_variance_metadata",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/evaluation_indices",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/snapshot_indices",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/snapshot_channel",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/tx_bits_binary",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/gray_mapping",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/gray_roundtrip",
+      "passed": true
+    },
+    {
+      "name": "shared_K1/noise_variance",
+      "passed": true,
+      "detail": {
+        "measured": 0.40005852018269433,
+        "target": 0.4,
+        "relative_error": 0.00014630045673569292,
+        "relative_tolerance": 0.03,
+        "n_complex_samples": 256000
+      }
+    },
+    {
+      "name": "shared_K1/noise_real_mean",
+      "passed": true,
+      "detail": {
+        "mean": -0.0007705317911551504,
+        "five_sigma_bound": 0.004419417382415922
+      }
+    },
+    {
+      "name": "shared_K1/noise_real_variance",
+      "passed": true,
+      "detail": {
+        "relative_error": 0.0014391667351432158,
+        "relative_tolerance": 0.03
+      }
+    },
+    {
+      "name": "shared_K1/noise_imag_mean",
+      "passed": true,
+      "detail": {
+        "mean": 1.7069292360362586e-05,
+        "five_sigma_bound": 0.004419417382415922
+      }
+    },
+    {
+      "name": "shared_K1/noise_imag_variance",
+      "passed": true,
+      "detail": {
+        "relative_error": 0.0017317676486148237,
+        "relative_tolerance": 0.03
+      }
+    },
+    {
+      "name": "shared_K1/noise_iq_cross_moment",
+      "passed": true,
+      "detail": {
+        "normalized_cross_moment": -0.0014915127043771538
+      }
+    },
+    {
+      "name": "K1_b1_gnn/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K1_b1_gnn/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2
+        ],
+        "expected": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_gnn/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/equalization",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/one_bit_levels",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_gnn/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 3488
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/ide_beta/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2
+        ],
+        "expected": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b1_ide_cal/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/equalization",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/one_bit_levels",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K1_b1_ide_cal/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 3488
+      }
+    },
+    {
+      "name": "K1_b2_gnn/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K1_b2_gnn/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          4
+        ],
+        "expected": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_gnn/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/equalization",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_gnn/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 3488
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/ide_beta/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          4
+        ],
+        "expected": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b2_ide_cal/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/equalization",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K1_b2_ide_cal/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 3488
+      }
+    },
+    {
+      "name": "K1_b3_gnn/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K1_b3_gnn/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          8
+        ],
+        "expected": [
+          8
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_gnn/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/equalization",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_gnn/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 3488
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/ide_beta/finite",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          8
+        ],
+        "expected": [
+          8
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1,
+          125
+        ],
+        "expected": [
+          2080,
+          1,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          1
+        ],
+        "expected": [
+          2080,
+          1
+        ]
+      }
+    },
+    {
+      "name": "K1_b3_ide_cal/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/equalization",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K1_b3_ide_cal/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 3488
+      }
+    },
+    {
+      "name": "shared_K2/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "shared_K2/H/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/tx_symbols/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/tx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/noise/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/channel_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/n_eval/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/snapshot_channel_index/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/noise_variance/finite",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/H/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          2
+        ]
+      }
+    },
+    {
+      "name": "shared_K2/tx_symbols/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "shared_K2/tx_bits/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125,
+          4
+        ],
+        "expected": [
+          2080,
+          2,
+          125,
+          4
+        ]
+      }
+    },
+    {
+      "name": "shared_K2/noise/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "shared_K2/channel_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "shared_K2/n_eval",
+      "passed": true,
+      "detail": {
+        "n_eval": 2048,
+        "n_snapshot_blocks": 32,
+        "evaluation_symbols_per_user": 256000
+      }
+    },
+    {
+      "name": "shared_K2/snapshot_count",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/snapshot_index",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/noise_variance_metadata",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/evaluation_indices",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/snapshot_indices",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/snapshot_channel",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/tx_bits_binary",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/gray_mapping",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/gray_roundtrip",
+      "passed": true
+    },
+    {
+      "name": "shared_K2/noise_variance",
+      "passed": true,
+      "detail": {
+        "measured": 0.39916847341643974,
+        "target": 0.4,
+        "relative_error": 0.002078816458900734,
+        "relative_tolerance": 0.03,
+        "n_complex_samples": 512000
+      }
+    },
+    {
+      "name": "shared_K2/noise_real_mean",
+      "passed": true,
+      "detail": {
+        "mean": 0.00010977128928866597,
+        "five_sigma_bound": 0.003125
+      }
+    },
+    {
+      "name": "shared_K2/noise_real_variance",
+      "passed": true,
+      "detail": {
+        "relative_error": 0.0017990876062067285,
+        "relative_tolerance": 0.03
+      }
+    },
+    {
+      "name": "shared_K2/noise_imag_mean",
+      "passed": true,
+      "detail": {
+        "mean": -2.5091114466774032e-05,
+        "five_sigma_bound": 0.003125
+      }
+    },
+    {
+      "name": "shared_K2/noise_imag_variance",
+      "passed": true,
+      "detail": {
+        "relative_error": 0.002358545311595517,
+        "relative_tolerance": 0.03
+      }
+    },
+    {
+      "name": "shared_K2/noise_iq_cross_moment",
+      "passed": true,
+      "detail": {
+        "normalized_cross_moment": 0.0016647546520283769
+      }
+    },
+    {
+      "name": "K2_b1_gnn/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K2_b1_gnn/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2
+        ],
+        "expected": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_gnn/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/equalization",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/one_bit_levels",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_gnn/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 813
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/ide_beta/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2
+        ],
+        "expected": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b1_ide_cal/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/equalization",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/one_bit_levels",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K2_b1_ide_cal/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 813
+      }
+    },
+    {
+      "name": "K2_b2_gnn/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K2_b2_gnn/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          4
+        ],
+        "expected": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_gnn/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/equalization",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_gnn/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 813
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/ide_beta/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          4
+        ],
+        "expected": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b2_ide_cal/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/equalization",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K2_b2_ide_cal/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 813
+      }
+    },
+    {
+      "name": "K2_b3_gnn/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K2_b3_gnn/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          8
+        ],
+        "expected": [
+          8
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_gnn/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/equalization",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_gnn/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 813
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/required_arrays",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/tx_samples/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/dac_indices/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/levels/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/power_scale/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_noiseless/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_raw/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_equalized/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/gain/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_bits/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/bit_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/symbol_errors/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/evm_rms/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/ber_analytic/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/tx_power/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/ide_beta/finite",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/tx_samples/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125
+        ],
+        "expected": [
+          2080,
+          40,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/dac_indices/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          40,
+          125,
+          2
+        ],
+        "expected": [
+          2080,
+          40,
+          125,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/levels/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          8
+        ],
+        "expected": [
+          8
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/power_scale/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080
+        ],
+        "expected": [
+          2080
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_noiseless/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_raw/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_equalized/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2,
+          125
+        ],
+        "expected": [
+          2080,
+          2,
+          125
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/gain/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/bit_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/symbol_errors/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/evm_rms/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/ber_analytic/shape",
+      "passed": true,
+      "detail": {
+        "actual": [
+          2080,
+          2
+        ],
+        "expected": [
+          2080,
+          2
+        ]
+      }
+    },
+    {
+      "name": "K2_b3_ide_cal/dac_indices_range",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/dac_levels_sorted_distinct",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/positive_power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/dac_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/power_scale",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/transmit_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/channel_transpose_without_conjugation",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/shared_awgn",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/noise_disabled_reconstruction",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/nonzero_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/oracle_gain",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/equalization",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/rx_bits",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/stored_tx_power",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/bit_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/symbol_errors",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/evm_rms",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/analytic_ber",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/analytic_ber_probability",
+      "passed": true
+    },
+    {
+      "name": "K2_b3_ide_cal/deterministic_repeated_joint_symbols",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "comparisons": 813
+      }
+    }
+  ],
+  "max_errors": {
+    "metadata/snr_noise_variance": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "shared_K1/noise_variance_metadata": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "shared_K1/snapshot_channel": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "shared_K1/gray_mapping": {
+      "max_abs": 5.11650812012911e-08,
+      "max_tolerance_ratio": 0.2185009822867375
+    },
+    "K1_b1_gnn/dac_reconstruction": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "K1_b1_gnn/power_scale": {
+      "max_abs": 1.711427111139585e-08,
+      "max_tolerance_ratio": 0.004278567741236679
+    },
+    "K1_b1_gnn/transmit_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.013691416569372452
+    },
+    "K1_b1_gnn/channel_transpose_without_conjugation": {
+      "max_abs": 2.3240463391814698e-05,
+      "max_tolerance_ratio": 0.029608469675458916
+    },
+    "K1_b1_gnn/shared_awgn": {
+      "max_abs": 3.923740592627551e-06,
+      "max_tolerance_ratio": 0.00269595938585238
+    },
+    "K1_b1_gnn/noise_disabled_reconstruction": {
+      "max_abs": 2.626653447438857e-05,
+      "max_tolerance_ratio": 0.03078497223135398
+    },
+    "K1_b1_gnn/oracle_gain": {
+      "max_abs": 5.986912407755254e-06,
+      "max_tolerance_ratio": 0.014915021533593557
+    },
+    "K1_b1_gnn/equalization": {
+      "max_abs": 6.696892529792564e-07,
+      "max_tolerance_ratio": 0.011841044521861336
+    },
+    "K1_b1_gnn/stored_tx_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.0016696850032414032
+    },
+    "K1_b1_gnn/one_bit_levels": {
+      "max_abs": 1.2101617152815436e-08,
+      "max_tolerance_ratio": 0.07088963201472402
+    },
+    "K1_b1_gnn/evm_rms": {
+      "max_abs": 4.5014312777258425e-08,
+      "max_tolerance_ratio": 0.005515733302586198
+    },
+    "K1_b1_gnn/analytic_ber": {
+      "max_abs": 2.797293336964657e-07,
+      "max_tolerance_ratio": 0.06146887027027478
+    },
+    "K1_b1_ide_cal/dac_reconstruction": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "K1_b1_ide_cal/power_scale": {
+      "max_abs": 1.711427111139585e-08,
+      "max_tolerance_ratio": 0.004278567741236679
+    },
+    "K1_b1_ide_cal/transmit_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.013691416569372452
+    },
+    "K1_b1_ide_cal/channel_transpose_without_conjugation": {
+      "max_abs": 1.6757483130628103e-05,
+      "max_tolerance_ratio": 0.03478628094541365
+    },
+    "K1_b1_ide_cal/shared_awgn": {
+      "max_abs": 4.160920803766222e-06,
+      "max_tolerance_ratio": 0.0027683476080394703
+    },
+    "K1_b1_ide_cal/noise_disabled_reconstruction": {
+      "max_abs": 2.0435631980527304e-05,
+      "max_tolerance_ratio": 0.035345094362757276
+    },
+    "K1_b1_ide_cal/oracle_gain": {
+      "max_abs": 9.510076286003948e-06,
+      "max_tolerance_ratio": 0.014736488784145994
+    },
+    "K1_b1_ide_cal/equalization": {
+      "max_abs": 5.937007600832312e-07,
+      "max_tolerance_ratio": 0.012512563240735911
+    },
+    "K1_b1_ide_cal/stored_tx_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.0016696850032414032
+    },
+    "K1_b1_ide_cal/one_bit_levels": {
+      "max_abs": 1.2101617152815436e-08,
+      "max_tolerance_ratio": 0.07088963201472402
+    },
+    "K1_b1_ide_cal/evm_rms": {
+      "max_abs": 6.674452796007202e-08,
+      "max_tolerance_ratio": 0.006863695179357932
+    },
+    "K1_b1_ide_cal/analytic_ber": {
+      "max_abs": 1.153506297112139e-07,
+      "max_tolerance_ratio": 0.04496635403597845
+    },
+    "K1_b2_gnn/dac_reconstruction": {
+      "max_abs": 8.161572320763686e-07,
+      "max_tolerance_ratio": 0.1055967045522482
+    },
+    "K1_b2_gnn/power_scale": {
+      "max_abs": 3.6694981897511525e-07,
+      "max_tolerance_ratio": 0.06440546735293692
+    },
+    "K1_b2_gnn/transmit_power": {
+      "max_abs": 2.5147807335201833e-05,
+      "max_tolerance_ratio": 0.2514780733520183
+    },
+    "K1_b2_gnn/channel_transpose_without_conjugation": {
+      "max_abs": 4.1507772801915025e-05,
+      "max_tolerance_ratio": 0.03229329272461141
+    },
+    "K1_b2_gnn/shared_awgn": {
+      "max_abs": 4.425619788371699e-06,
+      "max_tolerance_ratio": 0.0027536406305767027
+    },
+    "K1_b2_gnn/noise_disabled_reconstruction": {
+      "max_abs": 4.5190849236947955e-05,
+      "max_tolerance_ratio": 0.034162186570878966
+    },
+    "K1_b2_gnn/oracle_gain": {
+      "max_abs": 1.4530661199785272e-05,
+      "max_tolerance_ratio": 0.017917052047757644
+    },
+    "K1_b2_gnn/equalization": {
+      "max_abs": 5.882545204265188e-07,
+      "max_tolerance_ratio": 0.012264905717404143
+    },
+    "K1_b2_gnn/stored_tx_power": {
+      "max_abs": 1.161882705247308e-05,
+      "max_tolerance_ratio": 0.01416930661721932
+    },
+    "K1_b2_gnn/evm_rms": {
+      "max_abs": 2.661181908170107e-08,
+      "max_tolerance_ratio": 0.0043684443183393444
+    },
+    "K1_b2_gnn/analytic_ber": {
+      "max_abs": 1.951097940502966e-08,
+      "max_tolerance_ratio": 0.008068533059388183
+    },
+    "K1_b2_ide_cal/dac_reconstruction": {
+      "max_abs": 4.6073773850170093e-07,
+      "max_tolerance_ratio": 0.10131107446215272
+    },
+    "K1_b2_ide_cal/power_scale": {
+      "max_abs": 1.5213712312167615e-07,
+      "max_tolerance_ratio": 0.04041870593089849
+    },
+    "K1_b2_ide_cal/transmit_power": {
+      "max_abs": 2.11075317366749e-05,
+      "max_tolerance_ratio": 0.21107531736674903
+    },
+    "K1_b2_ide_cal/channel_transpose_without_conjugation": {
+      "max_abs": 9.584467645502099e-06,
+      "max_tolerance_ratio": 0.022151083762825347
+    },
+    "K1_b2_ide_cal/shared_awgn": {
+      "max_abs": 2.394640249012142e-06,
+      "max_tolerance_ratio": 0.002768686806077147
+    },
+    "K1_b2_ide_cal/noise_disabled_reconstruction": {
+      "max_abs": 1.1343138282940985e-05,
+      "max_tolerance_ratio": 0.024324051111912586
+    },
+    "K1_b2_ide_cal/oracle_gain": {
+      "max_abs": 6.301280016856194e-06,
+      "max_tolerance_ratio": 0.015905201370082972
+    },
+    "K1_b2_ide_cal/equalization": {
+      "max_abs": 6.317874432672405e-07,
+      "max_tolerance_ratio": 0.012144651744030663
+    },
+    "K1_b2_ide_cal/stored_tx_power": {
+      "max_abs": 1.1693431893888828e-05,
+      "max_tolerance_ratio": 0.014260278903759995
+    },
+    "K1_b2_ide_cal/evm_rms": {
+      "max_abs": 4.321537661056141e-08,
+      "max_tolerance_ratio": 0.004947409287151291
+    },
+    "K1_b2_ide_cal/analytic_ber": {
+      "max_abs": 1.2688472991739808e-07,
+      "max_tolerance_ratio": 0.044267363826742144
+    },
+    "K1_b3_gnn/dac_reconstruction": {
+      "max_abs": 1.1916530080513786e-06,
+      "max_tolerance_ratio": 0.11616784183028923
+    },
+    "K1_b3_gnn/power_scale": {
+      "max_abs": 3.6980056039581655e-07,
+      "max_tolerance_ratio": 0.062412811426611946
+    },
+    "K1_b3_gnn/transmit_power": {
+      "max_abs": 2.2839403321484042e-05,
+      "max_tolerance_ratio": 0.22839403321484045
+    },
+    "K1_b3_gnn/channel_transpose_without_conjugation": {
+      "max_abs": 2.8986728056345785e-05,
+      "max_tolerance_ratio": 0.027752306481078744
+    },
+    "K1_b3_gnn/shared_awgn": {
+      "max_abs": 5.247324955548645e-06,
+      "max_tolerance_ratio": 0.002816826152842255
+    },
+    "K1_b3_gnn/noise_disabled_reconstruction": {
+      "max_abs": 3.305220381890797e-05,
+      "max_tolerance_ratio": 0.02980335571776551
+    },
+    "K1_b3_gnn/oracle_gain": {
+      "max_abs": 1.5516965329823843e-05,
+      "max_tolerance_ratio": 0.014597352884097269
+    },
+    "K1_b3_gnn/equalization": {
+      "max_abs": 5.704482049689438e-07,
+      "max_tolerance_ratio": 0.011962208088607243
+    },
+    "K1_b3_gnn/stored_tx_power": {
+      "max_abs": 8.682125837822241e-06,
+      "max_tolerance_ratio": 0.010587959595786562
+    },
+    "K1_b3_gnn/evm_rms": {
+      "max_abs": 1.8736718510048433e-08,
+      "max_tolerance_ratio": 0.003695232387119376
+    },
+    "K1_b3_gnn/analytic_ber": {
+      "max_abs": 1.2331508499659888e-08,
+      "max_tolerance_ratio": 0.0060324329682847275
+    },
+    "K1_b3_ide_cal/dac_reconstruction": {
+      "max_abs": 5.819830817183563e-07,
+      "max_tolerance_ratio": 0.09067278776469877
+    },
+    "K1_b3_ide_cal/power_scale": {
+      "max_abs": 1.755634575495435e-07,
+      "max_tolerance_ratio": 0.04400750749713572
+    },
+    "K1_b3_ide_cal/transmit_power": {
+      "max_abs": 2.4858970142815906e-05,
+      "max_tolerance_ratio": 0.2485897014281591
+    },
+    "K1_b3_ide_cal/channel_transpose_without_conjugation": {
+      "max_abs": 4.016411833259626e-06,
+      "max_tolerance_ratio": 0.020323923480365602
+    },
+    "K1_b3_ide_cal/shared_awgn": {
+      "max_abs": 1.23823180261506e-06,
+      "max_tolerance_ratio": 0.0026966157637150342
+    },
+    "K1_b3_ide_cal/noise_disabled_reconstruction": {
+      "max_abs": 4.584678753354562e-06,
+      "max_tolerance_ratio": 0.021977922237935224
+    },
+    "K1_b3_ide_cal/oracle_gain": {
+      "max_abs": 3.8012694084900275e-06,
+      "max_tolerance_ratio": 0.014989535250652487
+    },
+    "K1_b3_ide_cal/equalization": {
+      "max_abs": 5.720628219820328e-07,
+      "max_tolerance_ratio": 0.01210459037972557
+    },
+    "K1_b3_ide_cal/stored_tx_power": {
+      "max_abs": 1.2461983835976298e-05,
+      "max_tolerance_ratio": 0.015197536644081923
+    },
+    "K1_b3_ide_cal/evm_rms": {
+      "max_abs": 6.775043626117139e-08,
+      "max_tolerance_ratio": 0.006681666300589789
+    },
+    "K1_b3_ide_cal/analytic_ber": {
+      "max_abs": 1.2725078115879973e-07,
+      "max_tolerance_ratio": 0.051846251383004555
+    },
+    "shared_K2/noise_variance_metadata": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "shared_K2/snapshot_channel": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "shared_K2/gray_mapping": {
+      "max_abs": 5.11650812012911e-08,
+      "max_tolerance_ratio": 0.2185009822867375
+    },
+    "K2_b1_gnn/dac_reconstruction": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "K2_b1_gnn/power_scale": {
+      "max_abs": 1.711427111139585e-08,
+      "max_tolerance_ratio": 0.004278567741236679
+    },
+    "K2_b1_gnn/transmit_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.013691416569372452
+    },
+    "K2_b1_gnn/channel_transpose_without_conjugation": {
+      "max_abs": 1.8688031188992003e-05,
+      "max_tolerance_ratio": 0.053811259725605846
+    },
+    "K2_b1_gnn/shared_awgn": {
+      "max_abs": 2.65558593391722e-06,
+      "max_tolerance_ratio": 0.0027639582259911394
+    },
+    "K2_b1_gnn/noise_disabled_reconstruction": {
+      "max_abs": 2.0367675396531904e-05,
+      "max_tolerance_ratio": 0.05516899387271053
+    },
+    "K2_b1_gnn/oracle_gain": {
+      "max_abs": 5.939013966266992e-06,
+      "max_tolerance_ratio": 0.012982555579289928
+    },
+    "K2_b1_gnn/equalization": {
+      "max_abs": 5.431250686237481e-07,
+      "max_tolerance_ratio": 0.010988577103875736
+    },
+    "K2_b1_gnn/stored_tx_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.0016696850032414032
+    },
+    "K2_b1_gnn/one_bit_levels": {
+      "max_abs": 1.2101617152815436e-08,
+      "max_tolerance_ratio": 0.07088963201472402
+    },
+    "K2_b1_gnn/evm_rms": {
+      "max_abs": 5.3365702246122027e-08,
+      "max_tolerance_ratio": 0.0056494518310108086
+    },
+    "K2_b1_gnn/analytic_ber": {
+      "max_abs": 2.355854795688117e-07,
+      "max_tolerance_ratio": 0.046769921903234354
+    },
+    "K2_b1_ide_cal/dac_reconstruction": {
+      "max_abs": 0.0,
+      "max_tolerance_ratio": 0.0
+    },
+    "K2_b1_ide_cal/power_scale": {
+      "max_abs": 1.711427111139585e-08,
+      "max_tolerance_ratio": 0.004278567741236679
+    },
+    "K2_b1_ide_cal/transmit_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.013691416569372452
+    },
+    "K2_b1_ide_cal/channel_transpose_without_conjugation": {
+      "max_abs": 1.7886619521729332e-05,
+      "max_tolerance_ratio": 0.06082819019751695
+    },
+    "K2_b1_ide_cal/shared_awgn": {
+      "max_abs": 2.5874119018124895e-06,
+      "max_tolerance_ratio": 0.002752742282446561
+    },
+    "K2_b1_ide_cal/noise_disabled_reconstruction": {
+      "max_abs": 1.8215265148024312e-05,
+      "max_tolerance_ratio": 0.061551025974202395
+    },
+    "K2_b1_ide_cal/oracle_gain": {
+      "max_abs": 4.810614379812118e-06,
+      "max_tolerance_ratio": 0.014504675641271161
+    },
+    "K2_b1_ide_cal/equalization": {
+      "max_abs": 5.400559713689757e-07,
+      "max_tolerance_ratio": 0.01128440862985029
+    },
+    "K2_b1_ide_cal/stored_tx_power": {
+      "max_abs": 1.369141656937245e-06,
+      "max_tolerance_ratio": 0.0016696850032414032
+    },
+    "K2_b1_ide_cal/one_bit_levels": {
+      "max_abs": 1.2101617152815436e-08,
+      "max_tolerance_ratio": 0.07088963201472402
+    },
+    "K2_b1_ide_cal/evm_rms": {
+      "max_abs": 4.7151274440437874e-08,
+      "max_tolerance_ratio": 0.006656204506668523
+    },
+    "K2_b1_ide_cal/analytic_ber": {
+      "max_abs": 2.259451591934969e-07,
+      "max_tolerance_ratio": 0.0449585922424425
+    },
+    "K2_b2_gnn/dac_reconstruction": {
+      "max_abs": 7.531794117314235e-07,
+      "max_tolerance_ratio": 0.10133998622903825
+    },
+    "K2_b2_gnn/power_scale": {
+      "max_abs": 2.799945770792789e-07,
+      "max_tolerance_ratio": 0.0539337612282778
+    },
+    "K2_b2_gnn/transmit_power": {
+      "max_abs": 2.0300099713210784e-05,
+      "max_tolerance_ratio": 0.20300099713210787
+    },
+    "K2_b2_gnn/channel_transpose_without_conjugation": {
+      "max_abs": 2.1394371927509026e-05,
+      "max_tolerance_ratio": 0.032171024193646
+    },
+    "K2_b2_gnn/shared_awgn": {
+      "max_abs": 4.442570731993066e-06,
+      "max_tolerance_ratio": 0.0028564011194994756
+    },
+    "K2_b2_gnn/noise_disabled_reconstruction": {
+      "max_abs": 2.4188567172403393e-05,
+      "max_tolerance_ratio": 0.03303935505022162
+    },
+    "K2_b2_gnn/oracle_gain": {
+      "max_abs": 1.2108332263010244e-05,
+      "max_tolerance_ratio": 0.01639621451627857
+    },
+    "K2_b2_gnn/equalization": {
+      "max_abs": 5.149370321142307e-07,
+      "max_tolerance_ratio": 0.010814454590347298
+    },
+    "K2_b2_gnn/stored_tx_power": {
+      "max_abs": 1.1577939119433722e-05,
+      "max_tolerance_ratio": 0.014119439310315165
+    },
+    "K2_b2_gnn/evm_rms": {
+      "max_abs": 2.2780835551294842e-08,
+      "max_tolerance_ratio": 0.004139759400523582
+    },
+    "K2_b2_gnn/analytic_ber": {
+      "max_abs": 6.707135647571194e-08,
+      "max_tolerance_ratio": 0.02470175938163415
+    },
+    "K2_b2_ide_cal/dac_reconstruction": {
+      "max_abs": 3.112510291840435e-07,
+      "max_tolerance_ratio": 0.06920349003092864
+    },
+    "K2_b2_ide_cal/power_scale": {
+      "max_abs": 1.4839412276757002e-07,
+      "max_tolerance_ratio": 0.038218429369741944
+    },
+    "K2_b2_ide_cal/transmit_power": {
+      "max_abs": 1.6937742344680373e-05,
+      "max_tolerance_ratio": 0.16937742344680376
+    },
+    "K2_b2_ide_cal/channel_transpose_without_conjugation": {
+      "max_abs": 6.6254613872337025e-06,
+      "max_tolerance_ratio": 0.03846963082208934
+    },
+    "K2_b2_ide_cal/shared_awgn": {
+      "max_abs": 1.1831184173392777e-06,
+      "max_tolerance_ratio": 0.0027013415869471826
+    },
+    "K2_b2_ide_cal/noise_disabled_reconstruction": {
+      "max_abs": 6.51295923280714e-06,
+      "max_tolerance_ratio": 0.03905428913892343
+    },
+    "K2_b2_ide_cal/oracle_gain": {
+      "max_abs": 3.829344476369594e-06,
+      "max_tolerance_ratio": 0.013802093460106343
+    },
+    "K2_b2_ide_cal/equalization": {
+      "max_abs": 6.251898812595181e-07,
+      "max_tolerance_ratio": 0.011996319123628852
+    },
+    "K2_b2_ide_cal/stored_tx_power": {
+      "max_abs": 1.2179490880726007e-05,
+      "max_tolerance_ratio": 0.014853033247168716
+    },
+    "K2_b2_ide_cal/evm_rms": {
+      "max_abs": 4.7020352000881616e-08,
+      "max_tolerance_ratio": 0.006614029364891512
+    },
+    "K2_b2_ide_cal/analytic_ber": {
+      "max_abs": 3.813406939529029e-08,
+      "max_tolerance_ratio": 0.012709610486011087
+    },
+    "K2_b3_gnn/dac_reconstruction": {
+      "max_abs": 9.420232192307939e-07,
+      "max_tolerance_ratio": 0.11281644360197284
+    },
+    "K2_b3_gnn/power_scale": {
+      "max_abs": 3.10706514516923e-07,
+      "max_tolerance_ratio": 0.05245684397484241
+    },
+    "K2_b3_gnn/transmit_power": {
+      "max_abs": 1.6527089954365692e-05,
+      "max_tolerance_ratio": 0.16527089954365695
+    },
+    "K2_b3_gnn/channel_transpose_without_conjugation": {
+      "max_abs": 2.9345276973096725e-05,
+      "max_tolerance_ratio": 0.029981575750364996
+    },
+    "K2_b3_gnn/shared_awgn": {
+      "max_abs": 4.554614935987569e-06,
+      "max_tolerance_ratio": 0.002781127786559855
+    },
+    "K2_b3_gnn/noise_disabled_reconstruction": {
+      "max_abs": 3.148901472273458e-05,
+      "max_tolerance_ratio": 0.031562026430270354
+    },
+    "K2_b3_gnn/oracle_gain": {
+      "max_abs": 1.0291406082098483e-05,
+      "max_tolerance_ratio": 0.014331062705432607
+    },
+    "K2_b3_gnn/equalization": {
+      "max_abs": 6.036913401882696e-07,
+      "max_tolerance_ratio": 0.012155215665244721
+    },
+    "K2_b3_gnn/stored_tx_power": {
+      "max_abs": 1.0216648846039789e-05,
+      "max_tolerance_ratio": 0.012459328647254663
+    },
+    "K2_b3_gnn/evm_rms": {
+      "max_abs": 2.261912041001679e-08,
+      "max_tolerance_ratio": 0.004376266065688888
+    },
+    "K2_b3_gnn/analytic_ber": {
+      "max_abs": 7.975026819484476e-09,
+      "max_tolerance_ratio": 0.0033380622944310864
+    },
+    "K2_b3_ide_cal/dac_reconstruction": {
+      "max_abs": 5.260781033467808e-07,
+      "max_tolerance_ratio": 0.08132104299052817
+    },
+    "K2_b3_ide_cal/power_scale": {
+      "max_abs": 1.0598114930093772e-07,
+      "max_tolerance_ratio": 0.03275015778987157
+    },
+    "K2_b3_ide_cal/transmit_power": {
+      "max_abs": 1.6944281405528727e-05,
+      "max_tolerance_ratio": 0.1694428140552873
+    },
+    "K2_b3_ide_cal/channel_transpose_without_conjugation": {
+      "max_abs": 5.3879783107778534e-06,
+      "max_tolerance_ratio": 0.021408543769907154
+    },
+    "K2_b3_ide_cal/shared_awgn": {
+      "max_abs": 6.743495761743046e-07,
+      "max_tolerance_ratio": 0.0026772496381540505
+    },
+    "K2_b3_ide_cal/noise_disabled_reconstruction": {
+      "max_abs": 5.321280445786327e-06,
+      "max_tolerance_ratio": 0.02242956161898099
+    },
+    "K2_b3_ide_cal/oracle_gain": {
+      "max_abs": 2.908500731783973e-06,
+      "max_tolerance_ratio": 0.01431663611654338
+    },
+    "K2_b3_ide_cal/equalization": {
+      "max_abs": 5.699392970231139e-07,
+      "max_tolerance_ratio": 0.011650061982343156
+    },
+    "K2_b3_ide_cal/stored_tx_power": {
+      "max_abs": 9.019910287122457e-06,
+      "max_tolerance_ratio": 0.010999888174100445
+    },
+    "K2_b3_ide_cal/evm_rms": {
+      "max_abs": 2.5689759819425007e-08,
+      "max_tolerance_ratio": 0.005656957501524781
+    },
+    "K2_b3_ide_cal/analytic_ber": {
+      "max_abs": 1.3887109268952147e-08,
+      "max_tolerance_ratio": 0.006595468295484343
+    }
+  }
+}

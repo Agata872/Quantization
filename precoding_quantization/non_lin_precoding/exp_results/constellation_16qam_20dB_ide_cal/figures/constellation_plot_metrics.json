@@ -1,0 +1,411 @@
+{
+  "source": "Saved tx_symbols, tx_bits and rx_equalized; no synthetic plot samples.",
+  "evm_definition": "100 * sqrt(mean(abs(rx_equalized-tx_symbols)^2) / mean(abs(tx_symbols)^2))",
+  "bit_mapping": "I then Q; levels [-3,-1,+1,+3]/sqrt(10) map to [00,01,11,10].",
+  "display_window": [
+    -1.8,
+    1.8
+  ],
+  "panels": {
+    "snapshot": {
+      "K1_user1_gnn_b1": {
+        "symbols": 4000,
+        "evm_rms_percent": 13.244196402738881,
+        "ber": 0.00025,
+        "bit_errors": 4,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_ide_cal_b1": {
+        "symbols": 4000,
+        "evm_rms_percent": 37.78177222165987,
+        "ber": 0.1234375,
+        "bit_errors": 1975,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_gnn_b2": {
+        "symbols": 4000,
+        "evm_rms_percent": 7.933875211593031,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_ide_cal_b2": {
+        "symbols": 4000,
+        "evm_rms_percent": 19.54782549595372,
+        "ber": 0.004,
+        "bit_errors": 64,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_gnn_b3": {
+        "symbols": 4000,
+        "evm_rms_percent": 6.439900351789967,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_ide_cal_b3": {
+        "symbols": 4000,
+        "evm_rms_percent": 14.22925342391284,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_gnn_b1": {
+        "symbols": 4000,
+        "evm_rms_percent": 16.771997289803846,
+        "ber": 0.0035,
+        "bit_errors": 56,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_gnn_b1": {
+        "symbols": 4000,
+        "evm_rms_percent": 12.468688215931204,
+        "ber": 0.000875,
+        "bit_errors": 14,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_ide_cal_b1": {
+        "symbols": 4000,
+        "evm_rms_percent": 13.2308343138727,
+        "ber": 0.000125,
+        "bit_errors": 2,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_ide_cal_b1": {
+        "symbols": 4000,
+        "evm_rms_percent": 11.04743402781101,
+        "ber": 6.25e-05,
+        "bit_errors": 1,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_gnn_b2": {
+        "symbols": 4000,
+        "evm_rms_percent": 9.178554341114108,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_gnn_b2": {
+        "symbols": 4000,
+        "evm_rms_percent": 6.968812890438347,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_ide_cal_b2": {
+        "symbols": 4000,
+        "evm_rms_percent": 9.547297943267608,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_ide_cal_b2": {
+        "symbols": 4000,
+        "evm_rms_percent": 8.130477203028901,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_gnn_b3": {
+        "symbols": 4000,
+        "evm_rms_percent": 6.883551863295448,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_gnn_b3": {
+        "symbols": 4000,
+        "evm_rms_percent": 4.236541737768424,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_ide_cal_b3": {
+        "symbols": 4000,
+        "evm_rms_percent": 9.458519909233793,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_ide_cal_b3": {
+        "symbols": 4000,
+        "evm_rms_percent": 8.419443033458409,
+        "ber": 0.0,
+        "bit_errors": 0,
+        "bits": 16000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 4000,
+        "plotted_outside_window_percent": 0.0
+      }
+    },
+    "ensemble": {
+      "K1_user1_gnn_b1": {
+        "symbols": 256000,
+        "evm_rms_percent": 15.708104036856557,
+        "ber": 0.005599609375,
+        "bit_errors": 5734,
+        "bits": 1024000,
+        "outside_window_percent": 0.000390625,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_ide_cal_b1": {
+        "symbols": 256000,
+        "evm_rms_percent": 18.937199635651027,
+        "ber": 0.01950390625,
+        "bit_errors": 19972,
+        "bits": 1024000,
+        "outside_window_percent": 0.00078125,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_gnn_b2": {
+        "symbols": 256000,
+        "evm_rms_percent": 7.941235524467323,
+        "ber": 0.0001484375,
+        "bit_errors": 152,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_ide_cal_b2": {
+        "symbols": 256000,
+        "evm_rms_percent": 16.862704319589433,
+        "ber": 0.006908203125,
+        "bit_errors": 7074,
+        "bits": 1024000,
+        "outside_window_percent": 0.0042968749999999995,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_gnn_b3": {
+        "symbols": 256000,
+        "evm_rms_percent": 6.651878568688678,
+        "ber": 6.640625e-05,
+        "bit_errors": 68,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K1_user1_ide_cal_b3": {
+        "symbols": 256000,
+        "evm_rms_percent": 17.99286437135732,
+        "ber": 0.008263671875,
+        "bit_errors": 8462,
+        "bits": 1024000,
+        "outside_window_percent": 0.019140625,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.016666666666666666
+      },
+      "K2_user1_gnn_b1": {
+        "symbols": 256000,
+        "evm_rms_percent": 18.249549983945528,
+        "ber": 0.0092119140625,
+        "bit_errors": 9433,
+        "bits": 1024000,
+        "outside_window_percent": 0.001171875,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_gnn_b1": {
+        "symbols": 256000,
+        "evm_rms_percent": 18.271269744323025,
+        "ber": 0.0092705078125,
+        "bit_errors": 9493,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_ide_cal_b1": {
+        "symbols": 256000,
+        "evm_rms_percent": 16.04784698085948,
+        "ber": 0.0071357421875,
+        "bit_errors": 7307,
+        "bits": 1024000,
+        "outside_window_percent": 0.0035156249999999997,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.008333333333333333
+      },
+      "K2_user2_ide_cal_b1": {
+        "symbols": 256000,
+        "evm_rms_percent": 16.065153428496135,
+        "ber": 0.007033203125,
+        "bit_errors": 7202,
+        "bits": 1024000,
+        "outside_window_percent": 0.005859375,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.008333333333333333
+      },
+      "K2_user1_gnn_b2": {
+        "symbols": 256000,
+        "evm_rms_percent": 9.602447327070605,
+        "ber": 0.000298828125,
+        "bit_errors": 306,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_gnn_b2": {
+        "symbols": 256000,
+        "evm_rms_percent": 9.541112242685807,
+        "ber": 0.000212890625,
+        "bit_errors": 218,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_ide_cal_b2": {
+        "symbols": 256000,
+        "evm_rms_percent": 12.950164510475858,
+        "ber": 0.003046875,
+        "bit_errors": 3120,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_ide_cal_b2": {
+        "symbols": 256000,
+        "evm_rms_percent": 12.94463356225445,
+        "ber": 0.0031328125,
+        "bit_errors": 3208,
+        "bits": 1024000,
+        "outside_window_percent": 0.00078125,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.008333333333333333
+      },
+      "K2_user1_gnn_b3": {
+        "symbols": 256000,
+        "evm_rms_percent": 7.179822032126225,
+        "ber": 8.203125e-05,
+        "bit_errors": 84,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_gnn_b3": {
+        "symbols": 256000,
+        "evm_rms_percent": 7.144592283115833,
+        "ber": 4.98046875e-05,
+        "bit_errors": 51,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user1_ide_cal_b3": {
+        "symbols": 256000,
+        "evm_rms_percent": 11.602788233406262,
+        "ber": 0.0007763671875,
+        "bit_errors": 795,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      },
+      "K2_user2_ide_cal_b3": {
+        "symbols": 256000,
+        "evm_rms_percent": 11.567935486273914,
+        "ber": 0.0007646484375,
+        "bit_errors": 783,
+        "bits": 1024000,
+        "outside_window_percent": 0.0,
+        "axis_limit": 1.8,
+        "plotted_symbols": 12000,
+        "plotted_outside_window_percent": 0.0
+      }
+    }
+  }
+}

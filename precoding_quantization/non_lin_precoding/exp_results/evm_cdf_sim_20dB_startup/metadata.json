@@ -1,0 +1,89 @@
+{
+  "k": 2,
+  "m": 40,
+  "pt": 40.0,
+  "snr_db": 20.0,
+  "noise_variance_complex": 0.4,
+  "channel_indices": [
+    4096,
+    4097,
+    4098,
+    4099,
+    4100,
+    4101,
+    4102,
+    4103,
+    4104,
+    4105,
+    4106,
+    4107,
+    4108,
+    4109,
+    4110,
+    4111,
+    4112,
+    4113,
+    4114,
+    4115
+  ],
+  "blocks_per_channel": 320,
+  "symbols_per_block": 125,
+  "window": 200,
+  "seed_symbols": 1234,
+  "seed_noise": 20260932,
+  "startup": {
+    "tau_symbols": 500.0,
+    "initial_gain_db_uniform_pm": 6.0,
+    "initial_phase_deg_uniform_pm": 45.0,
+    "seed": 2026,
+    "model": "g[t] = 10^(G0 exp(-t/tau)/20) exp(j phi0 exp(-t/tau)) applied to z[t] from the start of each capture; same draw for all methods and resolutions"
+  },
+  "methods": [
+    "gnn",
+    "wmmse",
+    "ide_wf"
+  ],
+  "link": "constellation_16qam.py receive(): per-block power normalization, H^T x + AWGN, oracle block gain",
+  "dataset": {
+    "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/datasets/cellfree/M_40_K_2_Ntr_200000_Nval_10000_Nte_10000_SperChannel125/Htest.npy",
+    "sha256": "ebfa6ae8b663f0605931050351a70af55d2f6a2b599d2a56577153307fcf0deb"
+  },
+  "checkpoints": {
+    "1": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K2_b1_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "132ec32b2fef03ddaa03a96013e09a363e483c6a5913acca1e834e81766c6b32"
+    },
+    "2": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K2_b2_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "085131bb8b9a1c562d5fc3e43f136206d0a027ce66b9407eadf52176ba682482"
+    },
+    "3": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K2_b3_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "424df27dded14cdbeb7224a4b67675613936a9fba48328e56cc931be4fef4bd7"
+    }
+  },
+  "sources": {
+    "evm_cdf_sim.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/evm_cdf_sim.py",
+      "sha256": "2b897d714ef0c932d52072cf4e7e648e1bb624e10e51f41aacf85872403d55eb"
+    },
+    "constellation_16qam.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/constellation_16qam.py",
+      "sha256": "f809812b78fb4f6b5a0ba86dc68fefcfcf6f1efc2351e1233bec1bc931f8ae4a"
+    },
+    "ide_baseline.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/ide_baseline.py",
+      "sha256": "92706fa3c5c198c489b85e7341a9c1dcc6dd34b61970a2e023a6b008323be7be"
+    },
+    "wmmse_baseline.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/wmmse_baseline.py",
+      "sha256": "2243ef3db983e4a93d5c65af1364043f703b709f1188e5feea908040094718d4"
+    },
+    "train_sweep.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/train_sweep.py",
+      "sha256": "199e943bfd09e9c602b935b3ae538d31c2682883e3cfc1191cce6a16700bdeef"
+    }
+  },
+  "figure_dir": "/home/user/Quantized-aware-training-and-deploy-study/Figure/evm_cdf_sim",
+  "seconds": 477.2586930661928
+}

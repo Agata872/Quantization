@@ -1,0 +1,1365 @@
+{
+  "definition": "EVM % = 100 * mean over a sliding window of |z - ref|; ref = nearest 16-QAM point (dd) or transmitted symbol (da); constellation RMS amplitude 1. dd_startup: dd of z*g[t] with the receiver start-up transient g[t]. Per channel one CDF of the windowed values of the selected UEs (both, strong = larger ||h_k||^2, weak); mean over channels and +- one std (ddof=1). Figure data (dd_startup): Figure/evm_cdf_sim/<method>_<selection>.dat",
+  "figure_kind": "dd_startup",
+  "selections": [
+    "both",
+    "strong",
+    "weak"
+  ],
+  "strong_ue_per_channel": [
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    1,
+    1
+  ],
+  "channel_gain_per_channel": [
+    [
+      5.908783912658691,
+      100.3164291381836
+    ],
+    [
+      3.3351054191589355,
+      31.42856216430664
+    ],
+    [
+      8.628802299499512,
+      43.79155731201172
+    ],
+    [
+      3.1080210208892822,
+      4.932761192321777
+    ],
+    [
+      142.84414672851562,
+      18.137779235839844
+    ],
+    [
+      10.790478706359863,
+      4.539740562438965
+    ],
+    [
+      31.04400634765625,
+      262.1842956542969
+    ],
+    [
+      15.464505195617676,
+      91.05461883544922
+    ],
+    [
+      14.785694122314453,
+      196.5838165283203
+    ],
+    [
+      6.740484714508057,
+      2.5547475814819336
+    ],
+    [
+      18.90285301208496,
+      1.6961268186569214
+    ],
+    [
+      38.73326873779297,
+      6.4044976234436035
+    ],
+    [
+      250.20582580566406,
+      9.156462669372559
+    ],
+    [
+      172.67279052734375,
+      8.758849143981934
+    ],
+    [
+      7.530585289001465,
+      2.3516886234283447
+    ],
+    [
+      2.015315055847168,
+      12.481348991394043
+    ],
+    [
+      18.03061294555664,
+      17.863605499267578
+    ],
+    [
+      16.261892318725586,
+      587.9041137695312
+    ],
+    [
+      3.8439252376556396,
+      15.188777923583984
+    ],
+    [
+      3.7920751571655273,
+      8.736435890197754
+    ]
+  ],
+  "results": {
+    "wmmse_unq": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 4.734223130841121,
+          "p10_of_mean_cdf": 0.7398961974367122,
+          "p90_of_mean_cdf": 8.981884745762711,
+          "p99_of_mean_cdf": 17.00666666666665,
+          "per_channel_median_mean": 6.516534598642072,
+          "per_channel_median_std": 1.581160080790677,
+          "per_channel_median_min": 3.56794398665386,
+          "per_channel_median_max": 9.404957678355503,
+          "max_band_halfwidth": 0.25066103651092814
+        },
+        "dd": {
+          "median_of_mean_cdf": 4.61788082772376,
+          "p10_of_mean_cdf": 0.719848257394409,
+          "p90_of_mean_cdf": 8.792415121598845,
+          "p99_of_mean_cdf": 11.591278935185185,
+          "per_channel_median_mean": 2.832935393258427,
+          "per_channel_median_std": 1.8773433471977705,
+          "per_channel_median_min": 0.5,
+          "per_channel_median_max": 6.3,
+          "max_band_halfwidth": 0.25956631789740126
+        },
+        "da": {
+          "median_of_mean_cdf": 4.61788082772376,
+          "p10_of_mean_cdf": 0.719848257394409,
+          "p90_of_mean_cdf": 8.792430350803299,
+          "p99_of_mean_cdf": 11.59741543798786,
+          "per_channel_median_mean": 2.832935393258427,
+          "per_channel_median_std": 1.8773433471977705,
+          "per_channel_median_min": 0.5,
+          "per_channel_median_max": 6.3,
+          "max_band_halfwidth": 0.25956631789740126
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002939624632546921,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.029482927564634054,
+          "max_windowed_evm": 64.83176844483623
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 2.4709217062209254,
+          "p10_of_mean_cdf": 0.5957432355937959,
+          "p90_of_mean_cdf": 4.798166058394161,
+          "p99_of_mean_cdf": 16.818490566037376,
+          "per_channel_median_mean": 2.471911663848369,
+          "per_channel_median_std": 1.6629532476007005,
+          "per_channel_median_min": 0.36417445985166075,
+          "per_channel_median_max": 5.5180199642431464,
+          "max_band_halfwidth": 0.4944552950925214
+        },
+        "dd": {
+          "median_of_mean_cdf": 2.2,
+          "p10_of_mean_cdf": 0.5833528795811518,
+          "p90_of_mean_cdf": 4.643764115432874,
+          "p99_of_mean_cdf": 5.695491531342762,
+          "per_channel_median_mean": 2.4640013027692724,
+          "per_channel_median_std": 1.6605594196861244,
+          "per_channel_median_min": 0.3587451292950762,
+          "per_channel_median_max": 5.505359754314127,
+          "max_band_halfwidth": 0.512989176042577
+        },
+        "da": {
+          "median_of_mean_cdf": 2.2,
+          "p10_of_mean_cdf": 0.5833528795811518,
+          "p90_of_mean_cdf": 4.643764115432874,
+          "p99_of_mean_cdf": 5.695491531342762,
+          "per_channel_median_mean": 2.4640013027692724,
+          "per_channel_median_std": 1.6605594196861244,
+          "per_channel_median_min": 0.3587451292950762,
+          "per_channel_median_max": 5.505359754314127,
+          "max_band_halfwidth": 0.512989176042577
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00031531871058516117,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.033775533278058344,
+          "max_windowed_evm": 64.83176844483623
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 7.481698062672976,
+          "p10_of_mean_cdf": 4.57594684385382,
+          "p90_of_mean_cdf": 10.096865203761755,
+          "p99_of_mean_cdf": 17.168000000000045,
+          "per_channel_median_mean": 7.386683868449355,
+          "per_channel_median_std": 1.9284744545063428,
+          "per_channel_median_min": 3.569146787225856,
+          "per_channel_median_max": 11.496186780840246,
+          "max_band_halfwidth": 0.4575160759538893
+        },
+        "dd": {
+          "median_of_mean_cdf": 7.437073716844644,
+          "p10_of_mean_cdf": 4.486181318681319,
+          "p90_of_mean_cdf": 9.606821192052978,
+          "p99_of_mean_cdf": 11.832410680707033,
+          "per_channel_median_mean": 7.375019825323245,
+          "per_channel_median_std": 1.9263709891465979,
+          "per_channel_median_min": 3.5610452289023717,
+          "per_channel_median_max": 11.477104508730779,
+          "max_band_halfwidth": 0.4674269937455401
+        },
+        "da": {
+          "median_of_mean_cdf": 7.437073716844644,
+          "p10_of_mean_cdf": 4.486181318681319,
+          "p90_of_mean_cdf": 9.606839309428949,
+          "p99_of_mean_cdf": 11.838119850187267,
+          "per_channel_median_mean": 7.375295880706223,
+          "per_channel_median_std": 1.9269837003302956,
+          "per_channel_median_min": 3.5610452289023717,
+          "per_channel_median_max": 11.482483574244416,
+          "max_band_halfwidth": 0.4674269937455401
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.000272606215924223,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.025190321851209767,
+          "max_windowed_evm": 61.2629503092341
+        }
+      }
+    },
+    "gnn_b1": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 15.171070475767007,
+          "p10_of_mean_cdf": 11.819841524788522,
+          "p90_of_mean_cdf": 21.5301275510204,
+          "p99_of_mean_cdf": 30.429138804457946,
+          "per_channel_median_mean": 16.665517091255015,
+          "per_channel_median_std": 3.4265182281540083,
+          "per_channel_median_min": 11.752280311457174,
+          "per_channel_median_max": 25.927777777777774,
+          "max_band_halfwidth": 0.33660144142623316
+        },
+        "dd": {
+          "median_of_mean_cdf": 15.090335548885077,
+          "p10_of_mean_cdf": 11.77305369851197,
+          "p90_of_mean_cdf": 21.018395103706222,
+          "p99_of_mean_cdf": 30.137881040892196,
+          "per_channel_median_mean": 15.347232312738095,
+          "per_channel_median_std": 2.4989328888311926,
+          "per_channel_median_min": 11.70126582278481,
+          "per_channel_median_max": 22.1,
+          "max_band_halfwidth": 0.34335379300855473
+        },
+        "da": {
+          "median_of_mean_cdf": 15.210288574793873,
+          "p10_of_mean_cdf": 11.805471940263681,
+          "p90_of_mean_cdf": 25.187385405207188,
+          "p99_of_mean_cdf": 42.31325842696631,
+          "per_channel_median_mean": 16.185469051620817,
+          "per_channel_median_std": 5.010520094498416,
+          "per_channel_median_min": 11.721600771456123,
+          "per_channel_median_max": 35.58584905660377,
+          "max_band_halfwidth": 0.3434028872847674
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00030903746137031735,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.021142056732242908,
+          "max_windowed_evm": 67.41996557205127
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 14.42606907894737,
+          "p10_of_mean_cdf": 11.106022613645104,
+          "p90_of_mean_cdf": 21.436539440203557,
+          "p99_of_mean_cdf": 25.057994100294977,
+          "per_channel_median_mean": 15.107478632421266,
+          "per_channel_median_std": 3.6561453659384444,
+          "per_channel_median_min": 10.8723522694833,
+          "per_channel_median_max": 24.270856137607506,
+          "max_band_halfwidth": 0.4426251650729126
+        },
+        "dd": {
+          "median_of_mean_cdf": 14.362065889249985,
+          "p10_of_mean_cdf": 11.092939882697946,
+          "p90_of_mean_cdf": 20.926696258719087,
+          "p99_of_mean_cdf": 24.695637642919966,
+          "per_channel_median_mean": 15.082427311209093,
+          "per_channel_median_std": 3.6480306272708463,
+          "per_channel_median_min": 10.858848821081832,
+          "per_channel_median_max": 24.23118977020015,
+          "max_band_halfwidth": 0.451930388663744
+        },
+        "da": {
+          "median_of_mean_cdf": 14.437095875139354,
+          "p10_of_mean_cdf": 11.110030372057707,
+          "p90_of_mean_cdf": 27.12857142857148,
+          "p99_of_mean_cdf": 32.73399484536082,
+          "per_channel_median_mean": 16.21899750676482,
+          "per_channel_median_std": 5.982142058073403,
+          "per_channel_median_min": 10.87963832136941,
+          "per_channel_median_max": 31.113476070528968,
+          "max_band_halfwidth": 0.4542435513992621
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002977312127835984,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.023586090801738648,
+          "max_windowed_evm": 67.41996557205127
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 17.366436781609195,
+          "p10_of_mean_cdf": 12.799809011198889,
+          "p90_of_mean_cdf": 21.63819290465632,
+          "p99_of_mean_cdf": 31.098738461538474,
+          "per_channel_median_mean": 17.230337111080054,
+          "per_channel_median_std": 4.09020055093102,
+          "per_channel_median_min": 12.499186232657417,
+          "per_channel_median_max": 29.732134387351778,
+          "max_band_halfwidth": 0.4848404744926803
+        },
+        "dd": {
+          "median_of_mean_cdf": 17.282742537313432,
+          "p10_of_mean_cdf": 12.790006757898293,
+          "p90_of_mean_cdf": 21.120709219858153,
+          "p99_of_mean_cdf": 30.96959677419354,
+          "per_channel_median_mean": 17.216827637336294,
+          "per_channel_median_std": 4.103836783154557,
+          "per_channel_median_min": 12.494396097046414,
+          "per_channel_median_max": 29.792113442113443,
+          "max_band_halfwidth": 0.49226607424624474
+        },
+        "da": {
+          "median_of_mean_cdf": 17.687326826196472,
+          "p10_of_mean_cdf": 12.839064962353353,
+          "p90_of_mean_cdf": 23.118749999999974,
+          "p99_of_mean_cdf": 43.99504901960784,
+          "per_channel_median_mean": 18.336027221230516,
+          "per_channel_median_std": 6.501290174554432,
+          "per_channel_median_min": 12.51277361751152,
+          "per_channel_median_max": 41.682521739130436,
+          "max_band_halfwidth": 0.4930664393232016
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00032034370995703625,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.018698022662747168,
+          "max_windowed_evm": 62.46353504711064
+        }
+      }
+    },
+    "wmmse_b1": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 23.416899518028185,
+          "p10_of_mean_cdf": 20.20957683741648,
+          "p90_of_mean_cdf": 26.617639842983323,
+          "p99_of_mean_cdf": 43.448282828282835,
+          "per_channel_median_mean": 23.727670606978158,
+          "per_channel_median_std": 2.289420094474911,
+          "per_channel_median_min": 19.52380340507549,
+          "per_channel_median_max": 31.310526315789467,
+          "max_band_halfwidth": 0.28090746739359024
+        },
+        "dd": {
+          "median_of_mean_cdf": 23.396473010473546,
+          "p10_of_mean_cdf": 20.17651804670913,
+          "p90_of_mean_cdf": 26.47737701175665,
+          "p99_of_mean_cdf": 43.325459183673466,
+          "per_channel_median_mean": 23.3099198091167,
+          "per_channel_median_std": 1.477614424512883,
+          "per_channel_median_min": 19.49051749060422,
+          "per_channel_median_max": 25.639549436795996,
+          "max_band_halfwidth": 0.287215461177449
+        },
+        "da": {
+          "median_of_mean_cdf": 34.68977316416763,
+          "p10_of_mean_cdf": 29.52793121417405,
+          "p90_of_mean_cdf": 44.138979343863916,
+          "p99_of_mean_cdf": 78.18941176470588,
+          "per_channel_median_mean": 35.65297744256618,
+          "per_channel_median_std": 5.073884498156437,
+          "per_channel_median_min": 30.2336071695295,
+          "per_channel_median_max": 53.4,
+          "max_band_halfwidth": 0.3482457029094313
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0005131780608527424,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.015314313710710787,
+          "max_windowed_evm": 68.66676274442867
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 23.184536829144637,
+          "p10_of_mean_cdf": 19.352700811642876,
+          "p90_of_mean_cdf": 25.780403259218343,
+          "p99_of_mean_cdf": 28.58382871536525,
+          "per_channel_median_mean": 22.873261435410164,
+          "per_channel_median_std": 2.3560237176966212,
+          "per_channel_median_min": 17.53184156378601,
+          "per_channel_median_max": 26.974870062370062,
+          "max_band_halfwidth": 0.40377449184284786
+        },
+        "dd": {
+          "median_of_mean_cdf": 23.144123785534365,
+          "p10_of_mean_cdf": 19.274814126394052,
+          "p90_of_mean_cdf": 25.672831255622672,
+          "p99_of_mean_cdf": 27.766071065989845,
+          "per_channel_median_mean": 22.844324722199737,
+          "per_channel_median_std": 2.3842339917755466,
+          "per_channel_median_min": 17.409347826086954,
+          "per_channel_median_max": 26.964159725624693,
+          "max_band_halfwidth": 0.4160408283174535
+        },
+        "da": {
+          "median_of_mean_cdf": 34.4629811056683,
+          "p10_of_mean_cdf": 29.75242923531897,
+          "p90_of_mean_cdf": 45.07065651070003,
+          "p99_of_mean_cdf": 49.83741750358679,
+          "per_channel_median_mean": 36.18621383228527,
+          "per_channel_median_std": 5.706730784004909,
+          "per_channel_median_min": 28.951778808971383,
+          "per_channel_median_max": 48.49402116402116,
+          "max_band_halfwidth": 0.4786979279275376
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0005627999296500088,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.019194241350719832,
+          "max_windowed_evm": 68.66676274442867
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 23.5918193646319,
+          "p10_of_mean_cdf": 21.163530571992112,
+          "p90_of_mean_cdf": 27.406394422310754,
+          "p99_of_mean_cdf": 44.58203448275862,
+          "per_channel_median_mean": 24.559390397389986,
+          "per_channel_median_std": 4.682410034502253,
+          "per_channel_median_min": 19.287267552182165,
+          "per_channel_median_max": 42.67675496688742,
+          "max_band_halfwidth": 0.40964685946839774
+        },
+        "dd": {
+          "median_of_mean_cdf": 23.58585423619335,
+          "p10_of_mean_cdf": 21.17926,
+          "p90_of_mean_cdf": 27.34507177033493,
+          "p99_of_mean_cdf": 44.51624161073825,
+          "per_channel_median_mean": 24.561173724782886,
+          "per_channel_median_std": 4.702673768417453,
+          "per_channel_median_min": 19.269631440391123,
+          "per_channel_median_max": 42.769903581267215,
+          "max_band_halfwidth": 0.41289168488541067
+        },
+        "da": {
+          "median_of_mean_cdf": 34.912955465587046,
+          "p10_of_mean_cdf": 29.32437106918239,
+          "p90_of_mean_cdf": 42.53580194667796,
+          "p99_of_mean_cdf": 80.51905956112853,
+          "per_channel_median_mean": 36.8872457686119,
+          "per_channel_median_std": 10.396072019911188,
+          "per_channel_median_min": 27.976547921967768,
+          "per_channel_median_max": 77.20755494505495,
+          "max_band_halfwidth": 0.46423761443908695
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.000463556192055476,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.01143438607070174,
+          "max_windowed_evm": 68.2700218385431
+        }
+      }
+    },
+    "ide_wf_b1": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 21.914261551748954,
+          "p10_of_mean_cdf": 15.670459717796996,
+          "p90_of_mean_cdf": 24.76555045060965,
+          "p99_of_mean_cdf": 35.36848484848484,
+          "per_channel_median_mean": 22.053217014282403,
+          "per_channel_median_std": 1.7113091060795054,
+          "per_channel_median_min": 17.242168674698796,
+          "per_channel_median_max": 25.871428571428588,
+          "max_band_halfwidth": 0.25396932029789976
+        },
+        "dd": {
+          "median_of_mean_cdf": 21.882755277897456,
+          "p10_of_mean_cdf": 15.619670882218497,
+          "p90_of_mean_cdf": 24.663473298002447,
+          "p99_of_mean_cdf": 35.10351293103447,
+          "per_channel_median_mean": 20.06540289658424,
+          "per_channel_median_std": 3.760368687968401,
+          "per_channel_median_min": 9.0,
+          "per_channel_median_max": 24.388805970149253,
+          "max_band_halfwidth": 0.25716989190123724
+        },
+        "da": {
+          "median_of_mean_cdf": 24.403063836193915,
+          "p10_of_mean_cdf": 15.647085798816567,
+          "p90_of_mean_cdf": 32.51885614385615,
+          "p99_of_mean_cdf": 55.33248291571751,
+          "per_channel_median_mean": 22.521404544808338,
+          "per_channel_median_std": 5.987440096519847,
+          "per_channel_median_min": 9.0,
+          "per_channel_median_max": 35.2,
+          "max_band_halfwidth": 0.3185261587588695
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0003335343333082083,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.017362629079671364,
+          "max_windowed_evm": 65.05279263744472
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 20.12212780421482,
+          "p10_of_mean_cdf": 13.6087656529517,
+          "p90_of_mean_cdf": 24.075918854415274,
+          "p99_of_mean_cdf": 27.201064220183483,
+          "per_channel_median_mean": 19.1304035608217,
+          "per_channel_median_std": 4.491104448374232,
+          "per_channel_median_min": 7.78150480989464,
+          "per_channel_median_max": 26.00527950310559,
+          "max_band_halfwidth": 0.4597247391699898
+        },
+        "dd": {
+          "median_of_mean_cdf": 20.053026684664108,
+          "p10_of_mean_cdf": 12.904166666666674,
+          "p90_of_mean_cdf": 23.887395328338474,
+          "p99_of_mean_cdf": 26.60318822023047,
+          "per_channel_median_mean": 19.102196719164034,
+          "per_channel_median_std": 4.484467922761543,
+          "per_channel_median_min": 7.765330240777557,
+          "per_channel_median_max": 25.956308526367668,
+          "max_band_halfwidth": 0.4655461892950973
+        },
+        "da": {
+          "median_of_mean_cdf": 21.545711012458828,
+          "p10_of_mean_cdf": 12.924637681159428,
+          "p90_of_mean_cdf": 33.17042723631509,
+          "p99_of_mean_cdf": 40.4195728643216,
+          "per_channel_median_mean": 22.06474060419594,
+          "per_channel_median_std": 7.780696179034293,
+          "per_channel_median_min": 7.765330240777557,
+          "per_channel_median_max": 39.111550632911396,
+          "max_band_halfwidth": 0.4695709534153424
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00042712494660938167,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.02366649079168865,
+          "max_windowed_evm": 65.05279263744472
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 22.80326807382482,
+          "p10_of_mean_cdf": 20.81238178062833,
+          "p90_of_mean_cdf": 25.08353547604609,
+          "p99_of_mean_cdf": 36.16349315068493,
+          "per_channel_median_mean": 23.279401933388495,
+          "per_channel_median_std": 2.954115356699937,
+          "per_channel_median_min": 19.80907859078591,
+          "per_channel_median_max": 34.615190525231725,
+          "max_band_halfwidth": 0.38714777814616536
+        },
+        "dd": {
+          "median_of_mean_cdf": 22.791566381518535,
+          "p10_of_mean_cdf": 20.81127721806955,
+          "p90_of_mean_cdf": 25.0156420462922,
+          "p99_of_mean_cdf": 36.08758208955225,
+          "per_channel_median_mean": 23.277197763729436,
+          "per_channel_median_std": 2.9736997426471596,
+          "per_channel_median_min": 19.776472191930207,
+          "per_channel_median_max": 34.685,
+          "max_band_halfwidth": 0.39261793549986135
+        },
+        "da": {
+          "median_of_mean_cdf": 26.305013774104683,
+          "p10_of_mean_cdf": 22.815853143902096,
+          "p90_of_mean_cdf": 32.22192164179104,
+          "p99_of_mean_cdf": 57.41865921787709,
+          "per_channel_median_mean": 27.853053715577584,
+          "per_channel_median_std": 6.893101116705877,
+          "per_channel_median_min": 22.38409694555113,
+          "per_channel_median_max": 54.48832199546485,
+          "max_band_halfwidth": 0.43999046856904506
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.000239943720007035,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.01105876736765408,
+          "max_windowed_evm": 61.71682702529782
+        }
+      }
+    },
+    "gnn_b2": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 8.119403123837857,
+          "p10_of_mean_cdf": 5.898803247894323,
+          "p90_of_mean_cdf": 12.440022864269382,
+          "p99_of_mean_cdf": 18.57562666666667,
+          "per_channel_median_mean": 9.102477014727409,
+          "per_channel_median_std": 2.3442079061249266,
+          "per_channel_median_min": 5.749144514258096,
+          "per_channel_median_max": 15.224885844748858,
+          "max_band_halfwidth": 0.38444336734884604
+        },
+        "dd": {
+          "median_of_mean_cdf": 8.027765902872776,
+          "p10_of_mean_cdf": 5.8822032142540035,
+          "p90_of_mean_cdf": 12.179496772986623,
+          "p99_of_mean_cdf": 17.056190004948043,
+          "per_channel_median_mean": 8.279738069243926,
+          "per_channel_median_std": 2.3170340420462927,
+          "per_channel_median_min": 5.2,
+          "per_channel_median_max": 15.067280163599182,
+          "max_band_halfwidth": 0.39351726676723775
+        },
+        "da": {
+          "median_of_mean_cdf": 8.027765902872776,
+          "p10_of_mean_cdf": 5.8822032142540035,
+          "p90_of_mean_cdf": 12.187117192590526,
+          "p99_of_mean_cdf": 18.051492718446596,
+          "per_channel_median_mean": 8.3012579350926,
+          "per_channel_median_std": 2.3840003901734974,
+          "per_channel_median_min": 5.2,
+          "per_channel_median_max": 15.492635658914727,
+          "max_band_halfwidth": 0.39351710665547385
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00027888746513906687,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.02490578126177734,
+          "max_windowed_evm": 63.35617938900532
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 7.184604754007739,
+          "p10_of_mean_cdf": 5.62726169528548,
+          "p90_of_mean_cdf": 10.853005797985961,
+          "p99_of_mean_cdf": 18.259062500000088,
+          "per_channel_median_mean": 7.614305297396923,
+          "per_channel_median_std": 2.12212980853637,
+          "per_channel_median_min": 4.557901688296773,
+          "per_channel_median_max": 13.824468537414967,
+          "max_band_halfwidth": 0.4611572223976675
+        },
+        "dd": {
+          "median_of_mean_cdf": 7.119029547302792,
+          "p10_of_mean_cdf": 5.6071608999588785,
+          "p90_of_mean_cdf": 10.327840375586856,
+          "p99_of_mean_cdf": 14.288025291828797,
+          "per_channel_median_mean": 7.599206294434181,
+          "per_channel_median_std": 2.1199493033545815,
+          "per_channel_median_min": 4.543522244578583,
+          "per_channel_median_max": 13.794545807453417,
+          "max_band_halfwidth": 0.4744502483109432
+        },
+        "da": {
+          "median_of_mean_cdf": 7.119033936896888,
+          "p10_of_mean_cdf": 5.6071608999588785,
+          "p90_of_mean_cdf": 10.32833099579243,
+          "p99_of_mean_cdf": 14.449307901907357,
+          "per_channel_median_mean": 7.606342980489531,
+          "per_channel_median_std": 2.1419184228023416,
+          "per_channel_median_min": 4.543522244578583,
+          "per_channel_median_max": 13.93594137076796,
+          "max_band_halfwidth": 0.4744502483109432
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002801437149820356,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.026569684178789476,
+          "max_windowed_evm": 63.35617938900532
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 10.052877063631993,
+          "p10_of_mean_cdf": 6.381305595408896,
+          "p90_of_mean_cdf": 12.794721321144205,
+          "p99_of_mean_cdf": 18.654285714285752,
+          "per_channel_median_mean": 9.777837367109928,
+          "per_channel_median_std": 2.739211568310169,
+          "per_channel_median_min": 5.915935418476687,
+          "per_channel_median_max": 16.848587997982854,
+          "max_band_halfwidth": 0.48439750328502396
+        },
+        "dd": {
+          "median_of_mean_cdf": 9.993988208918044,
+          "p10_of_mean_cdf": 6.35718492343934,
+          "p90_of_mean_cdf": 12.6028167168872,
+          "p99_of_mean_cdf": 17.509005010737294,
+          "per_channel_median_mean": 9.764270305362931,
+          "per_channel_median_std": 2.740783163462285,
+          "per_channel_median_min": 5.9068111672278345,
+          "per_channel_median_max": 16.86053391053391,
+          "max_band_halfwidth": 0.49392135023881695
+        },
+        "da": {
+          "median_of_mean_cdf": 9.994419995017854,
+          "p10_of_mean_cdf": 6.35718492343934,
+          "p90_of_mean_cdf": 12.612453025787223,
+          "p99_of_mean_cdf": 18.61694374475231,
+          "per_channel_median_mean": 9.813464435088852,
+          "per_channel_median_std": 2.8760987394348287,
+          "per_channel_median_min": 5.9068111672278345,
+          "per_channel_median_max": 17.80647095959596,
+          "max_band_halfwidth": 0.49392135023881695
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002776312152960981,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.023241878344765207,
+          "max_windowed_evm": 61.89786794920874
+        }
+      }
+    },
+    "wmmse_b2": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 16.717902028698663,
+          "p10_of_mean_cdf": 10.561826697892272,
+          "p90_of_mean_cdf": 23.082973935870992,
+          "p99_of_mean_cdf": 29.477692307692305,
+          "per_channel_median_mean": 17.68264170016449,
+          "per_channel_median_std": 3.4148557134105433,
+          "per_channel_median_min": 11.9,
+          "per_channel_median_max": 26.20827067669173,
+          "max_band_halfwidth": 0.3885224074787574
+        },
+        "dd": {
+          "median_of_mean_cdf": 16.59436257541292,
+          "p10_of_mean_cdf": 10.517460118075618,
+          "p90_of_mean_cdf": 22.891255111670336,
+          "p99_of_mean_cdf": 29.171503649635046,
+          "per_channel_median_mean": 15.295338354490335,
+          "per_channel_median_std": 4.781623661631489,
+          "per_channel_median_min": 6.7,
+          "per_channel_median_max": 26.17876712328767,
+          "max_band_halfwidth": 0.3937274614765037
+        },
+        "da": {
+          "median_of_mean_cdf": 16.709616472451636,
+          "p10_of_mean_cdf": 10.517460118075618,
+          "p90_of_mean_cdf": 25.119601273245102,
+          "p99_of_mean_cdf": 47.703609226594295,
+          "per_channel_median_mean": 15.624564855389476,
+          "per_channel_median_std": 5.321952398771542,
+          "per_channel_median_min": 6.7,
+          "per_channel_median_max": 27.6,
+          "max_band_halfwidth": 0.3916684343721347
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00031908746011406747,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.01892037888495264,
+          "max_windowed_evm": 68.48736041335847
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 15.794867583658387,
+          "p10_of_mean_cdf": 11.364435146443515,
+          "p90_of_mean_cdf": 22.058356575842094,
+          "p99_of_mean_cdf": 25.472247191011235,
+          "per_channel_median_mean": 16.05942169124779,
+          "per_channel_median_std": 5.114554671334921,
+          "per_channel_median_min": 5.903458398968925,
+          "per_channel_median_max": 24.743777679362267,
+          "max_band_halfwidth": 0.4955919670573454
+        },
+        "dd": {
+          "median_of_mean_cdf": 15.672045929018788,
+          "p10_of_mean_cdf": 7.6,
+          "p90_of_mean_cdf": 21.928517540550736,
+          "p99_of_mean_cdf": 25.24906474820144,
+          "per_channel_median_mean": 16.043382523246553,
+          "per_channel_median_std": 5.114802894985105,
+          "per_channel_median_min": 5.885059210526316,
+          "per_channel_median_max": 24.711004891062693,
+          "max_band_halfwidth": 0.5038069906666778
+        },
+        "da": {
+          "median_of_mean_cdf": 15.69368486869529,
+          "p10_of_mean_cdf": 7.6,
+          "p90_of_mean_cdf": 23.121236559139792,
+          "p99_of_mean_cdf": 26.174885496183208,
+          "per_channel_median_mean": 16.341088688337152,
+          "per_channel_median_std": 5.484911425746305,
+          "per_channel_median_min": 5.885059210526316,
+          "per_channel_median_max": 25.404065238558907,
+          "max_band_halfwidth": 0.5040217469430963
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00032159995980000504,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.019691716288535464,
+          "max_windowed_evm": 68.48736041335847
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 17.12753800882786,
+          "p10_of_mean_cdf": 10.54480198019802,
+          "p90_of_mean_cdf": 24.03042582417582,
+          "p99_of_mean_cdf": 30.01581047381545,
+          "per_channel_median_mean": 17.547201738109997,
+          "per_channel_median_std": 4.9069303044607,
+          "per_channel_median_min": 9.142171260732038,
+          "per_channel_median_max": 28.850147383935152,
+          "max_band_halfwidth": 0.4720629027569848
+        },
+        "dd": {
+          "median_of_mean_cdf": 17.056075105996367,
+          "p10_of_mean_cdf": 10.517460118075618,
+          "p90_of_mean_cdf": 23.850477773161614,
+          "p99_of_mean_cdf": 29.83316916488223,
+          "per_channel_median_mean": 17.531872724839054,
+          "per_channel_median_std": 4.912542344019283,
+          "per_channel_median_min": 9.136531159258432,
+          "per_channel_median_max": 28.886728395061727,
+          "max_band_halfwidth": 0.48018062615747453
+        },
+        "da": {
+          "median_of_mean_cdf": 17.27063207286779,
+          "p10_of_mean_cdf": 10.517460118075618,
+          "p90_of_mean_cdf": 29.1,
+          "p99_of_mean_cdf": 48.88686907020872,
+          "per_channel_median_mean": 19.45812526542428,
+          "per_channel_median_std": 8.67583476582766,
+          "per_channel_median_min": 9.136584003574619,
+          "per_channel_median_max": 47.16272475795298,
+          "max_band_halfwidth": 0.4853248672502217
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00031657496042812995,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.018149041481369813,
+          "max_windowed_evm": 64.01791650704813
+        }
+      }
+    },
+    "ide_wf_b2": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 16.47998511904762,
+          "p10_of_mean_cdf": 8.014161605937922,
+          "p90_of_mean_cdf": 22.95637403296334,
+          "p99_of_mean_cdf": 25.831115288220534,
+          "per_channel_median_mean": 17.956534877656704,
+          "per_channel_median_std": 2.171959168978467,
+          "per_channel_median_min": 14.0,
+          "per_channel_median_max": 22.40765550239234,
+          "max_band_halfwidth": 0.2364273036505691
+        },
+        "dd": {
+          "median_of_mean_cdf": 16.37693433327236,
+          "p10_of_mean_cdf": 7.972886391007627,
+          "p90_of_mean_cdf": 22.78692643845594,
+          "p99_of_mean_cdf": 25.43823015571591,
+          "per_channel_median_mean": 13.1199124624711,
+          "per_channel_median_std": 4.001962436726553,
+          "per_channel_median_min": 4.8,
+          "per_channel_median_max": 19.146615720524018,
+          "max_band_halfwidth": 0.24168300097512507
+        },
+        "da": {
+          "median_of_mean_cdf": 16.66766050054407,
+          "p10_of_mean_cdf": 8.029060257052246,
+          "p90_of_mean_cdf": 24.783702479338853,
+          "p99_of_mean_cdf": 30.347828571428572,
+          "per_channel_median_mean": 13.320166944650268,
+          "per_channel_median_std": 4.095146946792342,
+          "per_channel_median_min": 4.8,
+          "per_channel_median_max": 19.906833712984053,
+          "max_band_halfwidth": 0.24367153255908053
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0003140624607421924,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.02107233486595814,
+          "max_windowed_evm": 65.90160948628841
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 11.951506440966677,
+          "p10_of_mean_cdf": 6.807394766780432,
+          "p90_of_mean_cdf": 17.490070487281642,
+          "p99_of_mean_cdf": 25.646519823788548,
+          "per_channel_median_mean": 11.931557531639278,
+          "per_channel_median_std": 4.689502405100552,
+          "per_channel_median_min": 4.13712827828377,
+          "per_channel_median_max": 24.329294032023288,
+          "max_band_halfwidth": 0.4728546073011382
+        },
+        "dd": {
+          "median_of_mean_cdf": 11.86322450281825,
+          "p10_of_mean_cdf": 5.8,
+          "p90_of_mean_cdf": 17.21585795608566,
+          "p99_of_mean_cdf": 25.143128679562658,
+          "per_channel_median_mean": 11.905055657157373,
+          "per_channel_median_std": 4.679132926874564,
+          "per_channel_median_min": 4.125921349521865,
+          "per_channel_median_max": 24.240826963168868,
+          "max_band_halfwidth": 0.48336600195025015
+        },
+        "da": {
+          "median_of_mean_cdf": 12.06290545886076,
+          "p10_of_mean_cdf": 5.8,
+          "p90_of_mean_cdf": 17.483461667224642,
+          "p99_of_mean_cdf": 25.769208400646203,
+          "per_channel_median_mean": 12.055186154823009,
+          "per_channel_median_std": 4.794465676022293,
+          "per_channel_median_min": 4.125921349521865,
+          "per_channel_median_max": 24.92725134408602,
+          "max_band_halfwidth": 0.48734306511816106
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.000386924951634381,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.026810884148639483,
+          "max_windowed_evm": 65.90160948628841
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 19.7824656125466,
+          "p10_of_mean_cdf": 15.973459119496855,
+          "p90_of_mean_cdf": 23.674436377531528,
+          "p99_of_mean_cdf": 25.960062370062367,
+          "per_channel_median_mean": 19.704958023485098,
+          "per_channel_median_std": 2.754190632815738,
+          "per_channel_median_min": 14.205893377759267,
+          "per_channel_median_max": 24.798049219687876,
+          "max_band_halfwidth": 0.42452711194211923
+        },
+        "dd": {
+          "median_of_mean_cdf": 19.756169116723207,
+          "p10_of_mean_cdf": 15.949318929074684,
+          "p90_of_mean_cdf": 23.606043030869973,
+          "p99_of_mean_cdf": 25.631164537941398,
+          "per_channel_median_mean": 19.696623811899812,
+          "per_channel_median_std": 2.7597930335722682,
+          "per_channel_median_min": 14.177315812149935,
+          "per_channel_median_max": 24.816781411359724,
+          "max_band_halfwidth": 0.4285273296931784
+        },
+        "da": {
+          "median_of_mean_cdf": 20.562944123899182,
+          "p10_of_mean_cdf": 16.214150765161534,
+          "p90_of_mean_cdf": 27.150547327752736,
+          "p99_of_mean_cdf": 31.03931931931932,
+          "per_channel_median_mean": 20.93819590615218,
+          "per_channel_median_std": 3.9413077539619126,
+          "per_channel_median_min": 14.365901432181971,
+          "per_channel_median_max": 30.00256312165264,
+          "max_band_halfwidth": 0.43334862579184363
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00024119996985000377,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.015333785583276803,
+          "max_windowed_evm": 60.289034686579555
+        }
+      }
+    },
+    "gnn_b3": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 6.154931020352411,
+          "p10_of_mean_cdf": 3.643116569136515,
+          "p90_of_mean_cdf": 9.691355716742688,
+          "p99_of_mean_cdf": 17.333768115942053,
+          "per_channel_median_mean": 6.9720488618049306,
+          "per_channel_median_std": 2.271375730984043,
+          "per_channel_median_min": 3.6086861768368617,
+          "per_channel_median_max": 12.465271966527197,
+          "max_band_halfwidth": 0.41911216637688903
+        },
+        "dd": {
+          "median_of_mean_cdf": 6.010601552393273,
+          "p10_of_mean_cdf": 3.6251642123106262,
+          "p90_of_mean_cdf": 9.475584568857418,
+          "p99_of_mean_cdf": 14.126211180124223,
+          "per_channel_median_mean": 5.848993239775312,
+          "per_channel_median_std": 1.9237701827697358,
+          "per_channel_median_min": 3.1,
+          "per_channel_median_max": 9.730392156862745,
+          "max_band_halfwidth": 0.4297954671816681
+        },
+        "da": {
+          "median_of_mean_cdf": 6.010601552393273,
+          "p10_of_mean_cdf": 3.6251642123106262,
+          "p90_of_mean_cdf": 9.475614073910156,
+          "p99_of_mean_cdf": 14.48643828167482,
+          "per_channel_median_mean": 5.84926311380524,
+          "per_channel_median_std": 1.9243436063081276,
+          "per_channel_median_min": 3.1,
+          "per_channel_median_max": 9.73578947368421,
+          "max_band_halfwidth": 0.4297954671816681
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00029521871309766087,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.026765659154292607,
+          "max_windowed_evm": 64.45406120009591
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 5.094477298274766,
+          "p10_of_mean_cdf": 3.2829145728643216,
+          "p90_of_mean_cdf": 7.811490191300109,
+          "p99_of_mean_cdf": 17.362142857142892,
+          "per_channel_median_mean": 5.29706572140258,
+          "per_channel_median_std": 1.7226417278384716,
+          "per_channel_median_min": 2.734127542760611,
+          "per_channel_median_max": 8.390397703105062,
+          "max_band_halfwidth": 0.4713459077542899
+        },
+        "dd": {
+          "median_of_mean_cdf": 5.031599584278156,
+          "p10_of_mean_cdf": 3.199331320103538,
+          "p90_of_mean_cdf": 7.633687450357426,
+          "p99_of_mean_cdf": 8.651486796785303,
+          "per_channel_median_mean": 5.285157953745871,
+          "per_channel_median_std": 1.720805137306125,
+          "per_channel_median_min": 2.722687615022834,
+          "per_channel_median_max": 8.370739451044654,
+          "max_band_halfwidth": 0.48705086546469145
+        },
+        "da": {
+          "median_of_mean_cdf": 5.031599584278156,
+          "p10_of_mean_cdf": 3.199331320103538,
+          "p90_of_mean_cdf": 7.633687450357426,
+          "p99_of_mean_cdf": 8.651486796785303,
+          "per_channel_median_mean": 5.285158292474372,
+          "per_channel_median_std": 1.720805379921445,
+          "per_channel_median_min": 2.722687615022834,
+          "per_channel_median_max": 8.370739451044654,
+          "max_band_halfwidth": 0.48705086546469145
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00031783121027109874,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.028521896434762946,
+          "max_windowed_evm": 64.45406120009591
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 7.762160365600332,
+          "p10_of_mean_cdf": 4.314677582265696,
+          "p90_of_mean_cdf": 10.719033383158944,
+          "p99_of_mean_cdf": 17.314390243902416,
+          "per_channel_median_mean": 7.5188812592952825,
+          "per_channel_median_std": 2.5876730631208034,
+          "per_channel_median_min": 3.8839945601200525,
+          "per_channel_median_max": 13.945114678899083,
+          "max_band_halfwidth": 0.4908410464565836
+        },
+        "dd": {
+          "median_of_mean_cdf": 7.687085488287193,
+          "p10_of_mean_cdf": 4.303131349971344,
+          "p90_of_mean_cdf": 10.318379978471476,
+          "p99_of_mean_cdf": 14.551987500000003,
+          "per_channel_median_mean": 7.507388048457708,
+          "per_channel_median_std": 2.586783065609749,
+          "per_channel_median_min": 3.876269718245646,
+          "per_channel_median_max": 13.941426032874277,
+          "max_band_halfwidth": 0.5021321394662548
+        },
+        "da": {
+          "median_of_mean_cdf": 7.687085488287193,
+          "p10_of_mean_cdf": 4.303131349971344,
+          "p90_of_mean_cdf": 10.31879049676026,
+          "p99_of_mean_cdf": 14.954135546334717,
+          "per_channel_median_mean": 7.524275147250762,
+          "per_channel_median_std": 2.6315703002548063,
+          "per_channel_median_min": 3.876269718245646,
+          "per_channel_median_max": 14.27719861660079,
+          "max_band_halfwidth": 0.5021321394662548
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.000272606215924223,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.025009421873822265,
+          "max_windowed_evm": 60.64388957532574
+        }
+      }
+    },
+    "wmmse_b3": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 11.957660447472323,
+          "p10_of_mean_cdf": 7.418241891200149,
+          "p90_of_mean_cdf": 21.943737552555877,
+          "p99_of_mean_cdf": 27.780979156568105,
+          "per_channel_median_mean": 14.588525177658624,
+          "per_channel_median_std": 4.807515135697475,
+          "per_channel_median_min": 7.3452219714070734,
+          "per_channel_median_max": 23.94193548387097,
+          "max_band_halfwidth": 0.37635728586518646
+        },
+        "dd": {
+          "median_of_mean_cdf": 11.842978003384095,
+          "p10_of_mean_cdf": 7.393328809312523,
+          "p90_of_mean_cdf": 21.796597510373445,
+          "p99_of_mean_cdf": 27.56023407022106,
+          "per_channel_median_mean": 11.469274168659432,
+          "per_channel_median_std": 4.014255229496717,
+          "per_channel_median_min": 7.237488284910965,
+          "per_channel_median_max": 20.884371492704826,
+          "max_band_halfwidth": 0.3843413433785366
+        },
+        "da": {
+          "median_of_mean_cdf": 11.846746447270007,
+          "p10_of_mean_cdf": 7.393328809312523,
+          "p90_of_mean_cdf": 22.863926067558953,
+          "p99_of_mean_cdf": 35.5890113452188,
+          "per_channel_median_mean": 11.488658770110975,
+          "per_channel_median_std": 4.05622759856403,
+          "per_channel_median_min": 7.237488284910965,
+          "per_channel_median_max": 21.04468018720749,
+          "max_band_halfwidth": 0.3842511387090845
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002977312127835984,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.022851812768523404,
+          "max_windowed_evm": 64.82347264150181
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 9.530770601865605,
+          "p10_of_mean_cdf": 7.218320380291255,
+          "p90_of_mean_cdf": 16.992369157011588,
+          "p99_of_mean_cdf": 21.57559454191031,
+          "per_channel_median_mean": 10.703721815748947,
+          "per_channel_median_std": 3.8217484258583974,
+          "per_channel_median_min": 6.62801284162002,
+          "per_channel_median_max": 20.418742921857305,
+          "max_band_halfwidth": 0.484026341574269
+        },
+        "dd": {
+          "median_of_mean_cdf": 9.472176246924626,
+          "p10_of_mean_cdf": 7.1975006027485335,
+          "p90_of_mean_cdf": 16.56451253481894,
+          "p99_of_mean_cdf": 20.876406249999995,
+          "per_channel_median_mean": 10.687560268066582,
+          "per_channel_median_std": 3.817930174127613,
+          "per_channel_median_min": 6.610949307304786,
+          "per_channel_median_max": 20.377550623052958,
+          "max_band_halfwidth": 0.4980653948553836
+        },
+        "da": {
+          "median_of_mean_cdf": 9.472176246924626,
+          "p10_of_mean_cdf": 7.1975006027485335,
+          "p90_of_mean_cdf": 16.61350067842606,
+          "p99_of_mean_cdf": 20.980142857142855,
+          "per_channel_median_mean": 10.701858945783886,
+          "per_channel_median_std": 3.8461727507288535,
+          "per_channel_median_min": 6.610949307304786,
+          "per_channel_median_max": 20.460993860322333,
+          "max_band_halfwidth": 0.4980653948553836
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00027888746513906687,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.02535363433079571,
+          "max_windowed_evm": 64.82347264150181
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 14.85137705322959,
+          "p10_of_mean_cdf": 7.796944444444445,
+          "p90_of_mean_cdf": 25.073490813648306,
+          "p99_of_mean_cdf": 28.13037306642402,
+          "per_channel_median_mean": 15.663532057827577,
+          "per_channel_median_std": 6.020962455524498,
+          "per_channel_median_min": 6.676253711646321,
+          "per_channel_median_max": 27.277990314769976,
+          "max_band_halfwidth": 0.4732523060378454
+        },
+        "dd": {
+          "median_of_mean_cdf": 14.764818045862413,
+          "p10_of_mean_cdf": 7.76453939311471,
+          "p90_of_mean_cdf": 23.884916201117306,
+          "p99_of_mean_cdf": 27.97777916406737,
+          "per_channel_median_mean": 15.648737541403444,
+          "per_channel_median_std": 6.027056142369239,
+          "per_channel_median_min": 6.666198189614102,
+          "per_channel_median_max": 27.28795093795094,
+          "max_band_halfwidth": 0.4827151959919582
+        },
+        "da": {
+          "median_of_mean_cdf": 14.829842327906679,
+          "p10_of_mean_cdf": 7.76453939311471,
+          "p90_of_mean_cdf": 26.3,
+          "p99_of_mean_cdf": 36.11365168539326,
+          "per_channel_median_mean": 16.66113715367707,
+          "per_channel_median_std": 7.927143803666985,
+          "per_channel_median_min": 6.666198189614102,
+          "per_channel_median_max": 34.5525,
+          "max_band_halfwidth": 0.48261186210791734
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00031657496042812995,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.0203499912062511,
+          "max_windowed_evm": 63.54401491425043
+        }
+      }
+    },
+    "ide_wf_b3": {
+      "both": {
+        "dd_startup": {
+          "median_of_mean_cdf": 11.96852666784017,
+          "p10_of_mean_cdf": 5.814227384084929,
+          "p90_of_mean_cdf": 16.935586541376168,
+          "p99_of_mean_cdf": 23.443587028457966,
+          "per_channel_median_mean": 13.090263077781268,
+          "per_channel_median_std": 2.9806458385185937,
+          "per_channel_median_min": 7.5361191162343895,
+          "per_channel_median_max": 20.991333333333337,
+          "max_band_halfwidth": 0.30890532314214614
+        },
+        "dd": {
+          "median_of_mean_cdf": 11.88564933042666,
+          "p10_of_mean_cdf": 5.768253968253968,
+          "p90_of_mean_cdf": 16.44051987767584,
+          "p99_of_mean_cdf": 22.973010136624058,
+          "per_channel_median_mean": 9.912652289491172,
+          "per_channel_median_std": 2.851971316478029,
+          "per_channel_median_min": 5.3,
+          "per_channel_median_max": 14.40340030911901,
+          "max_band_halfwidth": 0.3154967731815067
+        },
+        "da": {
+          "median_of_mean_cdf": 11.902121666167215,
+          "p10_of_mean_cdf": 5.768253968253968,
+          "p90_of_mean_cdf": 16.5056682464455,
+          "p99_of_mean_cdf": 24.80580816110228,
+          "per_channel_median_mean": 9.92932264677795,
+          "per_channel_median_std": 2.86831579623154,
+          "per_channel_median_min": 5.3,
+          "per_channel_median_max": 14.446523178807947,
+          "max_band_halfwidth": 0.3154226539430971
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002933343383332077,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.022846159644230046,
+          "max_windowed_evm": 63.85249594981458
+        }
+      },
+      "strong": {
+        "dd_startup": {
+          "median_of_mean_cdf": 9.603310870202169,
+          "p10_of_mean_cdf": 5.301276731567188,
+          "p90_of_mean_cdf": 12.64362593230063,
+          "p99_of_mean_cdf": 18.916333333333338,
+          "per_channel_median_mean": 9.05351121425836,
+          "per_channel_median_std": 2.8663531865055054,
+          "per_channel_median_min": 4.543424641964083,
+          "per_channel_median_max": 13.263016187644533,
+          "max_band_halfwidth": 0.4978545985081452
+        },
+        "dd": {
+          "median_of_mean_cdf": 9.491904311393432,
+          "p10_of_mean_cdf": 5.27840936422673,
+          "p90_of_mean_cdf": 12.494877009490606,
+          "p99_of_mean_cdf": 13.719749085206486,
+          "per_channel_median_mean": 9.037089261374392,
+          "per_channel_median_std": 2.8629414328620677,
+          "per_channel_median_min": 4.535084800343495,
+          "per_channel_median_max": 13.247714658831212,
+          "max_band_halfwidth": 0.5094469042221615
+        },
+        "da": {
+          "median_of_mean_cdf": 9.513916360553829,
+          "p10_of_mean_cdf": 5.27840936422673,
+          "p90_of_mean_cdf": 12.525476896990249,
+          "p99_of_mean_cdf": 13.749251968503938,
+          "per_channel_median_mean": 9.047638032762887,
+          "per_channel_median_std": 2.872903750233453,
+          "per_channel_median_min": 4.535084800343495,
+          "per_channel_median_max": 13.28076923076923,
+          "max_band_halfwidth": 0.5094729229490202
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.00031783121027109874,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.026236777970402754,
+          "max_windowed_evm": 63.85249594981458
+        }
+      },
+      "weak": {
+        "dd_startup": {
+          "median_of_mean_cdf": 14.218539240889157,
+          "p10_of_mean_cdf": 9.67363718958207,
+          "p90_of_mean_cdf": 19.70049937578027,
+          "p99_of_mean_cdf": 23.682227602905574,
+          "per_channel_median_mean": 14.381333246617336,
+          "per_channel_median_std": 3.5773736226313333,
+          "per_channel_median_min": 7.644399477806789,
+          "per_channel_median_max": 22.79249411764706,
+          "max_band_halfwidth": 0.4363847787762928
+        },
+        "dd": {
+          "median_of_mean_cdf": 14.166558861578265,
+          "p10_of_mean_cdf": 9.645722362743639,
+          "p90_of_mean_cdf": 19.481106128550078,
+          "p99_of_mean_cdf": 23.391810512654118,
+          "per_channel_median_mean": 14.367038644253574,
+          "per_channel_median_std": 3.580036230194054,
+          "per_channel_median_min": 7.630291878172589,
+          "per_channel_median_max": 22.804343351173323,
+          "max_band_halfwidth": 0.4436107533274643
+        },
+        "da": {
+          "median_of_mean_cdf": 14.2184691936192,
+          "p10_of_mean_cdf": 9.645746579417013,
+          "p90_of_mean_cdf": 19.95070812807882,
+          "p99_of_mean_cdf": 25.304295612009245,
+          "per_channel_median_mean": 14.53553686675254,
+          "per_channel_median_std": 3.8817877068437614,
+          "per_channel_median_min": 7.630291878172589,
+          "per_channel_median_max": 24.59431447225245,
+          "max_band_halfwidth": 0.4449420271804051
+        },
+        "startup": {
+          "fraction_windows_above_50pct": 0.0002688374663953167,
+          "fraction_windows_above_100pct": 0.0,
+          "fraction_windows_raised_by_1pp": 0.019455541318057334,
+          "max_windowed_evm": 61.400471280634235
+        }
+      }
+    }
+  }
+}

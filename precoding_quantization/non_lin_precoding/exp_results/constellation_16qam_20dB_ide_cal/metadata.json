@@ -1,0 +1,352 @@
+{
+  "status": "complete",
+  "m": 40,
+  "pt": 40.0,
+  "snr_db": 20.0,
+  "noise_variance_complex": 0.4,
+  "snr_definition": "Pt / E[abs(n)^2], transmit reference",
+  "users": [
+    1,
+    2
+  ],
+  "bits": [
+    1,
+    2,
+    3
+  ],
+  "n_eval": 2048,
+  "ns": 125,
+  "start": 4096,
+  "snapshot_blocks": 32,
+  "snapshot_channel_index": 4096,
+  "snapshot_selection": "first evaluation channel, fixed before inference",
+  "seed_symbols": 1234,
+  "seed_noise": 20260930,
+  "seed_cal": 777,
+  "modulation": "unit-average-energy Gray 16-QAM; [-3,-1,1,3]/sqrt(10) -> [00,01,11,10]",
+  "bit_axis": [
+    "I_sign",
+    "I_inner_outer",
+    "Q_sign",
+    "Q_inner_outer"
+  ],
+  "receiver": "paper oracle per-block gain g=sum(rx_noiseless*conj(s))/sum(abs(s)^2); z=rx_raw/g",
+  "channel": "stored cell-free flat block fading: H^T x + n, perfect TX CSI and symbol timing",
+  "channel_geometry": {
+    "area_m": [
+      100,
+      100
+    ],
+    "minimum_distance_m": 10,
+    "pathloss_db": "-30 - 37*log10(d)",
+    "shadowing_std_db": 8,
+    "small_scale": "CN(0,1)",
+    "normalization": "original full-dataset common scalar"
+  },
+  "scope": "symbol-rate equivalent complex baseband; no pulse shaping, CFO, phase drift or timing acquisition",
+  "power_normalization": "one common scalar per 125-symbol block by default, no per-AP analog gain restoration",
+  "comparison": "shared channels, 16-QAM symbols and actual AWGN draws for all methods/bits at each K",
+  "evaluation_caveat": "Htest[4096:6144] was also used for checkpoint selection in the paper; not a new independent test set",
+  "baseline": "ide_cal",
+  "methods": [
+    "gnn",
+    "ide_cal"
+  ],
+  "ide_cal": "IDE (Wang et al., TWC 2018, Alg. 1) with a calibrated fixed beta, as in ber_16qam_20dB.py: per channel realization, beta = ide_baseline.calibrated_beta(...) on an independent training block of 125 16-QAM symbol vectors (seed --seed-cal, never the data), then T=100, alpha=0.95 with this beta fixed, every symbol vector processed independently; the last hard iterate on the DAC grid",
+  "software": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "numpy": "1.26.4",
+    "torch": "2.10.0+cu128",
+    "device": "cuda:0",
+    "threads": 16,
+    "git_commit": "a6cfdd41a127323968d31387c9e40bf2edccd751"
+  },
+  "sources": {
+    "constellation_16qam.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/constellation_16qam.py",
+      "sha256": "d5d2e85a3efbe5dfed6e2c80e87fcf001e7f8758115beae3406beaad2bbf9c91"
+    },
+    "exp_cellfree_ablation.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/exp_cellfree_ablation.py",
+      "sha256": "e2ecfbcb79d8c6c107e7d81f450f71738d3bc52f63c7884b74c345a329de0594"
+    },
+    "train_sweep.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/train_sweep.py",
+      "sha256": "199e943bfd09e9c602b935b3ae538d31c2682883e3cfc1191cce6a16700bdeef"
+    },
+    "wmmse_baseline.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/wmmse_baseline.py",
+      "sha256": "2243ef3db983e4a93d5c65af1364043f703b709f1188e5feea908040094718d4"
+    },
+    "ide_baseline.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/ide_baseline.py",
+      "sha256": "0dbfd2362504948308141261e02b944f73b73cb7dbb9b8e072f819d1fc960bfb"
+    },
+    "data_handling.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/data_handling.py",
+      "sha256": "91ce5b0dce84725192c1530a350699c16d4a59bf977d26979b2219b3abc2d484"
+    },
+    "model.py": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/model.py",
+      "sha256": "612d51abf54b7d282debfa9b61bd8b08ac1e89dd3b797ca908de642deb71163a"
+    }
+  },
+  "datasets": {
+    "1": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/datasets/cellfree/M_40_K_1_Ntr_200000_Nval_10000_Nte_10000_SperChannel125/Htest.npy",
+      "sha256": "2358a79d1828e0c494f4ba9ec469488eb8446f12a4017817c9c4f7087446af66",
+      "shape": [
+        10000,
+        40,
+        1
+      ],
+      "actual_noise_seed": 20260931
+    },
+    "2": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/datasets/cellfree/M_40_K_2_Ntr_200000_Nval_10000_Nte_10000_SperChannel125/Htest.npy",
+      "sha256": "ebfa6ae8b663f0605931050351a70af55d2f6a2b599d2a56577153307fcf0deb",
+      "shape": [
+        10000,
+        40,
+        2
+      ],
+      "actual_noise_seed": 20260932
+    }
+  },
+  "checkpoints": {
+    "K1_b1": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_k1_continue/M_40_K_1_1bit_polar4_mrtinit_refine1_tau1to0.25in3_lr0.001_dl128_L4_ep20to40_cosine/model_best.pt",
+      "sha256": "fd79ae1ee0ab1470fafee11b960899f9a151aca3bc4981b2fca96b41abeab6c1",
+      "epoch": 37,
+      "configuration": {
+        "epochs": 40,
+        "n_train": 200000,
+        "refine": 1,
+        "init": "mrt",
+        "tau0": 1.0,
+        "tau_final": 0.25,
+        "tau_epochs": 3,
+        "lr": 0.001,
+        "layers": 4,
+        "dl": 128,
+        "batch_channels": 128,
+        "accum_steps": 4,
+        "chan_chunk": 16,
+        "seed": 0,
+        "out": "stored_models_cellfree_polar4_mrtinit_nodrift",
+        "lr_schedule": "cosine",
+        "source": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_K_bits/M_40_K_1_1bit_polar4_mrtinit_refine1_tau1to0.25in3_lr0.001_dl128_L4"
+      },
+      "feat_stats": [
+        -3.7867650985717773,
+        1.5889252424240112,
+        1.3192179203033447,
+        0.6712714433670044
+      ],
+      "training_symbols": "CN(0,1); no 16-QAM retraining",
+      "inference": "deterministic argmax, one quantized MRT/ZF warm start"
+    },
+    "K1_b2": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K1_b2_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "6e1c0bc8c21c353503923a9cddbd9e14092b0f220dfc6b3255c857ad1c81a2c8",
+      "epoch": 29,
+      "configuration": {
+        "K": 1,
+        "bits": 2,
+        "epochs": 30,
+        "n_train": 100000,
+        "lr": 0.001,
+        "lr_min": 5e-05,
+        "tau0": 1.0,
+        "tau_final": 0.25,
+        "tau_epochs": 3,
+        "layers": 4,
+        "dl": 128,
+        "batch_channels": 128,
+        "accum_steps": 4,
+        "chan_chunk": 16,
+        "cd_sweeps": 8,
+        "logit_l2": 0.0,
+        "no_warm_start": false,
+        "logit_norm": null,
+        "loss": "biased",
+        "seed": 0,
+        "out": "stored_models_cellfree_sweep_K_bits",
+        "continued_from": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_K_bits/M40_K1_b2_ep15_n100000_lr0.001to5e-05_tau1to0.25in3",
+        "lr_schedule": "cosine 0.0002 -> 1e-05"
+      },
+      "feat_stats": [
+        -3.7867650985717773,
+        1.5889252424240112,
+        1.3192179203033447,
+        0.6712714433670044
+      ],
+      "training_symbols": "CN(0,1); no 16-QAM retraining",
+      "inference": "deterministic argmax, one quantized MRT/ZF warm start"
+    },
+    "K1_b3": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K1_b3_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "f7595be8138248f3cf63632472ffb813efe1d4f1c5801fd862aa867287b05268",
+      "epoch": 29,
+      "configuration": {
+        "K": 1,
+        "bits": 3,
+        "epochs": 30,
+        "n_train": 100000,
+        "lr": 0.001,
+        "lr_min": 5e-05,
+        "tau0": 1.0,
+        "tau_final": 0.25,
+        "tau_epochs": 3,
+        "layers": 4,
+        "dl": 128,
+        "batch_channels": 128,
+        "accum_steps": 4,
+        "chan_chunk": 16,
+        "cd_sweeps": 8,
+        "logit_l2": 0.0,
+        "no_warm_start": false,
+        "logit_norm": null,
+        "loss": "biased",
+        "seed": 0,
+        "out": "stored_models_cellfree_sweep_K_bits",
+        "continued_from": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_K_bits/M40_K1_b3_ep15_n100000_lr0.001to5e-05_tau1to0.25in3",
+        "lr_schedule": "cosine 0.0002 -> 1e-05"
+      },
+      "feat_stats": [
+        -3.7867650985717773,
+        1.5889252424240112,
+        1.3192179203033447,
+        0.6712714433670044
+      ],
+      "training_symbols": "CN(0,1); no 16-QAM retraining",
+      "inference": "deterministic argmax, one quantized MRT/ZF warm start"
+    },
+    "K2_b1": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K2_b1_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "132ec32b2fef03ddaa03a96013e09a363e483c6a5913acca1e834e81766c6b32",
+      "epoch": 23,
+      "configuration": {
+        "K": 2,
+        "bits": 1,
+        "epochs": 30,
+        "n_train": 100000,
+        "lr": 0.001,
+        "lr_min": 5e-05,
+        "tau0": 1.0,
+        "tau_final": 0.25,
+        "tau_epochs": 3,
+        "layers": 4,
+        "dl": 128,
+        "batch_channels": 128,
+        "accum_steps": 4,
+        "chan_chunk": 16,
+        "cd_sweeps": 8,
+        "logit_l2": 0.1,
+        "no_warm_start": false,
+        "logit_norm": null,
+        "seed": 0,
+        "out": "stored_models_cellfree_sweep_K_bits",
+        "continued_from": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_K_bits/M40_K2_b1_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1",
+        "lr_schedule": "cosine 0.0002 -> 1e-05"
+      },
+      "feat_stats": [
+        -4.365306854248047,
+        1.6080899238586426,
+        1.8566304445266724,
+        0.5276235938072205
+      ],
+      "training_symbols": "CN(0,1); no 16-QAM retraining",
+      "inference": "deterministic argmax, one quantized MRT/ZF warm start"
+    },
+    "K2_b2": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K2_b2_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "085131bb8b9a1c562d5fc3e43f136206d0a027ce66b9407eadf52176ba682482",
+      "epoch": 26,
+      "configuration": {
+        "K": 2,
+        "bits": 2,
+        "epochs": 30,
+        "n_train": 100000,
+        "lr": 0.001,
+        "lr_min": 5e-05,
+        "tau0": 1.0,
+        "tau_final": 0.25,
+        "tau_epochs": 3,
+        "layers": 4,
+        "dl": 128,
+        "batch_channels": 128,
+        "accum_steps": 4,
+        "chan_chunk": 16,
+        "cd_sweeps": 8,
+        "logit_l2": 0.1,
+        "no_warm_start": false,
+        "logit_norm": null,
+        "seed": 0,
+        "out": "stored_models_cellfree_sweep_K_bits",
+        "continued_from": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_K_bits/M40_K2_b2_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1",
+        "lr_schedule": "cosine 0.0002 -> 1e-05"
+      },
+      "feat_stats": [
+        -4.365306854248047,
+        1.6080899238586426,
+        1.8566304445266724,
+        0.5276235938072205
+      ],
+      "training_symbols": "CN(0,1); no 16-QAM retraining",
+      "inference": "deterministic argmax, one quantized MRT/ZF warm start"
+    },
+    "K2_b3": {
+      "path": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_continue/M40_K2_b3_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+      "sha256": "424df27dded14cdbeb7224a4b67675613936a9fba48328e56cc931be4fef4bd7",
+      "epoch": 29,
+      "configuration": {
+        "K": 2,
+        "bits": 3,
+        "epochs": 30,
+        "n_train": 100000,
+        "lr": 0.001,
+        "lr_min": 5e-05,
+        "tau0": 1.0,
+        "tau_final": 0.25,
+        "tau_epochs": 3,
+        "layers": 4,
+        "dl": 128,
+        "batch_channels": 128,
+        "accum_steps": 4,
+        "chan_chunk": 16,
+        "cd_sweeps": 8,
+        "logit_l2": 0.1,
+        "no_warm_start": false,
+        "logit_norm": null,
+        "seed": 0,
+        "out": "stored_models_cellfree_sweep_K_bits",
+        "continued_from": "/home/user/Quantization/precoding_quantization/non_lin_precoding/stored_models_cellfree_sweep_K_bits/M40_K2_b3_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1",
+        "lr_schedule": "cosine 0.0002 -> 1e-05"
+      },
+      "feat_stats": [
+        -4.365306854248047,
+        1.6080899238586426,
+        1.8566304445266724,
+        0.5276235938072205
+      ],
+      "training_symbols": "CN(0,1); no 16-QAM retraining",
+      "inference": "deterministic argmax, one quantized MRT/ZF warm start"
+    }
+  },
+  "case_files": [
+    "K1_b1_gnn.npz",
+    "K1_b1_ide_cal.npz",
+    "K1_b2_gnn.npz",
+    "K1_b2_ide_cal.npz",
+    "K1_b3_gnn.npz",
+    "K1_b3_ide_cal.npz",
+    "K2_b1_gnn.npz",
+    "K2_b1_ide_cal.npz",
+    "K2_b2_gnn.npz",
+    "K2_b2_ide_cal.npz",
+    "K2_b3_gnn.npz",
+    "K2_b3_ide_cal.npz"
+  ],
+  "simulation_seconds": 656.9018302538898
+}

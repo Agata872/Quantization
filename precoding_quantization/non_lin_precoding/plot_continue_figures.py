@@ -67,9 +67,8 @@ def load():
 
 # ------------------------------------------------------------------------------------------ fig: bits
 BITS_HEAD = r"""% Sum rate at SNR = 20.0 dB vs DAC resolution, after continued training.
-% Two panels: K = 1, 2 on the left; K = 4, 6 on the right.
+% One axis for K = 1, 2, 4, 6 (y from zero).
 % Color identifies K; line style and marker identify the method.
-% The panels use different y-axis ranges, both starting at zero.
 % Unquantized ZF/MRT and unquantized WMMSE are separate references at the categorical infinity tick,
 % drawn side by side (ZF/MRT left, WMMSE right of the tick); no extrapolation is drawn.
 % GNN: best epoch of the continued runs -- K = 1, b = 1: continue_k1_training.py (20 + 20 epochs, cosine
@@ -86,66 +85,82 @@ BITS_HEAD = r"""% Sum rate at SNR = 20.0 dB vs DAC resolution, after continued t
 \usepackage{{newtxtext,newtxmath}}
 \usepackage{{pgfplots}}
 \pgfplotsset{{compat=1.18}}
-\usepgfplotslibrary{{groupplots}}
 \usetikzlibrary{{calc}}
 \begin{{document}}
-\definecolor{{rsumKone}}{{HTML}}{{0072B2}}
-\definecolor{{rsumKtwo}}{{HTML}}{{D55E00}}
-\definecolor{{rsumKfour}}{{HTML}}{{009E73}}
-\definecolor{{rsumKsix}}{{HTML}}{{A35D94}}
-\definecolor{{rsumGrid}}{{HTML}}{{E2E5E8}}
-\definecolor{{rsumInk}}{{HTML}}{{42484F}}
+\definecolor{{rsumKone}}{{HTML}}{{4190D0}}%
+\definecolor{{rsumKtwo}}{{HTML}}{{BA5A12}}%
+\definecolor{{rsumKfour}}{{HTML}}{{11604A}}%
+\definecolor{{rsumKsix}}{{HTML}}{{3A1A4A}}%
+\definecolor{{rsumGrid}}{{HTML}}{{E2E5E8}}%
+\definecolor{{rsumInk}}{{HTML}}{{42484F}}%
 """
 
 BITS_STYLES = r"""
 \begin{tikzpicture}
 \pgfplotsset{
   rsum bits/gnn/.style={
-    solid, line width=1.05pt, mark=*, mark size=2.1pt,
+    solid, line width=1.05pt, mark=o, mark size=2.1pt,
     mark options={solid}, forget plot,
   },
   rsum bits/gd/.style={
     dashed, line width=1.05pt, mark=triangle*, mark size=2.7pt,
-    mark options={solid, fill=white}, forget plot,
+    mark options={solid, fill=none}, forget plot,
   },
   rsum bits/wmmse/.style={
-    dash dot, line width=1.05pt, mark=pentagon*, mark size=2.3pt,
-    mark options={solid, fill=white}, forget plot,
+    dash dot, line width=0.7pt, mark=pentagon*, mark size=2.3pt,
+    mark options={solid, fill=none}, forget plot,
   },
   rsum bits/linear/.style={
-    densely dotted, line width=1.05pt, mark=square*, mark size=2.0pt,
-    mark options={solid, fill=white}, forget plot,
+    densely dotted, line width=0.7pt, mark=square, mark size=2.0pt,
+    mark options={solid, fill=none}, forget plot,
   },
   rsum bits/unquantized/.style={
-    only marks, mark=diamond*, mark size=3.0pt,
+    only marks, mark=square*, mark size=2.3pt,
     mark options={solid}, forget plot,
   },
   rsum bits/unquantized wmmse/.style={
     only marks, mark=pentagon*, mark size=2.8pt,
     mark options={solid}, forget plot,
   },
+  % In-axis legend in the empty upper left: precoders, then the unquantized references.
+  rsum bits/key/.style={
+    legend cell align=left,
+    % Shorter line samples than the default 0.6 cm; markers keep their size.
+    legend image code/.code={
+      \draw[mark repeat=2, mark phase=2] plot coordinates {(0cm,0cm) (0.22cm,0cm) (0.44cm,0cm)};
+    },
+    legend style={
+      at={(0.02,0.975)}, anchor=north west, font=\scriptsize,
+      fill=none, text opacity=1, draw opacity=1,
+      draw=none,
+      inner xsep=1pt, inner ysep=0.5pt, row sep=-2pt,
+      /tikz/every even column/.append style={column sep=0.15cm},
+    },
+  },
 }
-\begin{groupplot}[
-  group style={group name=rsumbits, group size=2 by 1, horizontal sep=1.35cm},
-  scale only axis, width=7.2cm, height=5.1cm,
+\begin{axis}[
+  scale only axis, width=6.9cm, height=5.6cm,
   axis lines=left, axis line style={draw=rsumInk, line width=0.45pt, -},
   tick align=outside, tick pos=left,
   major tick length=2.5pt, tick style={draw=rsumInk, line width=0.45pt},
   ymajorgrids=true, xmajorgrids=false,
   grid style={line width=0.3pt, draw=rsumGrid},
   every axis plot/.append style={line join=round},
-  title style={font=\small, yshift=2pt},
   tick label style={font=\footnotesize, /pgf/number format/fixed},
   label style={font=\small},
   xmin=0.8, xmax=4.65, xtick={1,2,3,4.2},
   xticklabels={1,2,3,$\infty$},
   xlabel={DAC resolution $b$ [bits]},
   ylabel={$R_{\mathrm{sum}}$ [bits/channel use]},
-  ymin=0,
+  ymin=0, ymax=56, ytick={0,10,20,30,40,50},
+  rsum bits/key, legend columns=2,
+  set layers,
 ]
 """
 
 KCOL = {1: 'rsumKone', 2: 'rsumKtwo', 4: 'rsumKfour', 6: 'rsumKsix'}
+BANDS = ((0.8, 1.5), (1.5, 2.5), (2.5, 3.65), (3.65, 4.65))   # b = 1, 2, 3, infinity (x axis units)
+BAND_SHADE = (4, 8, 12, 17)                                     # % of rsumInk, darker with b
 KNAME = {1: 'One', 2: 'Two', 4: 'Four', 6: 'Six'}
 X_UNQ_LIN, X_UNQ_WMMSE = 4.05, 4.35
 
@@ -166,23 +181,20 @@ def bits_tables(data):
     return '\n'.join(L)
 
 
-def bits_panel(data, Ks, title, ymax, yticks, first):
-    L = []
-    opts = [f'title={{{title}}}', f'ymax={ymax}', 'ytick={' + ','.join(map(str, yticks)) + '}']
-    if first:
-        opts += ['legend to name=rsumbitslegend', 'legend columns=3', 'legend cell align=left',
-                 'legend style={\n    draw=none, fill=none, font=\\footnotesize,\n'
-                 '    /tikz/every even column/.append style={column sep=0.45cm},\n  }']
-    L.append(r'\nextgroupplot[' + '\n  ' + ',\n  '.join(opts) + ',\n]')
-    if first:   # row-wise fill: columns = learned | quantized linear | unquantized
-        for sty, name in (('gnn', 'GNN'), ('wmmse', 'WMMSE + DAC'), ('unquantized wmmse', 'Unquantized WMMSE'),
-                          ('gd', 'GNN-GD'), ('linear', 'ZF/MRT + DAC'), ('unquantized', 'Unquantized ZF/MRT')):
-            L += [r'\addlegendimage{rsumInk, rsum bits/%s}' % sty, r'\addlegendentry{%s}' % name]
-        L.append('')
-    L += ['% The shaded strip is a reference category, not a finite bit interval.',
-          r'\path[fill=black!3] (axis cs:3.65,0) rectangle (axis cs:4.65,%s);' % ymax,
+def bits_axis(data):
+    Ks = (1, 2, 4, 6)
+    L = ['% Legend: row-wise fill, learned | quantized linear | unquantized references.']
+    for sty, name in (('gnn', 'GNN'), ('gd', 'GNN-GD'), ('linear', 'ZF/MRT + DAC'), ('wmmse', 'WMMSE + DAC'),
+                      ('unquantized', 'Unquantized ZF/MRT'), ('unquantized wmmse', 'Unquantized WMMSE')):
+        L += [r'\addlegendimage{rsumInk, rsum bits/%s}' % sty, r'\addlegendentry{%s}' % name]
+    L += ['', '% Background bands per DAC resolution, darker with b (below the grid); the b = infinity strip',
+          '% is a reference category, not a finite bit interval.',
+          r'\begin{pgfonlayer}{axis background}']
+    for (x0, x1), shade in zip(BANDS, BAND_SHADE):
+        L.append(r'\path[fill=rsumInk!%d] (axis cs:%g,0) rectangle (axis cs:%g,56);' % (shade, x0, x1))
+    L += [r'\end{pgfonlayer}',
           r'\draw[black!22, densely dashed, line width=0.4pt]',
-          r'  (axis cs:3.65,0) -- (axis cs:3.65,%s);' % ymax]
+          r'  (axis cs:3.65,0) -- (axis cs:3.65,56);']
     for sty, col in (('linear', 'linear'), ('wmmse', 'wmmse'), ('gnn', 'gnn'), ('gd', 'gd')):
         for K in Ks:
             if col == 'wmmse' and K == 1:
@@ -197,25 +209,25 @@ def bits_panel(data, Ks, title, ymax, yticks, first):
     for K in Ks:   # line-end labels next to the highest curve at b = 3 (GNN-GD)
         L += [r'\node[anchor=west, font=\footnotesize, text=%s, xshift=4pt]' % KCOL[K],
               r'  at (axis cs:3,%.4f) {$K=%d$};' % (data[(K, 3)]['gd'][I20], K)]
-    for K in Ks:   # reference labels above the higher of the two markers
-        d = data[(K, 1)]
-        top = max(d['lin_unq'][I20], d['wmmse_unq'][I20]) if K > 1 else d['lin_unq'][I20]
-        x = 4.2 if K > 1 else X_UNQ_LIN
-        L += [r'\node[anchor=south, font=\scriptsize, text=%s, yshift=3pt]' % KCOL[K],
-              r'  at (axis cs:%g,%.4f) {$K=%d$};' % (x, top, K)]
-    if 1 in Ks:
-        L.append(r'\node[anchor=north west, font=\scriptsize, text=rsumInk, align=left] at (rel axis cs:0.02,0.98)'
-                 r' {$K=1$: WMMSE $\equiv$ MRT};')
+    # The reference markers carry no K labels: their colors match the line-end labels, and labels at the
+    # top of the strip would collide with the legend.
+    # below the K = 1 ZF/MRT + DAC curve
+    L.append(r'\node[anchor=south east, font=\scriptsize, text=rsumInk] at (axis cs:3.55,0.6)'
+             r' {$K=1$: WMMSE $\equiv$ MRT};')
     return '\n'.join(L)
+
+
+def panel_labels(group, titles):
+    """Subfigure labels below each panel, under the x-axis label (the caption does not repeat them)."""
+    return '% Panel labels below each axis (under the x-axis label).\n' + ''.join(
+        r'\node[anchor=north, font=\small, inner sep=1pt, yshift=-2pt] at (%s c%dr1.outer south) {%s};' % (group, i + 1, t) + '\n'
+        for i, t in enumerate(titles))
 
 
 def fig_bits(data, out):
     body = [BITS_HEAD.format(ls=LS_NOTE), bits_tables(data), BITS_STYLES,
-            bits_panel(data, (1, 2), '(a) $K=1,2$', 21, [0, 5, 10, 15, 20], True), '',
-            bits_panel(data, (4, 6), '(b) $K=4,6$', 51, [0, 10, 20, 30, 40, 50], False),
-            r'\end{groupplot}', r'\node[anchor=south] at',
-            r'  ($(rsumbits c1r1.north)!0.5!(rsumbits c2r1.north)+(0,0.65cm)$)',
-            r'  {\pgfplotslegendfromname{rsumbitslegend}};', r'\end{tikzpicture}', r'\end{document}', '']
+            bits_axis(data),
+            r'\end{axis}', r'\end{tikzpicture}', r'\end{document}', '']
     open(out, 'w').write('\n'.join(body))
 
 
@@ -241,12 +253,12 @@ SNR_HEAD = r"""% Sum rate vs SNR for K = 2, 4, 6 (K = 1 is shown separately in f
 \usepgfplotslibrary{{groupplots}}
 \usetikzlibrary{{calc}}
 \begin{{document}}
-\definecolor{{snrOne}}{{HTML}}{{0072B2}}
-\definecolor{{snrTwo}}{{HTML}}{{009E73}}
-\definecolor{{snrThree}}{{HTML}}{{D55E00}}
-\definecolor{{snrMuted}}{{HTML}}{{9BA3AB}}
-\definecolor{{snrGrid}}{{HTML}}{{E2E5E8}}
-\definecolor{{snrInk}}{{HTML}}{{42484F}}
+\definecolor{{snrOne}}{{HTML}}{{0072B2}}%
+\definecolor{{snrTwo}}{{HTML}}{{009E73}}%
+\definecolor{{snrThree}}{{HTML}}{{D55E00}}%
+\definecolor{{snrMuted}}{{HTML}}{{9BA3AB}}%
+\definecolor{{snrGrid}}{{HTML}}{{E2E5E8}}%
+\definecolor{{snrInk}}{{HTML}}{{42484F}}%
 \begin{{tikzpicture}}
 \pgfplotsset{{
   rsum snr/gnn/.style={{
@@ -265,6 +277,20 @@ SNR_HEAD = r"""% Sum rate vs SNR for K = 2, 4, 6 (K = 1 is shown separately in f
   rsum snr/one/.style={{mark=*, mark size=1.85pt}},
   rsum snr/two/.style={{mark=square*, mark size=1.8pt}},
   rsum snr/three/.style={{mark=triangle*, mark size=2.4pt}},
+  % In-axis legends in the empty region above the unquantized WMMSE curve: resolution key in (b), method key in (c).
+  rsum snr/key/.style={{
+    legend cell align=left,
+    % Shorter line samples than the default 0.6 cm; markers keep their size.
+    legend image code/.code={{
+      \draw[mark repeat=2, mark phase=2] plot coordinates {{(0cm,0cm) (0.22cm,0cm) (0.44cm,0cm)}};
+    }},
+    legend style={{
+      at={{(0.025,0.975)}}, anchor=north west, font=\scriptsize,
+      fill=white, fill opacity=0.9, text opacity=1, draw opacity=1,
+      draw=none,
+      inner xsep=1pt, inner ysep=0.5pt, row sep=-2pt,
+    }},
+  }},
 }}
 \begin{{groupplot}}[
   group style={{group name=rsumsnr, group size=3 by 1, horizontal sep=1.05cm}},
@@ -275,7 +301,6 @@ SNR_HEAD = r"""% Sum rate vs SNR for K = 2, 4, 6 (K = 1 is shown separately in f
   ymajorgrids=true, xmajorgrids=false,
   grid style={{line width=0.3pt, draw=snrGrid}},
   every axis plot/.append style={{line join=round, mark repeat=2, mark phase=1}},
-  title style={{font=\small, yshift=2pt}},
   tick label style={{font=\footnotesize, /pgf/number format/fixed}},
   label style={{font=\small}},
   xmin=-12, xmax=32, xtick={{-10,0,10,20,30}},
@@ -296,24 +321,21 @@ def _tab(vals):
 def fig_snr(data, out):
     L = [SNR_HEAD.format(ls=LS_NOTE).rstrip('\n')]
     for i, (K, title, ymax, yt) in enumerate(SNR_PANELS):
-        opts = [f'title={{{title}}}', f'ymax={ymax}', 'ytick={' + ','.join(map(str, yt)) + '}']
+        opts = [f'ymax={ymax}', 'ytick={' + ','.join(map(str, yt)) + '}']
         if i == 0:
-            opts += [r'ylabel={$R_{\mathrm{sum}}$ [bits/channel use]}', 'legend to name=rsumsnrlegend',
-                     'legend columns=3', 'legend cell align=left',
-                     'legend style={\n    draw=none, fill=none, font=\\footnotesize,\n'
-                     '    /tikz/every even column/.append style={column sep=0.55cm},\n  }']
+            opts += [r'ylabel={$R_{\mathrm{sum}}$ [bits/channel use]}']
+        else:
+            opts += ['rsum snr/key']
         L.append(r'\nextgroupplot[' + ('\n  ' + ',\n  '.join(opts) + ',\n]' if i == 0 else ', '.join(opts) + ']'))
-        if i == 0:
+        if i == 1:      # resolution key
             for b in (1, 2, 3):
                 L += [r'\addlegendimage{%s, rsum snr/gnn, rsum snr/%s}' % (BCOL[b], BSTY[b]),
-                      r'\addlegendentry{GNN, %s}' % BTXT[b]]
-            for b in (1, 2, 3):
-                L += [r'\addlegendimage{%s!55!snrMuted, rsum snr/zf, rsum snr/%s}' % (BCOL[b], BSTY[b]),
-                      r'\addlegendentry{ZF + DAC, %s}' % BTXT[b]]
-            for b in (1, 2, 3):
-                L += [r'\addlegendimage{%s!55!snrMuted, rsum snr/wmmse}' % BCOL[b],
-                      r'\addlegendentry{WMMSE + DAC, %s}' % BTXT[b]]
-            L += [r'\addlegendimage{snrInk, rsum snr/unq}', r'\addlegendentry{Unquantized WMMSE}']
+                      r'\addlegendentry{$b=%d$}' % b]
+        elif i == 2:    # method key
+            L += [r'\addlegendimage{black!55, rsum snr/gnn, rsum snr/one}', r'\addlegendentry{GNN}',
+                  r'\addlegendimage{snrMuted!80!black, rsum snr/zf, rsum snr/one}', r'\addlegendentry{ZF + DAC}',
+                  r'\addlegendimage{snrMuted!80!black, rsum snr/wmmse}', r'\addlegendentry{WMMSE + DAC}',
+                  r'\addlegendimage{snrInk, rsum snr/unq}', r'\addlegendentry{Unquantized WMMSE}']
         L.append(r'\addplot[snrInk, rsum snr/unq] %s' % _tab(data[(K, 1)]['wmmse_unq']))
         for b in (1, 2, 3):
             L.append(r'\addplot[%s!55!snrMuted, rsum snr/wmmse] %s' % (BCOL[b], _tab(data[(K, b)]['wmmse_q'])))
@@ -321,21 +343,21 @@ def fig_snr(data, out):
             L.append(r'\addplot[%s!55!snrMuted, rsum snr/zf, rsum snr/%s] %s' % (BCOL[b], BSTY[b], _tab(data[(K, b)]['lin_q'])))
         for b in (1, 2, 3):
             L.append(r'\addplot[%s, rsum snr/gnn, rsum snr/%s] %s' % (BCOL[b], BSTY[b], _tab(data[(K, b)]['gnn'])))
-    L += [r'\end{groupplot}', r'\node[anchor=south] at ($(rsumsnr c2r1.north)+(0,0.65cm)$)',
-          r'  {\pgfplotslegendfromname{rsumsnrlegend}};', r'\end{tikzpicture}', r'\end{document}', '']
+    L += [r'\end{groupplot}', panel_labels('rsumsnr', [t for _, t, _, _ in SNR_PANELS]).rstrip('\n'),
+          r'\end{tikzpicture}', r'\end{document}', '']
     open(out, 'w').write('\n'.join(L))
 
 
 # -------------------------------------------------------------------------------------------- preview
 def preview(data, out):
-    kc = {1: '#0072B2', 2: '#D55E00', 4: '#009E73', 6: '#A35D94'}
+    kc = {1: '#4190D0', 2: '#BA5A12', 4: '#11604A', 6: '#3A1A4A'}
     bc = {1: '#0072B2', 2: '#009E73', 3: '#D55E00'}
     bm = {1: 'o', 2: 's', 3: '^'}
     mute = lambda h: tuple(0.55 * int(h[i:i + 2], 16) / 255 + 0.45 * int('9BA3AB'[i - 1:i + 1], 16) / 255 for i in (1, 3, 5))
     fig = plt.figure(figsize=(12, 8.6))
     gs = fig.add_gridspec(2, 6, height_ratios=[1, 1.05], hspace=0.95, wspace=0.9)
-    for j, (Ks, title, ymax) in enumerate((((1, 2), '(a) $K=1,2$', 21), ((4, 6), '(b) $K=4,6$', 51))):
-        a = fig.add_subplot(gs[0, 3 * j:3 * j + 3])
+    for j, (Ks, title, ymax) in enumerate((((1, 2, 4, 6), '$K=1,2,4,6$', 56),)):
+        a = fig.add_subplot(gs[0, 1:5])
         a.axvspan(3.65, 4.65, color='0.97'); a.axvline(3.65, color='0.8', ls='--', lw=0.6)
         for K in Ks:
             c = kc[K]; bs = [1, 2, 3]

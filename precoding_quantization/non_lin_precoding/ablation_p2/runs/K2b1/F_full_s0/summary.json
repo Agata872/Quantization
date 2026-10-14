@@ -1,0 +1,10 @@
+{
+ "best_epoch": 15,
+ "val_rate_ls": 8.841070175170898,
+ "test_mean_20db": 8.837471008300781,
+ "test_p5_20db": 7.149389147758484,
+ "test_mean_30db": 9.90606689453125,
+ "train_hours": 5.32248912970225,
+ "params": 496672,
+ "failed": null
+}

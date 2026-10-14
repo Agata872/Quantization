@@ -1,0 +1,12 @@
+{
+ "checkpoint": "stored_models_cellfree_sweep_continue/M40_K6_b1_ep15_n100000_lr0.001to5e-05_tau1to0.25in3_l20.1_ep15to30_cos0.0002to1e-05/model_best.pt",
+ "checkpoint_sha256": "e5cdaa6a85102a9229c02a1c151ffaa061e089508732180b403591e5bf7adf07",
+ "epochs_trained": 30,
+ "best_epoch": 29,
+ "val_rate_ls": 20.318384170532227,
+ "test_mean_20db": 20.348583221435547,
+ "test_p5_20db": 17.49080114364624,
+ "test_mean_30db": 22.24191665649414,
+ "retrained": false,
+ "seed": 0
+}

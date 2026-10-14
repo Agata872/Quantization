@@ -1,0 +1,35 @@
+# K bits variant seed -- workers take the first unclaimed line not DONE (p2_ablation.py --worker)
+# A_orig seeds 1,2 are appended after the seed-0 lr choice (A_orig vs A_orig_lr1e-3, by validation)
+# 2026-10-14 19:40, user decision: only A (original, lr tuned on validation), B (original + training strategy) and F (full); C/D/E dropped; sigma_theta = 0 everywhere
+2 1 F_full 0
+2 1 A_orig 0
+2 1 A_orig_lr1e-3 0
+2 1 B_orig_ts 0
+2 3 F_full 0
+2 3 A_orig 0
+2 3 A_orig_lr1e-3 0
+2 3 B_orig_ts 0
+6 1 F_full 0
+6 1 A_orig 0
+6 1 A_orig_lr1e-3 0
+6 1 B_orig_ts 0
+6 3 F_full 0
+6 3 A_orig 0
+6 3 A_orig_lr1e-3 0
+6 3 B_orig_ts 0
+2 1 F_full 1
+2 1 B_orig_ts 1
+2 3 F_full 1
+2 3 B_orig_ts 1
+6 1 F_full 1
+6 1 B_orig_ts 1
+6 3 F_full 1
+6 3 B_orig_ts 1
+2 1 F_full 2
+2 1 B_orig_ts 2
+2 3 F_full 2
+2 3 B_orig_ts 2
+6 1 F_full 2
+6 1 B_orig_ts 2
+6 3 F_full 2
+6 3 B_orig_ts 2

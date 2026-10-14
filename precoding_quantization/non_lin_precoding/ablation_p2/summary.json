@@ -1,0 +1,447 @@
+{
+ "note": "test = Htest[6144:8192] (frozen, scored once per run); validation = Htest[4096:6144]",
+ "configs": {
+  "K2b1": {
+   "A_orig": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [
+     1
+    ],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     7.752457618713379,
+     0.0
+    ],
+    "test_mean_20db": [
+     7.769437313079834,
+     0.0
+    ],
+    "test_p5_20db": [
+     5.835464549064636,
+     0.0
+    ],
+    "test_mean_30db": [
+     8.282872200012207,
+     0.0
+    ],
+    "train_hours": [
+     5.178217219909032,
+     0.0
+    ],
+    "best_epoch": [
+     15
+    ]
+   },
+   "A_orig_lr1e-3": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     7.743114471435547,
+     0.0
+    ],
+    "test_mean_20db": [
+     7.768913269042969,
+     0.0
+    ],
+    "test_p5_20db": [
+     5.959616851806641,
+     0.0
+    ],
+    "test_mean_30db": [
+     8.320404052734375,
+     0.0
+    ],
+    "train_hours": [
+     6.541257579392857,
+     0.0
+    ],
+    "best_epoch": [
+     14
+    ]
+   },
+   "F_full": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     8.841070175170898,
+     0.0
+    ],
+    "test_mean_20db": [
+     8.837471008300781,
+     0.0
+    ],
+    "test_p5_20db": [
+     7.149389147758484,
+     0.0
+    ],
+    "test_mean_30db": [
+     9.90606689453125,
+     0.0
+    ],
+    "train_hours": [
+     5.32248912970225,
+     0.0
+    ],
+    "best_epoch": [
+     15
+    ]
+   },
+   "F_ep15": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     8.846719741821289,
+     0.0
+    ],
+    "test_mean_20db": [
+     8.840080261230469,
+     0.0
+    ],
+    "test_p5_20db": [
+     7.150801873207092,
+     0.0
+    ],
+    "test_mean_30db": [
+     9.920746803283691,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     13
+    ]
+   },
+   "F_paper": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     8.951229095458984,
+     0.0
+    ],
+    "test_mean_20db": [
+     8.946067810058594,
+     0.0
+    ],
+    "test_p5_20db": [
+     7.238319849967956,
+     0.0
+    ],
+    "test_mean_30db": [
+     10.074432373046875,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     24
+    ]
+   },
+   "A_star": "A_orig",
+   "effects": {
+    "paper F (15 ep) - A* (15 ep), same budget": {
+     "mean_bit": 1.0706429481506348,
+     "ci95": [
+      1.0519198685884477,
+      1.0905889779329299
+     ],
+     "rel_pct": 13.780186453762994,
+     "frac_channels_better": 0.9921875,
+     "seeds": [
+      [
+       0
+      ],
+      [
+       0
+      ]
+     ]
+    },
+    "paper F (15+15 ep) - A* (15 ep)": {
+     "mean_bit": 1.1766300201416016,
+     "ci95": [
+      1.158305326104164,
+      1.1961963295936584
+     ],
+     "rel_pct": 15.144340223464408,
+     "frac_channels_better": 0.99658203125,
+     "seeds": [
+      [
+       0
+      ],
+      [
+       0
+      ]
+     ]
+    },
+    "total (F - A*)": {
+     "mean_bit": 1.068033218383789,
+     "ci95": [
+      1.0490970581769943,
+      1.08790685236454
+     ],
+     "rel_pct": 13.746596765582458,
+     "frac_channels_better": 0.99169921875,
+     "seeds": [
+      [
+       0
+      ],
+      [
+       0
+      ]
+     ]
+    }
+   }
+  },
+  "K2b3": {
+   "A_orig": {
+    "seeds_done": [],
+    "seeds_running": [],
+    "seeds_failed": [
+     0
+    ]
+   },
+   "A_orig_lr1e-3": {
+    "seeds_done": [],
+    "seeds_running": [
+     0
+    ],
+    "seeds_failed": []
+   },
+   "F_ep15": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     15.504260063171387,
+     0.0
+    ],
+    "test_mean_20db": [
+     15.512001037597656,
+     0.0
+    ],
+    "test_p5_20db": [
+     12.6783362865448,
+     0.0
+    ],
+    "test_mean_30db": [
+     18.172616958618164,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     14
+    ]
+   },
+   "F_paper": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     15.636932373046875,
+     0.0
+    ],
+    "test_mean_20db": [
+     15.646915435791016,
+     0.0
+    ],
+    "test_p5_20db": [
+     12.765870618820191,
+     0.0
+    ],
+    "test_mean_30db": [
+     18.435840606689453,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     30
+    ]
+   },
+   "A_star": null,
+   "effects": {}
+  },
+  "K6b1": {
+   "A_orig": {
+    "seeds_done": [],
+    "seeds_running": [
+     0
+    ],
+    "seeds_failed": []
+   },
+   "A_orig_lr1e-3": {
+    "seeds_done": [],
+    "seeds_running": [
+     0
+    ],
+    "seeds_failed": []
+   },
+   "F_ep15": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     20.022968292236328,
+     0.0
+    ],
+    "test_mean_20db": [
+     20.053939819335938,
+     0.0
+    ],
+    "test_p5_20db": [
+     17.20525245666504,
+     0.0
+    ],
+    "test_mean_30db": [
+     21.836288452148438,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     15
+    ]
+   },
+   "F_paper": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     20.318384170532227,
+     0.0
+    ],
+    "test_mean_20db": [
+     20.348583221435547,
+     0.0
+    ],
+    "test_p5_20db": [
+     17.49080114364624,
+     0.0
+    ],
+    "test_mean_30db": [
+     22.24191665649414,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     29
+    ]
+   },
+   "A_star": null,
+   "effects": {}
+  },
+  "K6b3": {
+   "A_orig": {
+    "seeds_done": [],
+    "seeds_running": [
+     0
+    ],
+    "seeds_failed": []
+   },
+   "A_orig_lr1e-3": {
+    "seeds_done": [],
+    "seeds_running": [
+     0
+    ],
+    "seeds_failed": []
+   },
+   "F_ep15": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     35.728050231933594,
+     0.0
+    ],
+    "test_mean_20db": [
+     35.83306884765625,
+     0.0
+    ],
+    "test_p5_20db": [
+     30.803581142425536,
+     0.0
+    ],
+    "test_mean_30db": [
+     41.77003860473633,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     15
+    ]
+   },
+   "F_paper": {
+    "seeds_done": [
+     0
+    ],
+    "seeds_running": [],
+    "seeds_failed": [],
+    "val_rate_ls": [
+     36.05430221557617,
+     0.0
+    ],
+    "test_mean_20db": [
+     36.14985656738281,
+     0.0
+    ],
+    "test_p5_20db": [
+     31.062514877319337,
+     0.0
+    ],
+    "test_mean_30db": [
+     42.260780334472656,
+     0.0
+    ],
+    "train_hours": [
+     NaN,
+     0.0
+    ],
+    "best_epoch": [
+     29
+    ]
+   },
+   "A_star": null,
+   "effects": {}
+  }
+ }
+}

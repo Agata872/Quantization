@@ -1,0 +1,312 @@
+{
+ "test_slice": [
+  6144,
+  8192
+ ],
+ "checked": "2026-10-14 13:24:26",
+ "code_slices": [
+  {
+   "file": "non_lin_precoding/constellation_16qam.py",
+   "line": 306,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/ide_calibrated_check.py",
+   "line": 7,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/phase_offset_eval.py",
+   "line": 3,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/phase_offset_eval.py",
+   "line": 279,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/exp_cellfree_ablation.py",
+   "line": 43,
+   "range": [
+    0,
+    256
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/exp_cellfree_ablation.py",
+   "line": 44,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/plot_phase_offset.py",
+   "line": 39,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/evm_cdf_sim.py",
+   "line": 11,
+   "range": [
+    4096,
+    4116
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/rate_gain_table.py",
+   "line": 7,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/rate_gain_table.py",
+   "line": 70,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/train_sweep.py",
+   "line": 65,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/train_sweep.py",
+   "line": 66,
+   "range": [
+    0,
+    128
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/squid_baseline.py",
+   "line": 18,
+   "range": [
+    0,
+    128
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/squid_baseline.py",
+   "line": 50,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/squid_baseline.py",
+   "line": 50,
+   "range": [
+    0,
+    128
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/squid_baseline.py",
+   "line": 146,
+   "range": [
+    0,
+    128
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/ber_16qam_20dB.py",
+   "line": 7,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/ber_16qam_20dB.py",
+   "line": 7,
+   "range": [
+    0,
+    128
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/ber_16qam_20dB.py",
+   "line": 49,
+   "range": [
+    4096,
+    6144
+   ],
+   "overlaps_test": false
+  },
+  {
+   "file": "non_lin_precoding/ber_16qam_20dB.py",
+   "line": 49,
+   "range": [
+    0,
+    128
+   ],
+   "overlaps_test": false
+  }
+ ],
+ "code_full_Htest_users": [
+  {
+   "file": "non_lin_precoding/training.py",
+   "line": 216
+  },
+  {
+   "file": "non_lin_precoding/eval.py",
+   "line": 87
+  },
+  {
+   "file": "non_lin_precoding/s_vs_shat.py",
+   "line": 400
+  },
+  {
+   "file": "non_lin_precoding/training_qpsk.py",
+   "line": 78
+  },
+  {
+   "file": "non_lin_precoding/amp_phase_plot.py",
+   "line": 87
+  },
+  {
+   "file": "non_lin_precoding/rad_plots_iid.py",
+   "line": 511
+  },
+  {
+   "file": "non_lin_precoding/cdfs.py",
+   "line": 100
+  }
+ ],
+ "code_full_Htest_note": "old training.py pipeline (Feys-style raw-input GNNs): it evaluates whole Htest after training with Hval as validation; its stored models are M=16 K=2, M=8 K=1, M=32 K=1, M=40 K=1 (stored_models_cellfree_generalized_bussgang_loss*), none of them a paper model, and no such run exists for M=40 with K>=2. Hyperparameters of the paper recipe were chosen on Htest[4096:6144] (exp_cellfree_ablation.py rounds 1-6, K=1) and in train_sweep.py short runs (same slice).",
+ "any_code_slice_overlaps_test": false,
+ "data": {
+  "K1": {
+   "dataset": "datasets/cellfree/M_40_K_1_Ntr_200000_Nval_10000_Nte_10000_SperChannel125",
+   "unique_test_rows": 2048,
+   "duplicates_of_test_rows_in": {
+    "Htrain": 0,
+    "Hval": 0,
+    "Htest_outside_test": 0
+   },
+   "ks_pvalues": {
+    "log10_fro2": {
+     "vs_eval": 0.6536338438894469,
+     "vs_train100k": 0.6206492351373485
+    },
+    "strongest_ap_share": {
+     "vs_eval": 0.23803367225825672,
+     "vs_train100k": 0.11498184347687479
+    }
+   },
+   "sha256_Htest": "2358a79d1828e0c494f4ba9ec469488eb8446f12a4017817c9c4f7087446af66",
+   "sha256_stest": "4a089db71818c5a0d40754f1fada76195daa309308f7a1b4760cff6b135bd3c0",
+   "mean_abs_h2_test": 1.0434969127703602
+  },
+  "K2": {
+   "dataset": "datasets/cellfree/M_40_K_2_Ntr_200000_Nval_10000_Nte_10000_SperChannel125",
+   "unique_test_rows": 2048,
+   "duplicates_of_test_rows_in": {
+    "Htrain": 0,
+    "Hval": 0,
+    "Htest_outside_test": 0
+   },
+   "ks_pvalues": {
+    "log10_fro2": {
+     "vs_eval": 0.022205752585645076,
+     "vs_train100k": 0.014042363232082584
+    },
+    "strongest_ap_share": {
+     "vs_eval": 0.03830229448522745,
+     "vs_train100k": 0.0831984074154003
+    }
+   },
+   "sha256_Htest": "ebfa6ae8b663f0605931050351a70af55d2f6a2b599d2a56577153307fcf0deb",
+   "sha256_stest": "57501a03fc519a1cab948de1605d49a79193f7b3520286f00d0fde018a92be2c",
+   "mean_abs_h2_test": 0.9706087644452106
+  },
+  "K4": {
+   "dataset": "datasets/cellfree/M_40_K_4_Ntr_200000_Nval_10000_Nte_10000_SperChannel125",
+   "unique_test_rows": 2048,
+   "duplicates_of_test_rows_in": {
+    "Htrain": 0,
+    "Hval": 0,
+    "Htest_outside_test": 0
+   },
+   "ks_pvalues": {
+    "log10_fro2": {
+     "vs_eval": 0.7320634053443532,
+     "vs_train100k": 0.9588784990905509
+    },
+    "strongest_ap_share": {
+     "vs_eval": 0.6536338438894469,
+     "vs_train100k": 0.9808681553049496
+    }
+   },
+   "sha256_Htest": "5b3dc62472882b62e32d1325a11a63f1dd33febd881938fc0725671a20776631",
+   "sha256_stest": "5a471d067b90d7e8f152f7380e71c1040501154393a5afc361a87e8413c348fb",
+   "mean_abs_h2_test": 1.0412145261610146
+  },
+  "K6": {
+   "dataset": "datasets/cellfree/M_40_K_6_Ntr_200000_Nval_10000_Nte_10000_SperChannel125",
+   "unique_test_rows": 2048,
+   "duplicates_of_test_rows_in": {
+    "Htrain": 0,
+    "Hval": 0,
+    "Htest_outside_test": 0
+   },
+   "ks_pvalues": {
+    "log10_fro2": {
+     "vs_eval": 0.2700459212214896,
+     "vs_train100k": 0.15730548464095018
+    },
+    "strongest_ap_share": {
+     "vs_eval": 0.3431412304031749,
+     "vs_train100k": 0.04396185356228999
+    }
+   },
+   "sha256_Htest": "89bffec28dc9fe51bd3ee80baae038b976911901dbe01bcd3e377a3c83adc886",
+   "sha256_stest": "e776a25e07d5e10ab618c5b678ce967248f6a83fc888786a7e56601fcc5aa7bc",
+   "mean_abs_h2_test": 1.0029597297500785
+  }
+ },
+ "generation": "data_handling.getdata_nonlinprec: one call per K draws Ntr+Nval+Nte channels i.i.d. (fixed AP layout of that call, new UE positions, shadowing and fading per realization), scales all of them by one common constant, then splits train/val/test in order; symbols i.i.d. CN(0,1). The test rows are therefore independent draws from the training distribution; the AP layout is shared by design (one deployment per K)."
+}

@@ -1,7 +1,6 @@
 """Export saved receiver IQ as native PGFPlots/TikZ (no raster images).
 
-The paper figure has three rows (K=1 UE1, K=2 UE1 and UE2; the row label marks
-the weaker and stronger UE of the snapshot channel by ||h_k||^2) and six columns (GNN and the
+The paper figure has three rows (K=1 UE1, K=2 UE1 and UE2) and six columns (GNN and the
 baseline of the run for each of the three DAC resolutions; IDE with a calibrated
 beta for the paper, beta_WF, block beta or WMMSE in earlier runs).
 All 4,000 saved fixed-channel samples per panel are retained by default.
@@ -12,6 +11,7 @@ label for provenance only.
 from __future__ import annotations
 
 import argparse
+from decimal import Decimal, ROUND_HALF_UP
 import hashlib
 import json
 from pathlib import Path
@@ -35,8 +35,19 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def figure_tex(panels, layout, compact, notes=None):
-    """notes: optional {(K, user): text} added below the row label, e.g. 'weaker'."""
+def ber_tex(ber, bits):
+    """Panel BER as 'BER a.b x 10^e' (two significant digits, half up); no bit error: '< 1/bits'."""
+    errors = round(ber * bits)
+    value = Decimal(max(errors, 1)) / Decimal(bits)
+    exponent = value.adjusted()
+    mantissa = value.scaleb(-exponent).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+    if mantissa >= 10:
+        mantissa, exponent = (mantissa / 10).quantize(Decimal('0.1')), exponent + 1
+    number = rf'{mantissa}\!\times\!10^{{{exponent}}}'
+    return rf'BER ${{<}}\,{number}$' if errors == 0 else rf'BER ${number}$'
+
+
+def figure_tex(panels, layout, compact):
     rows, cols = len(layout), len(layout[0])
     axis_size, horizontal_sep = ('2.30cm', '0.34cm') if compact else ('4.20cm', '0.64cm')
     name = f'cq{rows}x{cols}'
@@ -102,7 +113,8 @@ def figure_tex(panels, layout, compact, notes=None):
             out.append(r'\addplot[cqpoints,forget plot] table[x=I,y=Q] {\CQData/' + key + '.dat};')
             out.append(r'\addplot[cqidealhalo] coordinates {' + ideal + '};')
             out.append(r'\addplot[cqidealcore] coordinates {' + ideal + '};')
-            # EVM only: no BER annotation (the paper reports BER over the channel ensemble, fig:tp_ber_16qam).
+            # EVM in the upper left. The panel BER is not shown (user request, 2026-10-06); it stays in the
+            # manifest ('ber_mc') and in the run's summary files, and ber_tex() still formats it if needed.
             evm = panel['evm_rms_percent']
             annotations.append(r'\node[anchor=north west,align=left,font=\tiny,inner sep=1.0pt,fill=white]')
             annotations.append(rf'  at ($({name} c{col+1}r{row+1}.north west)+(0.01cm,-0.01cm)$) {{EVM ' + f'{evm:.1f}' + r'\%};')
@@ -116,8 +128,6 @@ def figure_tex(panels, layout, compact, notes=None):
     for row, configurations in enumerate(layout, 1):
         k, user, _, method = panels[configurations[0]]['config']
         label = rf'$K={k}$\\UE {user}'
-        if (notes or {}).get((k, user)):
-            label += r'\\(' + notes[k, user] + ')'
         if not compact:
             label += r'\\' + LABELS[method]
         out.append(rf'\node[anchor=east,align=center,font=\scriptsize] at ($({name} c1r{row}.west)+(-1.20cm,0)$) {{{label}}};')
@@ -180,10 +190,9 @@ def main():
                                    'evm_rms_percent': record['evm_rms_percent'], 'ber_mc': record['ber_mc'],
                                    'source': source.name, 'array': 'rx_equalized', 'start_block': start,
                                    'user_axis': user - 1, 'dat_sha256': sha256(path)}
-    # Paper figure: the single UE for K = 1 and both UEs for K = 2, labelled weaker / stronger (||h_k||^2).
+    # Paper figure: the single UE for K = 1 and both UEs for K = 2.
     combined = [[f'K{k}_UE{u}_b{b}_{m}' for b in (1, 2, 3) for m in methods]
                 for k, u in ((1, 1), (2, 1), (2, 2))]
-    notes = {(2, weaker[2]): 'weaker', (2, 3 - weaker[2]): 'stronger'}
     layouts = {
         'constellation_16qam_tikz': (combined, True),
         'constellation_K1_tikz': ([[f'K1_UE1_b{b}_{m}' for b in (1,2,3)] for m in methods], False),
@@ -191,13 +200,13 @@ def main():
     }
     for name, (layout, compact) in layouts.items():
         destination = out / (name + '.tex')
-        destination.write_text(figure_tex(panels, layout, compact, notes))
+        destination.write_text(figure_tex(panels, layout, compact))
         print(destination)
     manifest = {'source_directory': str(root), 'source_sha256': sources,
                 'generator': str(Path(__file__).resolve()), 'generator_sha256': sha256(Path(__file__)),
                 'snapshot_channel_index': metadata['snapshot_channel_index'], 'snr_db': metadata['snr_db'],
                 'methods': list(methods),
-                'paper_rows': 'K=1 UE1; K=2 UE1 and UE2, labelled weaker/stronger by ||h_k||^2 of the snapshot channel',
+                'paper_rows': 'K=1 UE1; K=2 UE1 and UE2',
                 'weaker_ue': {str(k): u for k, u in weaker.items()},
                 'oracle_block_gain': True, 'subsampling': False,
                 'iq_export_float32_roundtrip': 'exact for every saved plotted I/Q value',

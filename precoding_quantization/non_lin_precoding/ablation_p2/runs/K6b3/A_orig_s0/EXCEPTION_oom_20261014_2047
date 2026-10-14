@@ -1,0 +1,41 @@
+Traceback (most recent call last):
+  File "/home/user/Quantization/precoding_quantization/non_lin_precoding/p2_ablation.py", line 362, in worker
+    flag = train_run(int(K), int(bits), variant, int(seed), epochs, n_train, root, compile_model)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/precoding_quantization/non_lin_precoding/p2_ablation.py", line 254, in train_run
+    loss.backward()
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_tensor.py", line 630, in backward
+    torch.autograd.backward(
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/autograd/__init__.py", line 364, in backward
+    _engine_run_backward(
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/autograd/graph.py", line 865, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/autograd/function.py", line 317, in apply
+    return user_fn(self, *args)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 2338, in backward
+    return impl_fn()
+           ^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 2324, in impl_fn
+    out = CompiledFunction._backward_impl(ctx, all_args)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 2494, in _backward_impl
+    out = call_func_at_runtime_with_args(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/utils.py", line 134, in call_func_at_runtime_with_args
+    out = normalize_as_list(f(args))
+                            ^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_inductor/output_code.py", line 638, in __call__
+    return self.current_callable(inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Quantization/env/lib/python3.12/site-packages/torch/_inductor/utils.py", line 3220, in run
+    out = model(new_inputs)
+          ^^^^^^^^^^^^^^^^^
+  File "/tmp/torchinductor_user/f6/cf6jrc2zyup4azvjy3w2dd5dytq7tomfsqmm26yp3rggfdcpolnb.py", line 776, in call
+    buf29 = empty_strided_cuda((2000, 40, 6, 128), (30720, 768, 128, 1), torch.float32)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 236.00 MiB. GPU 0 has a total capacity of 14.58 GiB of which 104.88 MiB is free. Process 2982205 has 522.00 MiB memory in use. Process 3412367 has 5.22 GiB memory in use. Process 3424307 has 3.59 GiB memory in use. Process 3431117 has 5.15 GiB memory in use. Of the allocated memory 4.68 GiB is allocated by PyTorch, and 343.75 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

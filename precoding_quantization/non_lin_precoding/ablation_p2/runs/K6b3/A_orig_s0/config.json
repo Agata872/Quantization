@@ -27,12 +27,12 @@
  "val": "Htest[4096:6144], 20 dB, LS estimator, argmax; selects model_best.pt",
  "test": "Htest[6144:8192] (frozen), scored once after training",
  "compiled": true,
- "git_rev": "9effb3f8fdeed8f61db152ec39749f89efd722ac",
- "script_sha256": "f3868d8f60ba8b46d1b20cafe4927e290fd4fa39616c9f70e779855bb56f60c2",
+ "git_rev": "464a65a13645fe1e275f8deec882645eb5951e5c",
+ "script_sha256": "ebaf17d23dd7e8020d1823f8d3ecd4036d81c4a246227f3189af0393926aec3c",
  "model_sha256": "766ffd4240d1c7709c9fede4108407b62980d44ad4922342604372ffafaba76f",
  "torch": "2.10.0+cu128",
  "host": "techtile-tianzheng",
  "gpu": "Tesla T4",
- "cuda_visible_devices": "1",
+ "cuda_visible_devices": "0",
  "command": "/home/user/Quantization/env/bin/python p2_ablation.py --worker"
 }

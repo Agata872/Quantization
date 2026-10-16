@@ -5,5 +5,26 @@
   "val_A_orig_lr1e-3": 7.743114471435547,
   "rule": "best validation LS rate (Htest[4096:6144], 20 dB) of seed 0",
   "at": "2026-10-14 19:56:43"
+ },
+ "K2b3": {
+  "chosen": "A_orig_lr1e-3",
+  "val_A_orig_lr5e-3": -Infinity,
+  "val_A_orig_lr1e-3": 12.164453506469727,
+  "rule": "best validation LS rate (Htest[4096:6144], 20 dB) of seed 0",
+  "at": "2026-10-15 02:08:14"
+ },
+ "K6b1": {
+  "chosen": "A_orig",
+  "val_A_orig_lr5e-3": 18.99249839782715,
+  "val_A_orig_lr1e-3": 17.956663131713867,
+  "rule": "best validation LS rate (Htest[4096:6144], 20 dB) of seed 0",
+  "at": "2026-10-15 08:38:14"
+ },
+ "K6b3": {
+  "chosen": "A_orig_lr1e-3",
+  "val_A_orig_lr5e-3": 0.06652654707431793,
+  "val_A_orig_lr1e-3": 30.998876571655273,
+  "rule": "best validation LS rate (Htest[4096:6144], 20 dB) of seed 0",
+  "at": "2026-10-15 13:58:14"
  }
 }
